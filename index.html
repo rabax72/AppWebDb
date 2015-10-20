@@ -1,47 +1,78 @@
 ﻿<!DOCTYPE html>
 <html>
-  <head>
-    <title>Contact Example</title>
+<head>
+<title>Page Title</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--<link rel="stylesheet" href="jquery.mobile-1.0rc2.min.css" />-->
+    <link href="jqueryMobile/jquery.mobile-1.4.5.css" rel="stylesheet" />
+<!--<script type="text/javascript" src="js/phonegap-1.1.0.js"></script>-->
+    <script type="text/javascript" src="phonegap.js"></script>
+<!--<script type="text/javascript" src="js/jquery.min.js"/></script>-->
+    <script type="text/javascript" src="jquery.js"></script>
+<!--<script type="text/javascript" src="js/jquery.mobile-1.0rc2.min.js"></script>-->
+    <link href="jqueryMobile/jquery.mobile-1.4.5.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="jqueryMobile/jquery.mobile-1.4.5.min.js"></script>
 
-    <script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
-    <script type="text/javascript" charset="utf-8">
-
-        // Wait for PhoneGap to load
-        //
-        document.addEventListener("deviceready", onDeviceReady, false);
-
-        // PhoneGap is ready
-        //
-        function onDeviceReady() {
-            var db = window.openDatabase("Database", "1.0", "PhoneGap Demo", 200000);
-            db.transaction(populateDB, errorCB, successCB);
-        }
-
-        // Populate the database 
-        //
-        function populateDB(tx) {
-            tx.executeSql('DROP TABLE IF EXISTS DEMO');
-            tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
-            tx.executeSql('INSERT INTO DEMO (id, data) VALUES (1, "First row")');
-            tx.executeSql('INSERT INTO DEMO (id, data) VALUES (2, "Second row")');
-        }
-
-        // Transaction error callback
-        //
-        function errorCB(tx, err) {
-            alert("Error processing SQL: " + err);
-        }
-
-        // Transaction success callback
-        //
-        function successCB() {
-            alert("success!");
-        }
-
+    <script type="text/javascript">
+        //add listener when device ready
+        //document.addEventListener("deviceready", onDeviceReady, true);
+        $(function () {
+            ///add listener when device ready
+            //document.addEventListener("deviceready", onDeviceReady, false);
+            var db = window.openDatabase("Dummy_DB", "1.0", "Just a Dummy DB", 200000); //will create database Dummy_DB or open it
+ 
+            //function will be called when device ready
+            //function onDeviceReady(){
+                db.transaction(populateDB, errorCB, successCB);
+            //}
+ 
+            //create table and insert some record
+            function populateDB(tx) {
+                tx.executeSql('CREATE TABLE IF NOT EXISTS `clienti` (`IdCliente` int(11) NOT NULL, `Descrizione` varchar(255) NOT NULL, `Indirizzo` varchar(255) DEFAULT NULL, `DataInserimento` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, `DataModifica` datetime DEFAULT NULL, `Cancellato` tinyint(1) NOT NULL DEFAULT \'0\', `IdOperatore` int(11) NOT NULL, `ordine` int(11) DEFAULT NULL, PRIMARY KEY (`IdCliente`))');
+                tx.executeSql('INSERT INTO `clienti` (`IdCliente`, `Descrizione`, `Indirizzo`, `DataInserimento`, `DataModifica`, `Cancellato`, `IdOperatore`, `ordine`) VALUES(1, \'GELATERIA CARAIBI\', \'via emilio lepido 9/a/b\', \'2015-01-06 14:16:59\', NULL, 0, 1, NULL), (2, \'LA GELATERIA\', \'piazzale vittorio emanuele II, 17\', \'2015-01-06 14:17:11\', NULL, 0, 1, NULL), (3, \'GELATERIA CARAIBI\'\'S\', \'via silvio pellico 10/c\', \'2015-01-06 14:17:21\', NULL, 0, 1, NULL), (4, \'GELATERIA IL POLO\', NULL, \'2015-03-21 18:56:58\', NULL, 0, 1, NULL)');
+               // tx.executeSql('INSERT INTO SoccerPlayer(Name,Club) VALUES ("Van Persie", "Arsenal")');
+            }
+ 
+            //function will be called when an error occurred
+            function errorCB(err) {
+                alert("Error processing SQL: "+err.code);
+            }
+ 
+            //function will be called when process succeed
+            function successCB() {
+                alert("success!");
+                db.transaction(queryDB,errorCB);
+            }
+ 
+            //select all from SoccerPlayer
+            function queryDB(tx){
+                tx.executeSql('SELECT * FROM Clienti',[],querySuccess,errorCB);
+            }
+ 
+            function querySuccess(tx,result){
+                $('#SoccerPlayerList').empty();
+                $.each(result.rows,function(index){
+                    var row = result.rows.item(index);
+                    $('#SoccerPlayerList').append('<li><a href="#"><h3 class="ui-li-heading">'+row['Descrizione']+'</h3><p class="ui-li-desc">Club '+row['Indirizzo']+'</p></a></li>');
+                });
+ 
+                $('#SoccerPlayerList').listview();
+            }
+        });
     </script>
-  </head>
-  <body>
-    <h1>Example</h1>
-    <p>Database</p>
-  </body>
+
+</head>
+<body>
+ 
+<div data-role="page">
+  <div data-role="header" data-position="fixed" data-theme="b">
+    <h1>Soccer Player</h1>
+  </div>
+  <div data-role="content">
+     <ul id="SoccerPlayerList">
+    </ul>
+  </div>
+</div>
+<!--end of Soccer Player Page--->
+</body>
 </html>
