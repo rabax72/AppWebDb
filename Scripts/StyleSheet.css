@@ -1,0 +1,403 @@
+﻿body {
+}
+
+.titolo { font-weight: bold; float:left;}
+.dato { float:left;}
+.riga { margin-bottom: 10px; padding-bottom:10px;float:left; width: 100%; }
+.RisultatiContainer, .risultatiAnagrafeAnimali, .risultatiOrdinanze { float: left; width: 100%; border-bottom: 1px solid #000; margin-top: 10px;}
+.footer { float: left; }
+.ui-popup .ui-content {
+    height: 150px !important;
+}
+.risultati { margin-bottom: 5px; }
+
+
+td.details-control {
+    background: url('../Images/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+ 
+tr.shown td.details-control {
+    background: url('../Images/details_close.png') no-repeat center center;
+}
+ 
+div.slider,  div.sliderResidenti{
+    display: none;
+}
+
+.separatore { background-color: #000099; text-align:center; color:#FFF; }
+ 
+table.dataTable tbody td.no-padding {
+    padding: 0;
+    border: 1px solid #ddd;
+}
+
+.ui-btn-up-b {
+border: 1px solid #044062 /*{b-bup-border}*/;
+background: #396b9e /*{b-bup-background-color}*/;
+font-weight: bold;
+color: #fff /*{b-bup-color}*/;
+text-shadow: 0 /*{b-bup-shadow-x}*/ 1px /*{b-bup-shadow-y}*/ 1px /*{b-bup-shadow-radius}*/ #194b7e /*{b-bup-shadow-color}*/;
+background-image: -webkit-gradient(linear, left top, left bottom, from( #5f9cc5 /*{b-bup-background-start}*/), to( #396b9e /*{b-bup-background-end}*/));
+background-image: -webkit-linear-gradient( #5f9cc5 /*{b-bup-background-start}*/, #396b9e /*{b-bup-background-end}*/);
+background-image: -moz-linear-gradient( #5f9cc5 /*{b-bup-background-start}*/, #396b9e /*{b-bup-background-end}*/);
+background-image: -ms-linear-gradient( #5f9cc5 /*{b-bup-background-start}*/, #396b9e /*{b-bup-background-end}*/);
+background-image: -o-linear-gradient( #5f9cc5 /*{b-bup-background-start}*/, #396b9e /*{b-bup-background-end}*/);
+background-image: linear-gradient( #5f9cc5 /*{b-bup-background-start}*/, #396b9e /*{b-bup-background-end}*/);
+}
+.h1DettDistributore {
+    font-size: 36px !important;
+}
+
+#map_canvas { height: 100%; }
+#content {
+                padding: 0;
+                position : absolute !important;
+                top : 140px !important; 
+                right : 0;
+                bottom : 10px !important; 
+                left : 0 !important;    
+            }
+.backButtonMappa { position : absolute !important; top: 85px;}
+
+.valoreCambiato {
+    color: red;
+}
+
+.resi, .rimasti, .caricaProdInDistributore {
+    width: 140px;
+}
+
+.calendario {
+    font-size: 24px !important;
+    margin-bottom: 75px;
+}
+
+.miniInput {
+  width: 130px;
+  height: 60px;
+  font-size: 50px;
+}
+
+.dataDDT {
+    width: 130px;
+    height:30px;
+    font-size:24px;
+}
+
+.evidenziaErrore {
+    border: 2px solid red;
+}
+
+.accentraInput{
+   /* margin-left: 20%; */
+}
+
+.miniText {
+    font-weight: normal;
+}
+
+.onlyAdmin {
+    display: none !important;
+}
+
+form h3 {
+min-width:400px;
+/*margin-top: -30px;*/
+}
+
+.labelForm {
+    margin-bottom: -20px !important;
+}
+
+.mezziDisponibiliPerDistributore {
+    font-size: 2em;
+}
+
+th, .caricaDaCamionPerCliente, .caricaDaCamion, .nomeCliente, .ui-title, .nomeDistributore, .ui-btnCarica, .vociVenduto, .voceMenuScomparsa {
+    font-size: 32px !important;      
+}
+
+.ui-btnCarica {
+    padding:0 !important;
+}
+
+.ui-btnCancella {
+    padding:5px;
+}
+
+.quantita {
+    font-size: 50px !important;
+    text-align:center;
+    border-left:1px solid #ddd;
+    border-right:1px solid #ddd;
+}
+
+.quantitaMag {
+    text-align:center;
+    font-weight:bold;
+    font-size:32px;
+}
+
+.medioGrande {
+    text-align: center;
+    font-size: 32px !important;
+    
+}
+
+.miniFont {
+    font-size: 16px !important;
+}
+
+.medioFont {
+    font-size: 24px !important;
+}
+
+.storicoVenduto {
+    text-align: center;
+}
+
+.storicoVendite td {
+    
+    border-collapse: collapse;
+    padding: 5px;
+    border: 1px solid;
+    text-align: center;
+    font-size:24px;
+}
+
+.ui-btnScarica {
+    font-size: 32px !important;
+    background-color:red !important;
+    color:white !important;
+    padding:0 !important;
+}
+
+.ui-btnClose {    
+    background-color:red !important;
+    color:white !important;   
+}
+
+.ui-btnCaricaDaMagazzino{
+    font-size: 32px !important;
+    background-color:green !important;
+    color:white !important;
+    padding:0 !important;
+}
+
+.ui-btnSposta{
+    font-size: 32px !important;
+    background-color:orange !important;
+    color:white !important;
+    padding:0 !important;
+}
+
+
+
+.ui-btnMedio {
+    font-size: 21px !important;
+}
+
+.Blu {
+    background-color:#0094ff !important;
+}
+
+.menuAdmin div{
+    display:inline-block;
+    background-color:#0094ff;
+    padding: 5px;
+    color: white;
+}
+
+    .menuAdmin div a {
+        color: white;
+    }
+
+    .menuAdmin div a:hover {
+        color: black;
+    }
+
+form {
+    font-family: Arial;
+}
+
+.ui-li-divider {
+  font-size: 36px !important;
+  /* color: blue !important; */
+  background-color: rgb(76, 200, 76) !important;
+}
+
+table.dataTable thead th, table.dataTable thead td {
+padding: 10px 0px !important;
+}
+
+table {
+    margin-bottom: 100px !important;
+}
+
+/*.ui-panel {
+    width: 500px !important;
+}*/
+
+/* Adjust the width of the left reveal menu. */
+
+.leftPanel.ui-panel {
+    width: 30em;
+}
+
+.leftPanel.ui-panel-closed {
+ width: 0;
+}
+.ui-panel-page-content-position-left,
+.ui-panel-dismiss-open.ui-panel-dismiss-position-left {
+ left: 30em;
+ right: -30em;
+}
+.ui-panel-animate.ui-panel-page-content-position-left.ui-panel-page-content-display-reveal {
+left: 0;
+right: 0;
+-webkit-transform: translate3d(30em,0,0);
+-moz-transform: translate3d(30em,0,0);
+transform: translate3d(30em,0,0);
+}
+/* Listview with collapsible list items. */
+.ui-listview > li .ui-collapsible-heading {
+margin: 0;
+}
+.ui-collapsible.ui-li-static {
+padding: 0;
+border: none !important;
+}
+.ui-collapsible + .ui-collapsible > .ui-collapsible-heading > .ui-btn {
+border-top: none !important;
+}
+/* Nested list button colors */
+.ui-listview .ui-listview .ui-btn {
+background: #fff;
+}
+.ui-listview .ui-listview .ui-btn:hover {
+background: #f5f5f5;
+}
+.ui-listview .ui-listview .ui-btn:active {
+background: #f1f1f1;
+}
+/* Reveal panel shadow on top of the listview menu (only to be used if you don't use fixed toolbars) */
+.ui-panel-display-reveal {
+-webkit-box-shadow: none;
+-moz-box-shadow: none;
+box-shadow: none;
+}
+.ui-panel-page-content-position-left {
+-webkit-box-shadow: -5px 0px 5px rgba(0,0,0,.15);
+-moz-box-shadow: -5px 0px 5px rgba(0,0,0,.15);
+box-shadow: -5px 0px 5px rgba(0,0,0,.15);
+}
+/* Setting a custom background image. */
+.ui-page-theme-a,
+.ui-panel-wrapper {
+background-color: #fff;
+/*background-image: url("../_assets/img/bg-pattern.png");*/
+background-repeat: repeat-x;
+background-position: left bottom;
+}
+/* Styling of the page contents */
+.article p {
+margin: 0 0 1em;
+line-height: 1.5;
+}
+.article p img {
+max-width: 100%;
+}
+.article p:first-child {
+text-align: center;
+}
+.article small {
+display: block;
+font-size: 75%;
+color: #c0c0c0;
+}
+.article p:last-child {
+text-align: right;
+}
+.article a.ui-btn {
+margin-right: 2em;
+}
+@media all and (min-width:769px) {
+    .article {
+    max-width: 994px;
+    margin: 0 auto;
+    padding-top: 4em;
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
+    -webkit-column-gap: 2em;
+    -moz-column-gap: 2em;
+    column-gap: 2em;
+    }
+    /* Fix for issue with buttons and form elements
+    if CSS columns are used on a page with a panel. */
+    .article a.ui-btn {
+    -webkit-transform: translate3d(0,0,0);
+    }
+}
+
+.ui-panel-animate.ui-panel-page-content-position-left {
+    left: 205px !important;
+}
+
+.cellaPopupStorico {
+    border: 1px solid black;
+}
+
+.arancio {
+    background-color: orange;
+}
+
+.azzurro {
+    background-color: #38c;
+}
+
+.rosso {
+    background-color: red;
+}
+
+.verde {
+    background-color: green;
+}
+
+.fineCarico {
+    width: 280px !important;
+}
+
+/* Custom indentations are needed because the length of custom labels differs from
+   the length of the standard labels */
+.custom-size-flipswitch.ui-flipswitch .ui-btn.ui-flipswitch-on {
+text-indent: -5.9em;
+}
+.custom-size-flipswitch.ui-flipswitch .ui-flipswitch-off {
+text-indent: 0.5em;
+margin:0;
+}
+/* Custom widths are needed because the length of custom labels differs from
+   the length of the standard labels */
+.custom-size-flipswitch.ui-flipswitch {
+width: 8.875em;
+}
+.custom-size-flipswitch.ui-flipswitch.ui-flipswitch-active {
+padding-left: 7em;
+width: 1.875em;
+}
+@media (min-width: 28em) {
+    /*Repeated from rule .ui-flipswitch above*/
+    .ui-field-contain > label + .custom-size-flipswitch.ui-flipswitch {
+        width: 1.875em;
+    }
+}
+
+.ui-flipswitch {
+    margin:0;
+}
+
+.quantSuCamion {
+margin-left:5px;
+}

@@ -4,7 +4,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.phonegap.app_app_webdb_distributore_doldi"
-        version   = "0.3">
+        version   = "0.3.1">
 
   <name>App WebSql</name>
 
