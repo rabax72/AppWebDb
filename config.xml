@@ -4,12 +4,12 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.phonegap.app_app_webdb_distributore_doldi"
-        version   = "0.2.3">
+        version   = "0.3">
 
-  <name>App WebDB</name>
+  <name>App WebSql</name>
 
   <description>
-    App WebDB TEST
+    App WebSql TEST
   </description>
 
   <author href="http://www.giacomorabaglia.com" email="rabax@hotmail.com">

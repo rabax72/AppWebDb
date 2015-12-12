@@ -1,78 +1,135 @@
 ﻿<!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Page Title</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--<link rel="stylesheet" href="jquery.mobile-1.0rc2.min.css" />-->
-    <link href="jqueryMobile/jquery.mobile-1.4.5.css" rel="stylesheet" />
-<!--<script type="text/javascript" src="js/phonegap-1.1.0.js"></script>-->
-    <script type="text/javascript" src="phonegap.js"></script>
-<!--<script type="text/javascript" src="js/jquery.min.js"/></script>-->
-    <script type="text/javascript" src="jquery.js"></script>
-<!--<script type="text/javascript" src="js/jquery.mobile-1.0rc2.min.js"></script>-->
-    <link href="jqueryMobile/jquery.mobile-1.4.5.min.css" rel="stylesheet" />
-    <script type="text/javascript" src="jqueryMobile/jquery.mobile-1.4.5.min.js"></script>
-
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Esempio Web Sql</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 10px;
+        }
+        h1 {
+            font-weight: bold;
+        }
+        label {
+            font-size: small;
+        }
+        #controls {
+            padding-bottom: 5px;
+            border-bottom: 1px solid #000;
+        }
+    </style>
     <script type="text/javascript">
-        //add listener when device ready
-        //document.addEventListener("deviceready", onDeviceReady, true);
-        $(function () {
-            ///add listener when device ready
-            //document.addEventListener("deviceready", onDeviceReady, false);
-            var db = window.openDatabase("Dummy_DB", "1.0", "Just a Dummy DB", 200000); //will create database Dummy_DB or open it
- 
-            //function will be called when device ready
-            //function onDeviceReady(){
-                db.transaction(populateDB, errorCB, successCB);
-            //}
- 
-            //create table and insert some record
-            function populateDB(tx) {
-                tx.executeSql('CREATE TABLE IF NOT EXISTS `clienti` (`IdCliente` int(11) NOT NULL, `Descrizione` varchar(255) NOT NULL, `Indirizzo` varchar(255) DEFAULT NULL, `DataInserimento` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, `DataModifica` datetime DEFAULT NULL, `Cancellato` tinyint(1) NOT NULL DEFAULT \'0\', `IdOperatore` int(11) NOT NULL, `ordine` int(11) DEFAULT NULL, PRIMARY KEY (`IdCliente`))');
-                tx.executeSql('INSERT INTO `clienti` (`IdCliente`, `Descrizione`, `Indirizzo`, `DataInserimento`, `DataModifica`, `Cancellato`, `IdOperatore`, `ordine`) VALUES(1, \'GELATERIA CARAIBI\', \'via emilio lepido 9/a/b\', \'2015-01-06 14:16:59\', NULL, 0, 1, NULL), (2, \'LA GELATERIA\', \'piazzale vittorio emanuele II, 17\', \'2015-01-06 14:17:11\', NULL, 0, 1, NULL), (3, \'GELATERIA CARAIBI\'\'S\', \'via silvio pellico 10/c\', \'2015-01-06 14:17:21\', NULL, 0, 1, NULL), (4, \'GELATERIA IL POLO\', NULL, \'2015-03-21 18:56:58\', NULL, 0, 1, NULL)');
-               // tx.executeSql('INSERT INTO SoccerPlayer(Name,Club) VALUES ("Van Persie", "Arsenal")');
-            }
- 
-            //function will be called when an error occurred
-            function errorCB(err) {
-                alert("Error processing SQL: "+err.code);
-            }
- 
-            //function will be called when process succeed
-            function successCB() {
-                alert("success!");
-                db.transaction(queryDB,errorCB);
-            }
- 
-            //select all from SoccerPlayer
-            function queryDB(tx){
-                tx.executeSql('SELECT * FROM Clienti',[],querySuccess,errorCB);
-            }
- 
-            function querySuccess(tx,result){
-                $('#SoccerPlayerList').empty();
-                $.each(result.rows,function(index){
-                    var row = result.rows.item(index);
-                    $('#SoccerPlayerList').append('<li><a href="#"><h3 class="ui-li-heading">'+row['Descrizione']+'</h3><p class="ui-li-desc">Club '+row['Indirizzo']+'</p></a></li>');
-                });
- 
-                $('#SoccerPlayerList').listview();
-            }
-        });
-    </script>
+        //Test for browser compatibility
+        if (window.openDatabase) {
+            //Create the database the parameters are 1. the database name 2.version number 3. a description 4. the size of the database (in bytes) 1024 x 1024 = 1MB
+            var mydb = openDatabase("cars_db", "0.1", "A Database of Cars I Like", 1024 * 1024);
 
+            //create the cars table using SQL for the database using a transaction
+            mydb.transaction(function (t) {
+                t.executeSql("CREATE TABLE IF NOT EXISTS cars (id INTEGER PRIMARY KEY ASC, make TEXT, model TEXT)");
+            });
+
+        } else {
+            alert("WebSQL is not supported by your browser!");
+        }
+
+        //function to output the list of cars in the database
+
+        function updateCarList(transaction, results) {
+            //initialise the listitems variable
+            var listitems = "";
+            //get the car list holder ul
+            var listholder = document.getElementById("carlist");
+
+            //clear cars list ul
+            listholder.innerHTML = "";
+
+            var i;
+            //Iterate through the results
+            for (i = 0; i < results.rows.length; i++) {
+                //Get the current row
+                var row = results.rows.item(i);
+
+                listholder.innerHTML += "<li>" + row.make + " - " + row.model + " (<a href='javascript:void(0);' onclick='deleteCar(" + row.id + ");'>Delete Car</a>)";
+            }
+
+        }
+
+        //function to get the list of cars from the database
+
+        function outputCars() {
+            //check to ensure the mydb object has been created
+            if (mydb) {
+                //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+                mydb.transaction(function (t) {
+                    t.executeSql("SELECT * FROM cars", [], updateCarList);
+                });
+            } else {
+                alert("db not found, your browser does not support web sql!");
+            }
+        }
+
+        //function to add the car to the database
+
+        function addCar() {
+            //check to ensure the mydb object has been created
+            if (mydb) {
+                //get the values of the make and model text inputs
+                var make = document.getElementById("carmake").value;
+                var model = document.getElementById("carmodel").value;
+
+                //Test to ensure that the user has entered both a make and model
+                if (make !== "" && model !== "") {
+                    //Insert the user entered details into the cars table, note the use of the ? placeholder, these will replaced by the data passed in as an array as the second parameter
+                    mydb.transaction(function (t) {
+                        t.executeSql("INSERT INTO cars (make, model) VALUES (?, ?)", [make, model]);
+                        outputCars();
+                    });
+                } else {
+                    alert("You must enter a make and model!");
+                }
+            } else {
+                alert("db not found, your browser does not support web sql!");
+            }
+        }
+
+
+        //function to remove a car from the database, passed the row id as it's only parameter
+
+        function deleteCar(id) {
+            //check to ensure the mydb object has been created
+            if (mydb) {
+                //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+                mydb.transaction(function (t) {
+                    t.executeSql("DELETE FROM cars WHERE id=?", [id], outputCars);
+                });
+            } else {
+                alert("db not found, your browser does not support web sql!");
+            }
+        }
+
+        outputCars();
+    </script>
 </head>
 <body>
- 
-<div data-role="page">
-  <div data-role="header" data-position="fixed" data-theme="b">
-    <h1>Soccer Player</h1>
-  </div>
-  <div data-role="content">
-     <ul id="SoccerPlayerList">
-    </ul>
-  </div>
+    <h1>WebSQL Example</h1>
+
+<div id="controls">
+    <p>Add a car to the database</p>
+    <label>Make:</label>
+    <input type="text" id="carmake" />
+    <br />
+    <label>Model:</label>
+    <input type="text" id="carmodel" />
+    <br />
+    <button type="button" id="addcar" onclick="addCar();">Add Car</button>
 </div>
-<!--end of Soccer Player Page--->
+<div id="carlistholder">
+     <h3>Your Cars</h3>
+
+    <ul id="carlist"></ul>
+</div>
+<p><strong>Note: </strong>You can leave this page and when you return the cars you entered will still be here!</p>
 </body>
 </html>
