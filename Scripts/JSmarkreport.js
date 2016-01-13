@@ -27,7 +27,7 @@ function GetMarkReport() {
         complete: function () { $.mobile.loading('hide'); }, //Hide spinner
         success: function (response) {
             risultati = response.d;
-            console.log(risultati);
+            //console.log(risultati);
             var dettaglio = '<h1>Riepilogo Mark per Tutti i Distributori</h1>' +
                             '<div>' +
                                 'Data Da <input type="text" id="MarkReportDataDa"  class="calendario" data-theme="a" /> Data A <input type="text" id="MarkReportDataA"  class="calendario" data-theme="a" /> <button id="filtraMarkReport" value="Filtra" class="filtraMarkReport">Filtra</button>' +

@@ -842,7 +842,7 @@ function AggiornaQuantitaProdottiInMagazzinoResi(id, idProdotto, numeroLotto, co
         success: function (response) {
             risultati = response.d;
 
-            console.log('Record Inserito Correttamente in MagazzinoResi');
+            //console.log('Record Inserito Correttamente in MagazzinoResi');
 
         }
 
@@ -868,7 +868,7 @@ function AggiornaQuantitaProdottiInMagazzino(id, idProdotto, codiceLotto, numero
         success: function (response) {
             risultati = response.d;
 
-            console.log('Record Inserito Correttamente in Magazzino');
+            //console.log('Record Inserito Correttamente in Magazzino');
 
         }
 

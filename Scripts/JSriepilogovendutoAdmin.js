@@ -132,7 +132,7 @@ function VendutoPerProdottoAdmin() {
         success: function (response) {
             risultati = response.d;
 
-            console.log(risultati);
+            //console.log(risultati);
 
             var dettaglio = '<h1>Filtra per prodotto</h1><table id="tabellaElencoProdottiAdmin" class="display" cellspacing="0" width="100%">' +
                                     '<thead>' +
@@ -289,7 +289,7 @@ function GetVendutoByIdProdottoAdmin(idProdotto, numeroLotto, descrizione, DataD
         success: function (response) {
             risultati = response.d;
 
-            console.log(risultati);
+            //console.log(risultati);
 
             var dettaglio = '<h1>Filtro per: ' + descrizione + '</h1>' + '<div>' +
                                 'Data Da <input type="text" id="VendutiByIdProdottoDataDaAdmin"  class="calendario" data-theme="a" /> Data A <input type="text" id="VendutiByIdProdottoDataAAdmin"  class="calendario" data-theme="a" /> <button id="filtraVendutiByIdProdottoAdmin" value="Filtra" class="filtraVendutiByIdProdottoAdmin">Filtra</button>' +
@@ -490,7 +490,7 @@ function VendutoPerTuttiDistributoriStampaAdmin(DataDa, DataA) {
         complete: function () { $.mobile.loading('hide'); }, //Hide spinner
         success: function (response) {
             risultati = response.d;
-            console.log(risultati);
+            //console.log(risultati);
             var dettaglio = '<h1>Riepilogo Venduto per Tutti i Distributori</h1>' +
                             '<div>' +
                                 'Data Da <input type="text" id="VendutoPerTuttiDitributoriStampaDataDaAdmin"  class="calendario" data-theme="a" /> Data A <input type="text" id="VendutoPerTuttiDitributoriStampaDataAAdmin"  class="calendario" data-theme="a" /> <button id="filtraVendutoDitributoreStampa" value="Filtra" class="filtraVendutoPerTuttiDitributoriStampaAdmin">Filtra</button>' +

@@ -22,7 +22,7 @@ function ElencoProdottiInMagazzinoPerVenditaDiretta() {
         success: function (response) {
             risultati = response.d;
 
-            console.log(risultati);
+            //console.log(risultati);
 
 
             var dettaglio = '<table id="tabellaProdottiInMagazzinoPerVenditaDiretta" class="display" cellspacing="0" width="100%">' +

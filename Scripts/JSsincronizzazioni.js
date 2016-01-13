@@ -992,7 +992,7 @@ function syncroUpdateRecordVenduto(ids) {
     //for (var i = 0; i < ids.length; i++) {
     //    tuttid = tuttid + ids[i] + "-";
     //}
-    console.log(tuttid);
+    //console.log(tuttid);
 
     $.ajax({
         type: "POST",
