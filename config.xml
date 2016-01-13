@@ -4,7 +4,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.phonegap.appdondisqlitedb"
-        version   = "0.9.2">
+        version   = "0.9.3">
 
   <name>App Sqlite</name>
 
@@ -24,7 +24,7 @@
   <preference name="permissions"                value="none"/>
 
   <!-- Customize your app and platform with the preference element. -->
-  <preference name="phonegap-version"           value="cli-5.2.0" />
+  <preference name="phonegap-version"           value="3.7.0" />
   <!-- all: current version of PhoneGap -->
   <preference name="orientation"                value="landscape" />
   <!-- all: default means both landscape and portrait are enabled -->
