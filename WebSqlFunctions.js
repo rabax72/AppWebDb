@@ -3,15 +3,15 @@
     var mydb = openDatabase("appdoldi_db", "0.1", "Il DB dei Distributori Doldi", 5 * 1024 * 1024);
 
     var strutturaClienti = "CREATE TABLE IF NOT EXISTS clienti (" +
-                      "IdCliente int(11) NOT NULL," +
+                      "IdCliente INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                       "Descrizione varchar(255) NOT NULL," +
                       "Indirizzo varchar(255) DEFAULT NULL," +
                       "DataInserimento timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                       "DataModifica datetime DEFAULT NULL," +
                       "Cancellato tinyint(1) NOT NULL DEFAULT '0'," +
                       "IdOperatore int(11) NOT NULL," +
-                      "ordine int(11) DEFAULT NULL," +
-                      "PRIMARY KEY (IdCliente)" +
+                      "ordine int(11) DEFAULT NULL" +
+                     // "PRIMARY KEY (IdCliente)" +
                     ");";
 
     var valoriClienti = "INSERT INTO clienti (IdCliente, Descrizione, Indirizzo, DataInserimento, DataModifica, Cancellato, IdOperatore, ordine) VALUES" +
@@ -37,7 +37,7 @@
                         "(20, 'SANE E PANOS', 'piazza garibaldi 19/e, parma', '2015-03-28 08:38:08', NULL, 0, 1, NULL);";
 
     var strutturaDistributori = "CREATE TABLE IF NOT EXISTS distributori (" +
-                      "IdDistributore int(11) NOT NULL," +
+                      "IdDistributore INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                       "CodGettoniera varchar(11) DEFAULT NULL," +
                       "Sigla varchar(2) DEFAULT NULL," +
                       "Descrizione varchar(255) DEFAULT NULL," +
@@ -46,8 +46,8 @@
                       "Longitudine decimal(11,8) DEFAULT '0.00000000'," +
                       "DataInserimento timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                       "Citta varchar(50) DEFAULT NULL," +
-                      "ordine int(11) DEFAULT NULL," +
-                      "PRIMARY KEY (IdDistributore)" +
+                      "ordine int(11) DEFAULT NULL" +
+                      //"PRIMARY KEY (IdDistributore)" +
                     ")";
 
     var valoriDistributori = "INSERT INTO distributori (IdDistributore, CodGettoniera, Sigla, Descrizione, Indirizzo, Latitudine, Longitudine, DataInserimento, Citta, ordine) VALUES" +
@@ -79,10 +79,10 @@
                                 "(29, '1819G401961', 'CO', 'CORCAGNANO', NULL, '0.00000000', '0.00000000', '2015-10-10 10:45:48', 'PARMA', 29);";
 
     var strutturaMezzi = "CREATE TABLE IF NOT EXISTS mezzi (" +
-                                 "IdMezzo int(11) NOT NULL," +
+                                 "IdMezzo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                                  "Descrizione varchar(255) NOT NULL," +
-                                 "ordine int(11) NOT NULL," +
-                                 "PRIMARY KEY (IdMezzo)" +
+                                 "ordine int(11) NOT NULL" +
+                                // "PRIMARY KEY (IdMezzo)" +
                            ")";
 
     var valoriMezzi = "INSERT INTO mezzi (IdMezzo, Descrizione, ordine) VALUES" +
@@ -90,14 +90,14 @@
                     "(2, 'Camion 2', 2);";
 
     var strutturaOperatori = "CREATE TABLE IF NOT EXISTS operatori (" +
-                              "IdOperatore int(11) NOT NULL," +
+                              "IdOperatore INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                               "Nome varchar(100) DEFAULT NULL," +
                               "Cognome varchar(100) DEFAULT NULL," +
                               "Email varchar(100) DEFAULT NULL," +
                               "User varchar(20) NOT NULL," +
                               "Password varchar(20) NOT NULL," +
-                              "Ruolo varchar(20) DEFAULT NULL," +
-                              "PRIMARY KEY (IdOperatore)" +
+                              "Ruolo varchar(20) DEFAULT NULL" +
+                              //"PRIMARY KEY (IdOperatore)" +
                             ")";
 
     var valoriOperatori = "INSERT INTO operatori (IdOperatore, Nome, Cognome, Email, User, Password, Ruolo) VALUES" +
@@ -107,7 +107,7 @@
                             "(4, 'Sara', 'Soncini', 'sara', 'sara', 'preppy2003', 'admin');";
 
     var strutturaProdotti = "CREATE TABLE IF NOT EXISTS prodotti (" +
-                              "IdProdotto int(11) NOT NULL," +
+                              "IdProdotto INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                               "Descrizione varchar(255) NOT NULL," +
                               "Foto varchar(255) DEFAULT ''''''," +
                               "Prezzo decimal(8,2) NOT NULL DEFAULT '0.00'," +
@@ -117,8 +117,8 @@
                               "DataInserimento timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                               "DataUltimaModifica datetime DEFAULT NULL," +
                               "cancellato tinyint(1) NOT NULL DEFAULT '0'," +
-                              "Ordine int(11) DEFAULT NULL," +
-                              "PRIMARY KEY (IdProdotto)" +
+                              "Ordine int(11) DEFAULT NULL" +
+                              //"PRIMARY KEY (IdProdotto)" +
                             ")";
     
     var valoriProdotti = "INSERT INTO prodotti (IdProdotto, Descrizione, Foto, Prezzo, Aliquota, DataProduzione, DataScadenza, DataInserimento, DataUltimaModifica, cancellato, Ordine) VALUES" +
@@ -143,96 +143,87 @@
                             "(19, 'PRIMOSALE', 'AtBoPHGaFIRp-bBOp5l2GtBfh3LVjYAuxR7jrm6DGm3G_100x75.jpg', '2.60', 10, NULL, NULL, '2015-06-09 06:00:29', NULL, 0, 19)," +
                             "(21, 'ESTATE'' ', 'Te.jpg', '0.80', 22, NULL, NULL, '2015-07-26 18:29:57', NULL, 0, 20);";
 
-    var strutturaSituazioneClienti = "CREATE TABLE IF NOT EXISTS situazioneclienti (" + 
-                                      "IdSituazioneCliente int(11) NOT NULL," + 
-                                      "IdCliente int(11) NOT NULL," + 
-                                      "IdProdotto int(11) NOT NULL," + 
-                                      "NumeroLotto date DEFAULT NULL," + 
-                                      "Quantita int(11) NOT NULL," + 
-                                      "PrezzoTotale decimal(8,2) NOT NULL," + 
-                                      "DataInserimento timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," + 
-                                      "DataModifica datetime DEFAULT NULL," + 
-                                      "Modificato tinyint(1) NOT NULL DEFAULT '0'," + 
-                                      "IdOperatore int(11) NOT NULL," + 
-                                      "NumeroDDT int(11) DEFAULT NULL," + 
-                                      "DataDDT datetime DEFAULT NULL," + 
-                                      "colore varchar(10) NOT NULL," + 
-                                      "PRIMARY KEY (IdSituazioneCliente)" +
+    var strutturaSituazioneClienti = "CREATE TABLE IF NOT EXISTS situazioneclienti ( " +
+                                     " IdSituazioneCliente INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                                     " IdCliente int(11) NOT NULL," +
+                                     " IdProdotto int(11) NOT NULL," +
+                                     " NumeroLotto date DEFAULT NULL," +
+                                     " CodiceLotto varchar(50) DEFAULT NULL," +
+                                     " Quantita int(11) NOT NULL," +
+                                     " PrezzoTotale decimal(8,2) NOT NULL DEFAULT '0.00'," +
+                                     " DataInserimento timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                                     " DataModifica datetime DEFAULT NULL," +
+                                     " DataScadenza date DEFAULT NULL," +
+                                     " Modificato tinyint(1) NOT NULL DEFAULT '0'," +
+                                     " IdOperatore int(11) NOT NULL," +
+                                     " NumeroDDT int(11) DEFAULT NULL," +
+                                     " DataDDT datetime DEFAULT NULL," +
+                                     " colore varchar(10) NOT NULL" +                                     
                                     ")";
 
-    var valoriSituazioneClienti = "INSERT INTO situazioneclienti (IdSituazioneCliente, IdCliente, IdProdotto, NumeroLotto, Quantita, PrezzoTotale, DataInserimento, DataModifica, Modificato, IdOperatore, NumeroDDT, DataDDT, colore) VALUES" +
-                                    "(88, 6, 13, NULL, 3, '3.60', '2015-07-28 10:24:28', '2015-10-10 10:11:18', 1, 2, NULL, NULL, '')," +
-                                    "(89, 8, 13, NULL, 8, '9.60', '2015-07-28 10:24:47', '2015-10-10 10:11:48', 1, 2, NULL, NULL, '')," +
-                                    "(90, 9, 13, NULL, 5, '6.00', '2015-07-28 10:25:02', '2015-10-10 10:11:32', 1, 2, NULL, NULL, '')," +
-                                    "(91, 6, 13, NULL, 3, '3.60', '2015-07-30 08:24:49', '2015-10-10 10:11:18', 1, 2, NULL, NULL, '')," +
-                                    "(92, 9, 13, NULL, 6, '7.20', '2015-07-30 08:25:33', '2015-10-10 10:11:32', 1, 2, NULL, NULL, '')," +
-                                    "(94, 9, 13, NULL, 6, '7.20', '2015-08-01 06:04:29', '2015-10-10 10:11:32', 1, 2, NULL, NULL, '')," +
-                                    "(93, 8, 13, NULL, 5, '6.00', '2015-08-01 06:03:24', '2015-10-10 10:11:48', 1, 2, NULL, NULL, '')," +
-                                    "(95, 8, 13, NULL, 5, '6.00', '2015-08-04 06:39:06', '2015-10-10 10:11:48', 1, 2, NULL, NULL, '')," +
-                                    "(96, 9, 13, NULL, 8, '9.60', '2015-08-15 04:41:32', '2015-10-10 10:11:32', 1, 2, NULL, NULL, '')," +
-                                    "(97, 9, 13, NULL, 7, '8.40', '2015-08-18 04:35:37', '2015-10-10 10:11:32', 1, 2, NULL, NULL, '')," +
-                                    "(98, 9, 13, NULL, 7, '8.40', '2015-08-20 04:26:36', '2015-10-10 10:11:32', 1, 2, NULL, NULL, '')," +
-                                    "(99, 9, 13, NULL, 8, '9.60', '2015-08-22 04:53:37', '2015-10-10 10:11:32', 1, 2, NULL, NULL, '')," +
-                                    "(100, 9, 13, NULL, 6, '7.20', '2015-08-25 04:07:29', '2015-10-10 10:11:32', 1, 2, NULL, NULL, '')," +
-                                    "(101, 6, 13, NULL, 4, '4.80', '2015-08-25 04:07:49', '2015-10-10 10:11:18', 1, 2, NULL, NULL, '')," +
-                                    "(127, 9, 13, NULL, 12, '14.40', '2015-09-19 04:37:05', '2015-10-10 10:11:32', 1, 2, NULL, NULL, 'verde')," +
-                                    "(102, 9, 13, NULL, 6, '7.20', '2015-08-27 04:16:30', '2015-10-10 10:11:32', 1, 2, NULL, NULL, '')," +
-                                    "(126, 6, 13, NULL, 7, '8.40', '2015-09-17 04:11:37', '2015-10-10 10:11:18', 1, 2, NULL, NULL, 'verde');";
+    var valoriSituazioneClienti = "INSERT INTO situazioneclienti (IdSituazioneCliente, IdCliente, IdProdotto, NumeroLotto, CodiceLotto, Quantita, PrezzoTotale, DataInserimento, DataModifica, DataScadenza, Modificato, IdOperatore, NumeroDDT, DataDDT, colore) VALUES " +
+                                    "(88, 6, 13, NULL, NULL, 3, '3.60', '2015-07-28 10:24:28', '2015-11-24 07:03:20', NULL, 1, 2, NULL, NULL, ''), " +
+                                    "(89, 8, 13, NULL, NULL, 8, '9.60', '2015-07-28 10:24:47', '2015-11-24 09:15:20', NULL, 1, 2, NULL, NULL, '');";
 
     var strutturaSituazioneDistributori = "CREATE TABLE IF NOT EXISTS situazionedistributori (" +
-                                              "IdSituazioneDistributore int(11) NOT NULL," +
-                                              "IdDistributore int(11) NOT NULL," +
-                                              "IdProdotto int(11) NOT NULL," +
-                                              "NumeroLotto date DEFAULT NULL," +
-                                              "Quantita int(11) NOT NULL," +
-                                              "PrezzoTotale decimal(8,2) NOT NULL," +
-                                              "DataInserimento timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                                              "DataModifica datetime DEFAULT NULL," +
-                                              "Modificato tinyint(1) NOT NULL DEFAULT '0'," +
-                                              "IdOperatore int(11) NOT NULL," +
-                                              "NumeroDDT int(11) DEFAULT NULL," +
-                                              "DataDDT datetime DEFAULT NULL," +
-                                              "colore varchar(10) DEFAULT NULL," +
-                                              "PRIMARY KEY (IdSituazioneDistributore)" +
-                                            ")";
+                                          "IdSituazioneDistributore INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                                          "IdDistributore int(11) NOT NULL," +
+                                          "IdProdotto int(11) NOT NULL," +
+                                          "CodiceLotto varchar(50) DEFAULT NULL," +
+                                          "NumeroLotto date DEFAULT NULL," +
+                                          "Quantita int(11) NOT NULL," +
+                                          "PrezzoTotale decimal(8,2) NOT NULL," +
+                                          "DataInserimento timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                                          "DataModifica datetime DEFAULT NULL," +
+                                          "DataScadenza date DEFAULT NULL," +
+                                          "Modificato tinyint(1) NOT NULL DEFAULT '0'," +
+                                          "IdOperatore int(11) NOT NULL," +
+                                          "NumeroDDT int(11) DEFAULT NULL," +
+                                          "DataDDT datetime DEFAULT NULL," +
+                                          "colore varchar(10) DEFAULT NULL" +
+                                         // "PRIMARY KEY (IdSituazioneDistributore)" +
+                                          ")";
 
-    var valoriSituazioneDistributori = "INSERT INTO situazionedistributori (IdSituazioneDistributore, IdDistributore, IdProdotto, NumeroLotto, Quantita, PrezzoTotale, DataInserimento, DataModifica, Modificato, IdOperatore, NumeroDDT, DataDDT, colore) VALUES" +
-                                        "(9140, 7, 13, NULL, 52, '2337.60', '2015-07-24 23:39:40', '2015-10-10 00:56:03', 1, 2, NULL, NULL, NULL)," +
-                                        "(9141, 7, 8, NULL, 18, '482.00', '2015-07-24 23:39:46', '2015-10-10 00:56:03', 1, 2, NULL, NULL, NULL)," +
-                                         "   (9142, 7, 9, NULL, 12, '132.00', '2015-07-24 23:39:51', '2015-10-10 00:56:03', 1, 2, NULL, NULL, NULL)," +
-                                         "   (9143, 7, 10, NULL, 1, '148.50', '2015-07-24 23:39:57', '2015-10-10 00:54:51', 1, 2, NULL, NULL, NULL)," +
-                                         "   (9144, 7, 11, NULL, 6, '141.00', '2015-07-24 23:40:08', '2015-10-10 00:54:50', 1, 2, NULL, NULL, NULL)," +
-                                         "   (9145, 7, 4, NULL, 6, '504.00', '2015-07-24 23:40:16', '2015-10-08 01:30:34', 1, 2, NULL, NULL, NULL)," +
-                                         "   (9146, 7, 14, NULL, 2, '117.60', '2015-07-24 23:40:20', '2015-10-01 09:20:51', 1, 2, NULL, NULL, NULL)," +
-                                         "   (9147, 7, 2, NULL, 5, '253.50', '2015-07-24 23:40:25', '2015-10-01 09:20:51', 1, 2, NULL, NULL, NULL);";
+    var valoriSituazioneDistributori = "INSERT INTO situazionedistributori (IdSituazioneDistributore, IdDistributore, IdProdotto, CodiceLotto, NumeroLotto, Quantita, PrezzoTotale, DataInserimento, DataModifica, DataScadenza, Modificato, IdOperatore, NumeroDDT, DataDDT, colore) VALUES" +
+                                        "(41353, 6, 19, '346', '1901-01-02', 1, '2.10', '2015-12-18 04:59:36', NULL, '2016-01-09', 0, 2, NULL, NULL, NULL)," +
+                                        "(41354, 3, 13, '', '2015-12-20', 16, '165.60', '2015-12-18 05:15:02', '2015-12-18 06:15:03', '2015-12-20', 0, 2, NULL, NULL, NULL)," +
+                                        "(41361, 5, 13, '', '2015-12-22', 32, '38.40', '2015-12-18 05:16:39', '2015-12-18 06:27:14', '2015-12-22', 0, 2, NULL, NULL, NULL)," +
+                                        "(41355, 3, 13, '', '2015-12-22', 32, '38.40', '2015-12-18 05:15:03', NULL, '2015-12-22', 0, 2, NULL, NULL, NULL)," +
+                                        "(41356, 3, 8, '', '2016-01-16', 6, '6.00', '2015-12-18 05:15:06', NULL, '2016-01-16', 0, 2, NULL, NULL, NULL)," +
+                                        "(41357, 3, 10, '', '2016-01-16', 2, '3.00', '2015-12-18 05:15:10', NULL, '2016-01-16', 0, 2, NULL, NULL, NULL)," +
+                                        "(41358, 3, 2, '', '2015-12-01', 1, '1.30', '2015-12-18 05:15:18', NULL, '2016-02-04', 0, 2, NULL, NULL, NULL)," +
+                                        "(41359, 3, 3, '', '2015-12-14', 1, '1.00', '2015-12-18 05:15:19', NULL, '2016-01-17', 0, 2, NULL, NULL, NULL)," +
+                                        "(41360, 3, 12, '', '2015-12-16', 1, '1.20', '2015-12-18 05:15:23', NULL, '2016-01-15', 0, 2, NULL, NULL, NULL);";
 
-    var strutturaVenduto = "CREATE TABLE IF NOT EXISTS venduto (" +
-                              "IdVendita int(11) NOT NULL ," +
-                              "IdProdotto int(11) NOT NULL," +
-                              "IdDistributore int(11) NOT NULL," +
-                              "Quantita int(11) NOT NULL," +
-                              "PrezzoTotale decimal(8,2) NOT NULL," +
-                              "DataRilevazione timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                              "IdOperatore int(11) NOT NULL," +
-                              "IdCliente int(11) DEFAULT NULL," +
-                              "VenditaDiretta tinyint(1) DEFAULT '0'," +
-                              "numeroDDT int(11) DEFAULT NULL," +
-                              "DataDDT datetime DEFAULT NULL," +
-                              "NumeroLotto datetime DEFAULT NULL," +
-                              "note varchar(50) DEFAULT NULL," +
-                              "PRIMARY KEY (IdVendita)" +
-                            ") ";
+    var strutturaVenduto = "CREATE TABLE IF NOT EXISTS venduto (" + 
+                              "IdVendita INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                              "IdProdotto int(11) NOT NULL," + 
+                              "IdDistributore int(11) NOT NULL," + 
+                              "Quantita int(11) NOT NULL," + 
+                              "PrezzoTotale decimal(8,2) NOT NULL," + 
+                              "DataRilevazione timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," + 
+                              "IdOperatore int(11) NOT NULL," + 
+                              "IdCliente int(11) DEFAULT NULL," + 
+                              "VenditaDiretta tinyint(1) DEFAULT '0'," + 
+                              "numeroDDT int(11) DEFAULT NULL," + 
+                              "DataDDT datetime DEFAULT NULL," + 
+                              "NumeroLotto datetime DEFAULT NULL," + 
+                              "CodiceLotto varchar(50) DEFAULT NULL," + 
+                              "DataScadenza date DEFAULT NULL," + 
+                              "note varchar(50) DEFAULT NULL" + 
+                              //"PRIMARY KEY (IdVendita)" +
+                              ") ";
 
-    var valoriVenduto = "INSERT INTO venduto (IdVendita, IdProdotto, IdDistributore, Quantita, PrezzoTotale, DataRilevazione, IdOperatore, IdCliente, VenditaDiretta, numeroDDT, DataDDT, NumeroLotto, note) VALUES" +
-                        "(3576, 13, 7, 23, '27.60', '2015-07-25 23:59:59', 2, 0, 0, NULL, NULL, NULL, NULL)," +
-                        "(3577, 8, 7, 6, '6.00', '2015-07-26 00:00:39', 2, 0, 0, NULL, NULL, NULL, NULL)," +
-                        "(3578, 9, 7, 5, '7.50', '2015-07-26 00:00:49', 2, 0, 0, NULL, NULL, NULL, NULL)," +
-                        "(3579, 10, 7, 1, '1.50', '2015-07-26 00:00:55', 2, 0, 0, NULL, NULL, NULL, NULL)," +
-                        "(3580, 3, 7, 1, '1.00', '2015-07-26 00:01:19', 2, 0, 0, NULL, NULL, NULL, NULL)," +
-                        "(3581, 7, 7, 1, '1.00', '2015-07-26 00:01:31', 2, 0, 0, NULL, NULL, NULL, NULL);";
+    var valoriVenduto = "INSERT INTO venduto (IdVendita, IdProdotto, IdDistributore, Quantita, PrezzoTotale, DataRilevazione, IdOperatore, IdCliente, VenditaDiretta, numeroDDT, DataDDT, NumeroLotto, CodiceLotto, DataScadenza, note) VALUES " + 
+                        "(3576, 13, 7, 23, '27.60', '2015-07-25 23:59:59', 2, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL)," + 
+                        "(3577, 8, 7, 6, '6.00', '2015-07-26 00:00:39', 2, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL)," + 
+                        "(3578, 9, 7, 5, '7.50', '2015-07-26 00:00:49', 2, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL)," + 
+                        "(3579, 10, 7, 1, '1.50', '2015-07-26 00:00:55', 2, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL)," + 
+                        "(3580, 3, 7, 1, '1.00', '2015-07-26 00:01:19', 2, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL)," +
+                        "(3581, 7, 7, 1, '1.00', '2015-07-26 00:01:31', 2, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL);";
 
     var strutturaMark = "CREATE TABLE IF NOT EXISTS mark (" +
-                          "Id int(11) NOT NULL," +
+                          "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                           "CodiceGettoniera varchar(20) DEFAULT NULL," +
                           "Venduto int(11) DEFAULT NULL," +
                           "InviatoInCassa int(11) DEFAULT NULL," +
@@ -242,8 +233,8 @@
                           "oraRilevazionePrecedente varchar(4) DEFAULT NULL," +
                           "nomeFile varchar(50) DEFAULT 'mark1.txt'," +
                           "Banconote int(11) DEFAULT NULL," +
-                          "idRilevazione int(11) DEFAULT NULL," +
-                          "PRIMARY KEY (Id)" +
+                          "idRilevazione int(11) DEFAULT NULL" +
+                          //"PRIMARY KEY (Id)" +
                         ")";
 
     var valoriMark = "INSERT INTO mark (Id, CodiceGettoniera, Venduto, InviatoInCassa, dataRilevazione, oraRilevazione, dataRilevazionePrecedente, oraRilevazionePrecedente, nomeFile, Banconote, idRilevazione) VALUES" +
@@ -252,15 +243,86 @@
                         "(775, '4949GA02270', 5894, 5155, '150703', '0822', '150702', '0119', 'dati_Unireader203.07.15.txt', 0, 1)," +
                         "(776, '3919G302642', 5290, 5600, '150703', '0835', '150702', '0138', 'dati_Unireader203.07.15.txt', 0, 1)";
 
-    creaTabella(strutturaClienti, valoriClienti);
-    creaTabella(strutturaDistributori, valoriDistributori);
-    creaTabella(strutturaMezzi, valoriMezzi);
-    creaTabella(strutturaOperatori, valoriOperatori);    
-    creaTabella(strutturaProdotti, valoriProdotti);
-    creaTabella(strutturaSituazioneClienti, valoriSituazioneClienti);
-    creaTabella(strutturaSituazioneDistributori, valoriSituazioneDistributori);
-    creaTabella(strutturaVenduto, valoriVenduto);
-    creaTabella(strutturaMark, valoriMark);
+    var strutturaMagazzino = "CREATE TABLE IF NOT EXISTS magazzino (" +
+                              "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ," +
+                              "IdProdotto int(11) NOT NULL," +
+                              "CodiceLotto varchar(50) DEFAULT NULL," +
+                              "NumeroLotto date DEFAULT NULL," +
+                              "Quantita int(11) NOT NULL," +
+                              "PrezzoTotale decimal(8,2) NOT NULL DEFAULT '0.00'," +
+                              "DataInserimento timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                              "DataModifica datetime DEFAULT NULL," +
+                              "DataScadenza date DEFAULT NULL," +
+                              "Modificato tinyint(1) NOT NULL DEFAULT '0'," +
+                              "IdOperatore int(11) NOT NULL," +
+                              "dataDDT datetime DEFAULT NULL," +
+                              "numeroDDT int(11) DEFAULT '0'," +
+                              "Note varchar(255) DEFAULT NULL," +
+                              "Smaltito tinyint(1) DEFAULT '0'," +
+                              "colore varchar(10) DEFAULT NULL" +
+                              //"PRIMARY KEY (Id)" +
+                            ")";
+
+    var valoriMagazzino = "INSERT INTO magazzino (Id, IdProdotto, CodiceLotto, NumeroLotto, Quantita, PrezzoTotale, DataInserimento, DataModifica, DataScadenza, Modificato, IdOperatore, dataDDT, numeroDDT, Note, Smaltito, colore) VALUES" +
+                                                    "(19845, 13, NULL, '2015-11-10', 1377, '1652.40', '2015-11-04 16:43:43', '2015-11-24 09:15:20', NULL, 0, 2, NULL, 0, '', 0, NULL)," +
+                                                    "(19844, 13, NULL, '2015-11-01', 201, '244.80', '2015-11-04 15:49:07', '2015-11-24 09:15:20', NULL, 0, 2, NULL, 0, '', 0, NULL)," +
+                                                    "(19843, 13, NULL, '2015-11-01', 204, '246.00', '2015-11-04 15:48:26', '2015-11-24 09:15:20', NULL, 0, 2, NULL, 0, '', 0, NULL);";
+
+    var strutturaMagazzinoResi = "CREATE TABLE IF NOT EXISTS magazzinoresi (" +
+                                  "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                                  "IdProdotto int(11) NOT NULL," +
+                                  "NumeroLotto datetime DEFAULT NULL," +
+                                  "CodiceLotto varchar(50) DEFAULT NULL," +
+                                  "Quantita int(11) NOT NULL," +
+                                  "PrezzoTotale decimal(8,2) NOT NULL," +
+                                  "DataInserimento timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                                  "DataModifica datetime DEFAULT NULL," +
+                                  "DataScadenza date DEFAULT NULL," +
+                                  "Modificato tinyint(1) NOT NULL DEFAULT '0'," +
+                                  "IdDistributore int(11) DEFAULT NULL," +
+                                  "IdOperatore int(11) NOT NULL," +
+                                  "IdCliente int(11) DEFAULT NULL" +
+                                  ")";
+
+    var valoriMagazzinoResi = "INSERT INTO magazzinoresi (Id, IdProdotto, NumeroLotto, CodiceLotto, Quantita, PrezzoTotale, DataInserimento, DataModifica, DataScadenza, Modificato, IdDistributore, IdOperatore, IdCliente) VALUES" +
+                                "(1308, 6, '2015-12-19 00:00:00', '', 2, '2.60', '2015-12-19 06:14:07', '0000-00-00 00:00:00', '2015-12-19', 0, 18, 2, 0)," +
+                                "(1306, 13, '2015-12-22 00:00:00', '', 11, '13.20', '2015-12-19 05:59:33', '0000-00-00 00:00:00', '2015-12-22', 0, 9, 2, 0)," +
+                                "(1307, 13, '2015-12-22 00:00:00', '', 13, '15.60', '2015-12-19 06:13:38', '0000-00-00 00:00:00', '2015-12-22', 0, 18, 2, 0)," +
+                                "(1305, 13, '2015-12-22 00:00:00', '', 9, '10.80', '2015-12-19 04:47:25', '0000-00-00 00:00:00', '2015-12-22', 0, 25, 2, 0);";
+
+    var strutturaTrasporto = "CREATE TABLE IF NOT EXISTS trasporto (" +
+                              "IdTrasporto INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                              "IdProdotto int(11) NOT NULL," +
+                              "NumeroLotto date DEFAULT NULL," +
+                              "Quantita int(11) NOT NULL," +
+                              "PrezzoTotale decimal(8,2) NOT NULL DEFAULT '0.00'," +
+                              "DataInserimento timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                              "DataModifica datetime DEFAULT NULL," +
+                              "Modificato tinyint(1) NOT NULL DEFAULT '0'," +
+                              "numeroDDT int(11) DEFAULT NULL," +
+                              "numeroDDT_interno int(50) DEFAULT NULL," +
+                              "DataDDT datetime DEFAULT NULL," +
+                              "DataDDT_interno datetime DEFAULT NULL," +
+                              "IdOperatore int(11) NOT NULL," +
+                              "IdMezzo int(11) NOT NULL" +
+                              //"PRIMARY KEY (IdTrasporto)" +
+                            ")";
+
+    var valoriTrasporto = "INSERT INTO trasporto (IdTrasporto, IdProdotto, NumeroLotto, Quantita, PrezzoTotale, DataInserimento, DataModifica, Modificato, numeroDDT, numeroDDT_interno, DataDDT, DataDDT_interno, IdOperatore, IdMezzo) VALUES" +
+                            "(1503, 1, '2015-12-12', 1, '1.00', '2015-12-12 14:29:38', '2015-12-12 00:00:00', 0, NULL, NULL, NULL, NULL, 1, 1);";
+
+    creaTabella(strutturaClienti, valoriClienti, 'Clienti');
+    creaTabella(strutturaDistributori, valoriDistributori, 'Distributori');
+    creaTabella(strutturaMezzi, valoriMezzi, 'Mezzi');
+    creaTabella(strutturaOperatori, valoriOperatori, 'Operatori');
+    creaTabella(strutturaProdotti, valoriProdotti, 'Prodotti');
+    creaTabella(strutturaSituazioneClienti, valoriSituazioneClienti, 'SituazioneClienti');
+    creaTabella(strutturaSituazioneDistributori, valoriSituazioneDistributori, 'SituazioneDistributori');
+    creaTabella(strutturaVenduto, valoriVenduto, 'Venduto');
+    creaTabella(strutturaMark, valoriMark, 'Mark');
+    creaTabella(strutturaMagazzino, valoriMagazzino, 'Magazzino');
+    creaTabella(strutturaMagazzinoResi, valoriMagazzinoResi, 'MagazzinoResi');
+    creaTabella(strutturaTrasporto, valoriTrasporto, 'Trasporto');
 
 } else {
     alert("WebSQL is not supported by your browser!");
@@ -304,16 +366,72 @@ function outputCars() {
 
 //function to add the car to the database
 
-function creaTabella(strutturaTabella, valoriTabella) {
+function creaTabella(strutturaTabella, valoriTabella, nomeTabella) {
+    var righeAggiornate = [];
+    var righeCancellate = 0;
+    var righeInserite = 0;
     if (mydb) {
         mydb.transaction(function (t) {
-            t.executeSql(strutturaTabella);
-            t.executeSql(valoriTabella);
+            t.executeSql(strutturaTabella, [], function (transaction, results) {
+                if (results.rowsAffected > 0) {
+                    righeCancellate = results.rowsAffected;
+                    //console.log('Righe Cancellate: ' + righeCancellate);
+                    $('.contentSyncroMagToTablet').append('Righe Cancellate: ' + righeCancellate + '<br>');
+                }
+               
+            }, errorHandler);
+            t.executeSql(valoriTabella, [], function (transaction, results) {
+                if (results.rowsAffected > 0) {
+                    righeInserite = results.rowsAffected;
+                    //console.log('Righe Inserite: ' + righeInserite);
+                    //console.log('***Aggiornamento Tabella: ' + nomeTabella + ' completato***');
+                    $('.contentSyncroMagToTablet').append('Righe Inserite: ' + righeInserite + '<br>');
+                    $('.contentSyncroMagToTablet').append('***Aggiornamento Tabella: ' + nomeTabella + ' completato***<br><br>');
+                    //righeAggiornate = [righeCancellate, righeInserite];
+                    //return righeAggiornate;
+                }
+                
+            }, errorHandler);
+            
         });
-
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
+        }
     } else {
         alert("db not found, your browser does not support web sql!");
     }
+    
+}
+
+function aggiornaTabella(valoriTabella, nomeTabella) {
+    var righeAggiornate = [];
+    var righeCancellate = 0;
+    var righeInserite = 0;
+    if (mydb) {
+        mydb.transaction(function (t) {
+            
+            t.executeSql(valoriTabella, [], function (transaction, results) {
+                if (results.rowsAffected > 0) {
+                    righeInserite = results.rowsAffected;
+                    //console.log('Righe Inserite: ' + righeInserite);
+                    //console.log('***Aggiornamento Tabella: ' + nomeTabella + ' completato***');
+                    //$('.contentSyncroMagToTablet').html('');
+                    $('.contentSyncroMagToTablet').append('Righe Inserite: ' + righeInserite + '<br>');
+                    $('.contentSyncroMagToTablet').append('***Aggiornamento Tabella: ' + nomeTabella + ' completato***<br><br>');
+                    //righeAggiornate = [righeCancellate, righeInserite];
+                    //return righeAggiornate;
+                }
+
+            }, errorHandler);
+
+        });
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message + "<br>br>" + valoriTabella);
+        }
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+
 }
 
 function addCar() {
@@ -353,4 +471,8 @@ function deleteCar(id) {
     }
 }
 
-outputCars();
+//outputCars();
+
+
+
+//GetElencoDistributori();

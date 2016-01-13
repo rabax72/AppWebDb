@@ -1,80 +1,101 @@
 ﻿//Connessioni ai WebServices
-var tipoDiConn = "prod";
-var urlProd = 'http://www.giacomorabaglia.com/appdistributoridondi/';
+var tipoDiConn = "preprod";
+var urlProd = 'http://www.giacomorabaglia.com/appdistributoridondi/WebServiceAppDondi.asmx/';
 
-if (tipoDiConn != "prod") {
-    urlProd = '';
+if (tipoDiConn == "test") {
+    urlProd = 'http://localhost:60683/WebServiceAppDondiTest.asmx/';
+}
+if (tipoDiConn == "preprod") {
+    urlProd = 'http://www.giacomorabaglia.com/appdistributoridondi/WebServiceAppDondiTest.asmx/';
 }
 
-var urlGetAuthentication = urlProd + 'WebServiceAppDondi.asmx/GetAuthentication';
-var urlGetClienteById = urlProd + 'WebServiceAppDondi.asmx/GetClienteById';
-var urlGetElencoMezzi = urlProd + 'WebServiceAppDondi.asmx/GetElencoMezzi';
-var urlGetElencoClienti = urlProd + 'WebServiceAppDondi.asmx/GetElencoClienti';
-var urlGetElencoDistributori = urlProd + 'WebServiceAppDondi.asmx/GetElencoDistributori';
-var urlGetElencoProdotti = urlProd + 'WebServiceAppDondi.asmx/GetElencoProdotti';
-var urlGetElencoProdottiVenduti = urlProd + 'WebServiceAppDondi.asmx/GetElencoProdottiVenduti';
-var urlGetElencoProdottiVendutiPerLotto = urlProd + 'WebServiceAppDondi.asmx/GetElencoProdottiVendutiPerLotto';
-var urlInsertProdotto = urlProd + 'WebServiceAppDondi.asmx/InsertProdotto';
-var urlGetProdottiDaGestireInMagazzino = urlProd + 'WebServiceAppDondi.asmx/GetProdottiDaGestireInMagazzino';
-var urlGetProdottiDaScaricareDaMagazzino = urlProd + 'WebServiceAppDondi.asmx/GetProdottiDaScaricareDaMagazzino';
-var urlGetProdottiInMagazzino = urlProd + 'WebServiceAppDondi.asmx/GetProdottiInMagazzino';
-var urlGetProdottiInMagazzinoResi = urlProd + 'WebServiceAppDondi.asmx/GetProdottiInMagazzinoResi';
-var urlGetProdottiInMagazzinoResiFiltrato = urlProd + 'WebServiceAppDondi.asmx/GetProdottiInMagazzinoResiFiltrato';
-var urlStoricizzoProdottiInMagazzino = urlProd + 'WebServiceAppDondi.asmx/StoricizzoProdottoInMagazzino';
-var urlSmaltiscoProdottoInMagazzino = urlProd + 'WebServiceAppDondi.asmx/SmaltiscoProdottoInMagazzino';
-var urlSmaltiscoProdottoInMagazzinoV2 = urlProd + 'WebServiceAppDondi.asmx/SmaltiscoProdottoInMagazzinoV2';
-var urlSmaltiscoProdottoInMagazzinoV3 = urlProd + 'WebServiceAppDondi.asmx/SmaltiscoProdottoInMagazzinoV3';
-var urlQuantitaProdottiInMagazzino = urlProd + 'WebServiceAppDondi.asmx/AggiornaQuantitaProdottiInMagazzino';
-var urlQuantitaProdottiInMagazzinoV2 = urlProd + 'WebServiceAppDondi.asmx/AggiornaQuantitaProdottiInMagazzinoV2';
-var urlGetProdottiSuCamion = urlProd + 'WebServiceAppDondi.asmx/GetProdottiInCamion';
-var urlGetProdottiSuCamionByIdProdotto = urlProd + 'WebServiceAppDondi.asmx/GetProdottiInCamionByIdProdotto';
-var urlStoricizzoProdTrasporto = urlProd + 'WebServiceAppDondi.asmx/StoricizzoProdottoInTrasporto';
-var urlStoricizzoProdTrasportoV2 = urlProd + 'WebServiceAppDondi.asmx/StoricizzoProdottoInTrasportoV2';
-var urlAggiornaQuantInTrasporto = urlProd + 'WebServiceAppDondi.asmx/AggiornaQuantitaProdottiInTrasporto';
-var urlAggiornaQuantInTrasportoV2 = urlProd + 'WebServiceAppDondi.asmx/AggiornaQuantitaProdottiInTrasportoV2';
-var urlGetSituazioneClienti = urlProd + 'WebServiceAppDondi.asmx/GetSituazioneCliente';
-var urlGetSituazioneClientiV2 = urlProd + 'WebServiceAppDondi.asmx/GetSituazioneClienteV2';
-var urlAggiornaQuantitaProdottiVenduti = urlProd + 'WebServiceAppDondi.asmx/AggiornaQuantitaProdottiVenduti';
-var urlAggiornaQuantitaProdottiInMagazzinoResi = urlProd + 'WebServiceAppDondi.asmx/AggiornaQuantitaProdottiInMagazzinoResi';
-var urlAggiornaQuantitaProdottiInMagazzinoResiV2 = urlProd + 'WebServiceAppDondi.asmx/AggiornaQuantitaProdottiInMagazzinoResiV2';
-var urlStoricizzoStatoProdottiInDistributore = urlProd + 'WebServiceAppDondi.asmx/StoricizzoStatoProdottoInDistributore';
-var urlStoricizzoStatoProdottiInDistributore2 = urlProd + 'WebServiceAppDondi.asmx/StoricizzoStatoProdottoInDistributore2';
-var urlAggiornaQuantitaProdottoInCliente = urlProd + 'WebServiceAppDondi.asmx/AggiornaQuantitaProdottoInCliente';
-var urlAggiornaQuantitaProdottoInClienteV2 = urlProd + 'WebServiceAppDondi.asmx/AggiornaQuantitaProdottoInClienteV2';
-var urlGetSituazioneDistributore = urlProd + 'WebServiceAppDondi.asmx/GetSituazioneDistributore';
-var urlGetSituazioneDistributoreV2 = urlProd + 'WebServiceAppDondi.asmx/GetSituazioneDistributoreV2';
-var urlAggiornoQuantitaProdottiInDistributore = urlProd + 'WebServiceAppDondi.asmx/AggiornaQuantitaProdottoInDistributore';
-var urlAggiornoQuantitaProdottiInDistributoreV2 = urlProd + 'WebServiceAppDondi.asmx/AggiornaQuantitaProdottoInDistributoreV2';
-var urlAggiornaColoreProdottoInCliente = urlProd + 'WebServiceAppDondi.asmx/AggiornaColoreProdottoInCliente';
-var urlAggiornaColoreProdottoInDistributore = urlProd + 'WebServiceAppDondi.asmx/AggiornaColoreProdottoInDistributore';
-var urlStoricizzaStatoProdottoInCliente = urlProd + 'WebServiceAppDondi.asmx/StoricizzoStatoProdottoInCliente';
-var urlStoricizzaStatoProdottoInClienteV2 = urlProd + 'WebServiceAppDondi.asmx/StoricizzoStatoProdottoInClienteV2';
-var urlCaricaProdottiInMagazzino = urlProd + 'WebServiceAppDondi.asmx/CaricaProdottiInMagazzino';
-var urlCaricaProdottiInMagazzinoV2 = urlProd + 'WebServiceAppDondi.asmx/CaricaProdottiInMagazzinoV2';
-var urlGetSituazioneVendutoInCliente = urlProd + 'WebServiceAppDondi.asmx/GetSituazioneVendutoInCliente';
-var urlGetSituazioneVendutoInDistributore = urlProd + 'WebServiceAppDondi.asmx/GetSituazioneVendutoInDistributore';
-var urlGetSituazioneVendutoInDistributore2 = urlProd + 'WebServiceAppDondi.asmx/GetSituazioneVendutoInDistributore2';
-var urlGetVendutoCliente = urlProd + 'WebServiceAppDondi.asmx/GetVendutoCliente';
-var urlGetVendutoDirettamente = urlProd + 'WebServiceAppDondi.asmx/GetVendutoDirettamente';
-var urlGetVendutoDistributori = urlProd + 'WebServiceAppDondi.asmx/GetVendutoDistributori';
-var urlGetVendutoByIdProdotto = urlProd + 'WebServiceAppDondi.asmx/GetVendutoByIdProdotto';
-var urlGetVendutoByIdDistributore = urlProd + 'WebServiceAppDondi.asmx/GetVendutoByIdDistributore';
-var urlGetVendutoPerTuttiDistributori = urlProd + 'WebServiceAppDondi.asmx/GetVendutoPerTuttiDistributori';
-var urlGetVendutoPerTuttiDistributoriStampa = urlProd + 'WebServiceAppDondi.asmx/GetVendutoPerTuttiDistributoriStampa';
-var urlGetVendutoByIdCliente = urlProd + 'WebServiceAppDondi.asmx/GetVendutoByIdCliente';
-var urlResetEvidenzaByCliente = urlProd + 'WebServiceAppDondi.asmx/ResetEvidenzaByCliente';
-var urlResetEvidenzaByDistributore = urlProd + 'WebServiceAppDondi.asmx/ResetEvidenzaByDistributore';
-var urlResetEvidenzaMagazzino = urlProd + 'WebServiceAppDondi.asmx/ResetEvidenzaMagazzino';
-var urlCorrezioneVendita = urlProd + 'WebServiceAppDondi.asmx/CorrezioneVendita';
-var urlGetMarkReport = urlProd + 'WebServiceAppDondi.asmx/GetMarkReport';
-var urlFilterMarkReport = urlProd + 'WebServiceAppDondi.asmx/FiltraMarkReport';
-var urlGetStoricoMagazzinoByIdProd = urlProd + 'WebServiceAppDondi.asmx/GetStoricoMagazzinoByIdProd';
-var urlCorrezioneMagazzinoByIdProd = urlProd + 'WebServiceAppDondi.asmx/CorrezioneMagazzinoByIdProd';
-var urldisplayNumeriLottoMagazzino = urlProd + 'WebServiceAppDondi.asmx/displyaNumeriLottoMagazzino';
-var urldisplayNumeriLottoMagazzinoResi = urlProd + 'WebServiceAppDondi.asmx/displyaNumeriLottoMagazzinoResi';
-var urldisplayNumeriLottoDistributore = urlProd + 'WebServiceAppDondi.asmx/displayNumeriLottoDistributore';
-var urlGetProdottiInMagazzinoByIdProdNumLotto = urlProd + 'WebServiceAppDondi.asmx/GetProdottiInMagazzinoByIdProdNumLotto';
-var urlAzzeraProdottoInMagazzinoResi = urlProd + 'WebServiceAppDondi.asmx/AzzeraProdottoInMagazzinoResi';
+var urlGetAuthentication = urlProd + 'GetAuthentication';
+var urlGetClienteById = urlProd + 'GetClienteById';
+var urlGetElencoMezzi = urlProd + 'GetElencoMezzi';
+var urlGetElencoClienti = urlProd + 'GetElencoClienti';
+var urlGetElencoDistributori = urlProd + 'GetElencoDistributori';
+var urlGetElencoOperatori = urlProd + 'GetElencoOperatori';
+var urlGetElencoProdotti = urlProd + 'GetElencoProdotti';
+var urlGetElencoProdottiVenduti = urlProd + 'GetElencoProdottiVenduti';
+var urlGetElencoProdottiVendutiPerLotto = urlProd + 'GetElencoProdottiVendutiPerLotto';
+var urlInsertProdotto = urlProd + 'InsertProdotto';
+var urlGetProdottiDaGestireInMagazzino = urlProd + 'GetProdottiDaGestireInMagazzino';
+var urlGetProdottiDaScaricareDaMagazzino = urlProd + 'GetProdottiDaScaricareDaMagazzino';
+var urlGetProdottiInMagazzino = urlProd + 'GetProdottiInMagazzino';
+var urlGetProdottiInMagazzinoResi = urlProd + 'GetProdottiInMagazzinoResi';
+var urlGetProdottiInMagazzinoResiFiltrato = urlProd + 'GetProdottiInMagazzinoResiFiltrato';
+var urlStoricizzoProdottiInMagazzino = urlProd + 'StoricizzoProdottoInMagazzino';
+var urlSmaltiscoProdottoInMagazzino = urlProd + 'SmaltiscoProdottoInMagazzino';
+var urlSmaltiscoProdottoInMagazzinoV2 = urlProd + 'SmaltiscoProdottoInMagazzinoV2';
+var urlSmaltiscoProdottoInMagazzinoV3 = urlProd + 'SmaltiscoProdottoInMagazzinoV3';
+var urlQuantitaProdottiInMagazzino = urlProd + 'AggiornaQuantitaProdottiInMagazzino';
+var urlQuantitaProdottiInMagazzinoV2 = urlProd + 'AggiornaQuantitaProdottiInMagazzinoV2';
+var urlGetProdottiSuCamion = urlProd + 'GetProdottiInCamion';
+var urlGetProdottiSuCamionByIdProdotto = urlProd + 'GetProdottiInCamionByIdProdotto';
+var urlStoricizzoProdTrasporto = urlProd + 'StoricizzoProdottoInTrasporto';
+var urlStoricizzoProdTrasportoV2 = urlProd + 'StoricizzoProdottoInTrasportoV2';
+var urlAggiornaQuantInTrasporto = urlProd + 'AggiornaQuantitaProdottiInTrasporto';
+var urlAggiornaQuantInTrasportoV2 = urlProd + 'AggiornaQuantitaProdottiInTrasportoV2';
+var urlGetSituazioneClienti = urlProd + 'GetSituazioneClienti';
+var urlGetSituazioneDistributori = urlProd + 'GetSituazioneDistributori';
+var urlGetSituazioneCliente = urlProd + 'GetSituazioneCliente';
+var urlGetSituazioneClienteV2 = urlProd + 'GetSituazioneClienteV2';
+var urlAggiornaQuantitaProdottiVenduti = urlProd + 'AggiornaQuantitaProdottiVenduti';
+var urlAggiornaQuantitaProdottiInMagazzinoResi = urlProd + 'AggiornaQuantitaProdottiInMagazzinoResi';
+var urlAggiornaQuantitaProdottiInMagazzinoResiV2 = urlProd + 'AggiornaQuantitaProdottiInMagazzinoResiV2';
+var urlStoricizzoStatoProdottiInDistributore = urlProd + 'StoricizzoStatoProdottoInDistributore';
+var urlStoricizzoStatoProdottiInDistributore2 = urlProd + 'StoricizzoStatoProdottoInDistributore2';
+var urlAggiornaQuantitaProdottoInCliente = urlProd + 'AggiornaQuantitaProdottoInCliente';
+var urlAggiornaQuantitaProdottoInClienteV2 = urlProd + 'AggiornaQuantitaProdottoInClienteV2';
+var urlGetSituazioneDistributore = urlProd + 'GetSituazioneDistributore';
+var urlGetSituazioneDistributoreV2 = urlProd + 'GetSituazioneDistributoreV2';
+var urlAggiornoQuantitaProdottiInDistributore = urlProd + 'AggiornaQuantitaProdottoInDistributore';
+var urlAggiornoQuantitaProdottiInDistributoreV2 = urlProd + 'AggiornaQuantitaProdottoInDistributoreV2';
+var urlAggiornoQuantitaProdottiInDistributoreV3 = urlProd + 'AggiornaQuantitaProdottoInDistributoreV3';
+var urlAggiornaColoreProdottoInCliente = urlProd + 'AggiornaColoreProdottoInCliente';
+var urlAggiornaColoreProdottoInDistributore = urlProd + 'AggiornaColoreProdottoInDistributore';
+var urlStoricizzaStatoProdottoInCliente = urlProd + 'StoricizzoStatoProdottoInCliente';
+var urlStoricizzaStatoProdottoInClienteV2 = urlProd + 'StoricizzoStatoProdottoInClienteV2';
+var urlCaricaProdottiInMagazzino = urlProd + 'CaricaProdottiInMagazzino';
+var urlCaricaProdottiInMagazzinoV2 = urlProd + 'CaricaProdottiInMagazzinoV2';
+var urlGetSituazioneVendutoInCliente = urlProd + 'GetSituazioneVendutoInCliente';
+var urlGetSituazioneVendutoInDistributore = urlProd + 'GetSituazioneVendutoInDistributore';
+var urlGetSituazioneVendutoInDistributore2 = urlProd + 'GetSituazioneVendutoInDistributore2';
+var urlGetVendutoCliente = urlProd + 'GetVendutoCliente';
+var urlGetVendutoDirettamente = urlProd + 'GetVendutoDirettamente';
+var urlGetVendutoDistributori = urlProd + 'GetVendutoDistributori';
+var urlGetVendutoByIdProdotto = urlProd + 'GetVendutoByIdProdotto';
+var urlGetVendutoByIdDistributore = urlProd + 'GetVendutoByIdDistributore';
+var urlGetVendutoPerTuttiDistributori = urlProd + 'GetVendutoPerTuttiDistributori';
+var urlGetVendutoPerTuttiDistributoriStampa = urlProd + 'GetVendutoPerTuttiDistributoriStampa';
+var urlGetVendutoByIdCliente = urlProd + 'GetVendutoByIdCliente';
+var urlResetEvidenzaByCliente = urlProd + 'ResetEvidenzaByCliente';
+var urlResetEvidenzaByDistributore = urlProd + 'ResetEvidenzaByDistributore';
+var urlResetEvidenzaMagazzino = urlProd + 'ResetEvidenzaMagazzino';
+var urlCorrezioneVendita = urlProd + 'CorrezioneVendita';
+var urlGetMark = urlProd + 'GetMark';
+var urlGetMarkReport = urlProd + 'GetMarkReport';
+var urlFilterMarkReport = urlProd + 'FiltraMarkReport';
+var urlGetStoricoMagazzinoByIdProd = urlProd + 'GetStoricoMagazzinoByIdProd';
+var urlCorrezioneMagazzinoByIdProd = urlProd + 'CorrezioneMagazzinoByIdProd';
+var urldisplayNumeriLottoMagazzino = urlProd + 'displyaNumeriLottoMagazzino';
+var urldisplayNumeriLottoMagazzinoResi = urlProd + 'displyaNumeriLottoMagazzinoResi';
+var urldisplayNumeriLottoDistributore = urlProd + 'displayNumeriLottoDistributore';
+var urlGetProdottiInMagazzinoByIdProdNumLotto = urlProd + 'GetProdottiInMagazzinoByIdProdNumLotto';
+var urlAzzeraProdottoInMagazzinoResi = urlProd + 'AzzeraProdottoInMagazzinoResi';
+var urlGetVenduto = urlProd + 'GetVenduto';
+var urlGetMagazzino = urlProd + 'GetMagazzino';
+var urlGetMagazzinoPerSyncro = urlProd + 'GetMagazzinoPerSyncro';
+var urlGetMagazzinoResiPerSyncro = urlProd + 'GetMagazzinoResiPerSyncro';
+var urlGetSituazioneDistributoriPerSyncro = urlProd + 'GetSituazioneDistributoriPerSyncro';
+var urlAggiornaColoreProdottoInCliente = urlProd + 'AggiornaColoreProdottoInCliente';
+
+var urlGetMagazzinoResi = urlProd + 'GetMagazzinoResi';
+var urlGetMaxId = urlProd + 'GetMaxId';
+var urlSincronizzoDatiInMagazzino = urlProd + 'SincronizzoDatiInMagazzino';
+var urlSincronizzoDatiInMagazzinoResi = urlProd + 'SincronizzoDatiInMagazzinoResi';
+var urlSincronizzoDatiInSituazioneDistributori = urlProd + 'SincronizzoDatiInSituazioneDistributori';
+var urlAggiornaRecordCancellatiInVenduto = urlProd + 'AggiornaRecordCancellatiInVenduto';
 
 $(function () {    
 
@@ -83,7 +104,11 @@ $(function () {
     //ElencoMezziPerDistributori();
     //ElencoMezziPerClienti();
     //ElencoMezziPerCaricareMerce();
-    ElencoDistributori();
+
+    GetElencoDistributori();
+
+    //ElencoDistributori();
+
     ElencoClienti();        
 
     $("#btn-submit").click(function () {
@@ -91,7 +116,8 @@ $(function () {
         var email = $("#txt-email").val();
         var password = $("#txt-password").val();
 
-        Autenticazione(email, password);
+        //Autenticazione(email, password);
+        getAutenticazione(email, password);
 
     });
 
@@ -179,6 +205,56 @@ function stringPerDataA(_date, _format, _delimiter) {
         formatedDate = new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
         formatedDate.setDate(formatedDate.getDate() + 1);
         formatedDate = formatedDate.getDate() + '-' + (1 + formatedDate.getMonth()) + '-' + formatedDate.getFullYear();
+
+    }
+    return formatedDate;
+}
+
+function dataItaliana(_date) {
+    var formatedDate = '';
+    if (_date != null) {
+        var dateItems = _date.split('-');
+        formatedDate = dateItems[2] + '-' + dateItems[1] + '-' + dateItems[0];
+    }
+    return formatedDate;
+}
+
+function padLeft(nr, n, str) {
+    return Array(n - String(nr).length + 1).join(str || '0') + nr;
+}
+
+function stringPerDataAmericana(_date, _format, _delimiter) {
+    var formatedDate = '';
+    if (_date != '') {
+        var formatLowerCase = _format.toLowerCase();
+        var formatItems = formatLowerCase.split(_delimiter);
+        var dateItems = _date.split(_delimiter);
+        var monthIndex = formatItems.indexOf("mm");
+        var dayIndex = formatItems.indexOf("dd");
+        var yearIndex = formatItems.indexOf("yyyy");
+        var month = parseInt(dateItems[monthIndex]);
+        month -= 1;
+        formatedDate = new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
+        //formatedDate.setDate(formatedDate.getDate() + 1);
+        formatedDate = formatedDate.getFullYear() + '-' + padLeft((1 + formatedDate.getMonth()),2) + '-' + formatedDate.getDate();
+    }
+    return formatedDate;
+}
+
+function stringPerDataAmericanaPiUno(_date, _format, _delimiter) {
+    var formatedDate = '';
+    if (_date != '') {
+        var formatLowerCase = _format.toLowerCase();
+        var formatItems = formatLowerCase.split(_delimiter);
+        var dateItems = _date.split(_delimiter);
+        var monthIndex = formatItems.indexOf("mm");
+        var dayIndex = formatItems.indexOf("dd");
+        var yearIndex = formatItems.indexOf("yyyy");
+        var month = parseInt(dateItems[monthIndex]);
+        month -= 1;
+        formatedDate = new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
+        formatedDate.setDate(formatedDate.getDate() + 1);
+        formatedDate = formatedDate.getFullYear() + '-' + padLeft((1 + formatedDate.getMonth()), 2) + '-' + formatedDate.getDate();
     }
     return formatedDate;
 }
@@ -238,8 +314,67 @@ function parseJsonDateLettura(jsonDate) {
     }
     mon = mon < 10 ? "0" + mon : mon;
    
-    return (date + "-" + mon + "-" + year);
+    return (padLeft(date, 2) + "-" + padLeft(mon,2) + "-" + year);
 };
+
+function parseJsonDateLetturaAmericana(jsonDate) {
+    var offset = new Date().getTimezoneOffset() * 60000;
+    var parts = /\/Date\((-?\d+)([+-]\d{2})?(\d{2})?.*/.exec(jsonDate);
+    if (parts[2] == undefined) parts[2] = 0;
+    if (parts[3] == undefined) parts[3] = 0;
+    d = new Date(+parts[1] + offset + parts[2] * 3600000 + parts[3] * 60000);
+
+    year = d.getFullYear();
+    var bisestile = annoBisestile(year);
+    mon = d.getMonth() + 1;
+    date = d.getDate() + 1;
+    if ((mon == 4 || mon == 6 || mon == 9 || mon == 11) && date == 31) {
+        mon = mon + 1;
+        date = 1;
+    }
+
+    date = date < 10 ? "0" + date : date;
+
+    if (date == "32" && mon < 12) {
+        mon = mon + 1;
+        date = "01";
+    }
+    if (date == "32" && mon == 12) {
+        mon = 1;
+        date = "01";
+        year = year + 1;
+    }
+    if (bisestile == false && mon == "02" && date == "29") {
+        date = "01";
+        mon = "3";
+    }
+    mon = mon < 10 ? "0" + mon : mon;
+
+    return (year + "-" + padLeft(mon, 2) + "-" + padLeft(date, 2));
+};
+
+function dataOdierna() {
+    var currentTime = new Date();
+
+    // returns the month (from 0 to 11)
+    var month = currentTime.getMonth() + 1;
+
+    // returns the day of the month (from 1 to 31)
+    var day = currentTime.getDate();
+
+    // returns the year (four digits)
+    var year = currentTime.getFullYear();
+
+    var ora = currentTime.getHours();
+    var minuti = currentTime.getMinutes();
+    var secondi = currentTime.getSeconds();
+
+    var orario = padLeft(ora, 2) + ":" + padLeft(minuti, 2) + ":" + padLeft(secondi, 2);
+    // write output MM/dd/yyyy
+    var oggi = year + "-" + padLeft(month, 2) + "-" + padLeft(day, 2) + " " + orario;
+
+    return oggi;
+}
 
 function parseJsonDateSenzaTime(jsonDate) {
     var offset = new Date().getTimezoneOffset() * 60000;
@@ -271,6 +406,35 @@ function parseJsonDateToJsDate(jsonDate) {
 
     return javascriptDate;
 };
+
+function getAutenticazione(user, password) {
+    if (mydb) {
+        //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+        mydb.transaction(function (t) {
+            t.executeSql("SELECT * FROM operatori where user = ? and password = ?", [user, password], operatoriValidi);
+        });
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+}
+
+function operatoriValidi(transaction, results) {
+    var i;
+      
+    for (var i = 0; i < results.rows.length; i++) {
+        var row = results.rows.item(i);
+        if (row.Ruolo != null) {
+            if (row.Ruolo == 'admin') {
+                $(".onlyAdmin").switchClass("onlyAdmin", "", 1000);
+            }
+            localStorage.idOperatore = row.IdOperatore;
+            location.hash = "ElencoDistributori";
+        } else {
+            $("#authResult").html('User o Password Errati!!!');
+        }
+    }
+   
+}
 
 function Autenticazione(user, password) {
     $.ajax({
@@ -534,59 +698,97 @@ function ElencoMezziPerDistributori() {
 }
 
 function ElencoClienti() {
-    $.ajax({
-        type: "POST",
-        crossDomain: true,
-        contentType: "application/json; charset=utf-8",        
-        url: urlGetElencoClienti,
-        cache: false,
-        async: true,
-        data: JSON.stringify({}),
-        error: function (data) {
-            console.log(data.responseText)
-        },
-        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
-        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
-        success: function (response) {
-            risultati = response.d;
+    if (mydb) {
+        //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+        mydb.transaction(function (t) {
+            
+            t.executeSql("SELECT idcliente, descrizione, indirizzo, dataModifica, cancellato, idoperatore, ordine From clienti ORDER by descrizione", [], function (transaction, results) {
+                //console.log(risultati);
 
             var clienti = '<ul data-role="listview" data-filter="true" data-filter-placeholder="Cerca il Cliente..." data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">';
 
-            for (var i = 0; i < risultati.length; i++) {
-                var desc = risultati[i].descrizione;
+            for (var i = 0; i < results.rows.length; i++) {
+                var row = results.rows.item(i);
+                var desc = row.Descrizione;
                 desc = desc.replace("'", "\\'");
                 desc = '\'' + desc + '\'';
-                
-                clienti = clienti + '<li><a href="javascript:GetSituazioneCliente(' + risultati[i].idCliente + ', ' + desc + ');" class="ui-btn ui-btn-icon-right ui-icon-carat-r nomeCliente" >' + risultati[i].descrizione + '</a></li>';
-                //$("#" + risultati[i]).show();
+
+                clienti = clienti + '<li><a href="javascript:GetSituazioneCliente(' + row.IdCliente + ', ' + desc + ');" class="ui-btn ui-btn-icon-right ui-icon-carat-r nomeCliente" >' + row.Descrizione + '</a></li>';
+                //$("#" + row).show();
             }
             clienti = clienti + '</ul>';
 
             $("#tuttiClienti").html(clienti);
 
-            //console.log(clienti);
+            //console.log(clienti);            
 
-            //$(".caricaDaCamion").on('click', function () {
-
-            //    var idCliente = $(this).attr('data-idCliente');
-            //    var descCliente = $(this).attr('data-descCliente');
-            //    var idDistributore = $(this).attr('data-IdDistributore');
-            //    var descDistributore = $(this).attr('data-descDistributore');
-            //    $("#titoloProdottiInCamion").html('Elenco prodotti su:' + descMezzo);
-            //    $(".descDistributore").html('Carica per:' + descDistributore);
-            //    var desc = '\'' + descDistributore + '\'';
-            //    var linkBack = 'javascript:GetSituazioneDistributore(' + idDistributore + ', ' + desc + ');'
-            //    $(".backDistributore").attr("href", linkBack);
-
-            //    ElencoProdottiSuCamion(idCliente, idDistributore);
-            //});
-
+            }, errorHandler);
             //console.log(risultati);
+        });
 
+            function errorHandler(transaction, error) {
+                console.log("Error : " + error.message);
+            }
+
+        } else {
+            alert("db not found, your browser does not support web sql!");
         }
-
-    });
 }
+
+//function ElencoClienti() {
+//    $.ajax({
+//        type: "POST",
+//        crossDomain: true,
+//        contentType: "application/json; charset=utf-8",        
+//        url: urlGetElencoClienti,
+//        cache: false,
+//        async: true,
+//        data: JSON.stringify({}),
+//        error: function (data) {
+//            console.log(data.responseText)
+//        },
+//        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+//        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+//        success: function (response) {
+//            risultati = response.d;
+
+//            var clienti = '<ul data-role="listview" data-filter="true" data-filter-placeholder="Cerca il Cliente..." data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">';
+
+//            for (var i = 0; i < risultati.length; i++) {
+//                var desc = risultati[i].descrizione;
+//                desc = desc.replace("'", "\\'");
+//                desc = '\'' + desc + '\'';
+                
+//                clienti = clienti + '<li><a href="javascript:GetSituazioneCliente(' + risultati[i].idCliente + ', ' + desc + ');" class="ui-btn ui-btn-icon-right ui-icon-carat-r nomeCliente" >' + risultati[i].descrizione + '</a></li>';
+//                //$("#" + risultati[i]).show();
+//            }
+//            clienti = clienti + '</ul>';
+
+//            $("#tuttiClienti").html(clienti);
+
+//            //console.log(clienti);
+
+//            //$(".caricaDaCamion").on('click', function () {
+
+//            //    var idCliente = $(this).attr('data-idCliente');
+//            //    var descCliente = $(this).attr('data-descCliente');
+//            //    var idDistributore = $(this).attr('data-IdDistributore');
+//            //    var descDistributore = $(this).attr('data-descDistributore');
+//            //    $("#titoloProdottiInCamion").html('Elenco prodotti su:' + descMezzo);
+//            //    $(".descDistributore").html('Carica per:' + descDistributore);
+//            //    var desc = '\'' + descDistributore + '\'';
+//            //    var linkBack = 'javascript:GetSituazioneDistributore(' + idDistributore + ', ' + desc + ');'
+//            //    $(".backDistributore").attr("href", linkBack);
+
+//            //    ElencoProdottiSuCamion(idCliente, idDistributore);
+//            //});
+
+//            //console.log(risultati);
+
+//        }
+
+//    });
+//}
 
 // Storicizzo Prodotti in magazzino ************************************************
 function storicizzaProdottoInMagazzino(IdProdotto, IdOperatore, note, smaltito, quantitaRimasti, prezzoTotaleRimasti) {
@@ -621,18 +823,17 @@ function storicizzaProdottoInMagazzino(IdProdotto, IdOperatore, note, smaltito, 
    
 }
 // *********************************************************************************
-
-// Aggiorno quantita Prodotti rimasti in magazzino *********************************
-function AggiornaQuantitaProdottiInMagazzino(idProdotto, quantitaRimasti, prezzoTotaleRimasti, idOperatore, numeroLotto, numeroDDT, dataDDT, note) {
+// Aggiorno quantita Prodotti rimasti in magazzinoresi *********************************
+function AggiornaQuantitaProdottiInMagazzinoResi(id, idProdotto, numeroLotto, codiceLotto, quantita, prezzoTotale, dataModifica, dataScadenza, modificato, idDistributore, idOperatore, IdCliente) {
     $.ajax({
         type: "POST",
         crossDomain: true,
         contentType: "application/json; charset=utf-8",
-        //url: "http://www.giacomorabaglia.com/appdistributoridondi/WebServiceAppDondi.asmx/AggiornaQuantitaProdottiInMagazzino",
-        url: urlQuantitaProdottiInMagazzino,
+
+        url: urlAggiornaQuantitaProdottiInMagazzinoResi,
         cache: false,
         async: true,
-        data: JSON.stringify({ idProdotto: idProdotto, quantita: quantitaRimasti, prezzoTotale: prezzoTotaleRimasti, idOperatore: idOperatore, numeroLotto: numeroLotto, numeroDDT: numeroDDT, dataDDT: dataDDT, note: note }),
+        data: JSON.stringify({ id: id, idProdotto: idProdotto, numeroLotto: numeroLotto, codiceLotto: codiceLotto, quantita: quantita, prezzoTotale: prezzoTotale, dataModifica: dataModifica, dataScadenza: dataScadenza, modificato: modificato, idDistributore: idDistributore, idOperatore: idOperatore, IdCliente: IdCliente }),
         error: function (data) {
             console.log(data.responseText)
         },
@@ -641,7 +842,33 @@ function AggiornaQuantitaProdottiInMagazzino(idProdotto, quantitaRimasti, prezzo
         success: function (response) {
             risultati = response.d;
 
-            //console.log(risultati);
+            console.log('Record Inserito Correttamente in MagazzinoResi');
+
+        }
+
+    });
+}
+// *********************************************************************************
+// Aggiorno quantita Prodotti rimasti in magazzino *********************************
+function AggiornaQuantitaProdottiInMagazzino(id, idProdotto, codiceLotto, numeroLotto, quantita, prezzoTotale, dataModifica, dataScadenza, modificato, idOperatore, note, smaltito, colore) {
+    $.ajax({
+        type: "POST",
+        crossDomain: true,
+        contentType: "application/json; charset=utf-8",
+      
+        url: urlQuantitaProdottiInMagazzino,
+        cache: false,
+        async: true,
+        data: JSON.stringify({ id: id, idProdotto: idProdotto, codiceLotto: codiceLotto, numeroLotto: numeroLotto, quantita: quantita, prezzoTotale: prezzoTotale, dataModifica: dataModifica, dataScadenza: dataScadenza, modificato: modificato, idOperatore: idOperatore, note: note, smaltito: smaltito, colore: colore }),
+        error: function (data) {
+            console.log(data.responseText)
+        },
+        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+        success: function (response) {
+            risultati = response.d;
+
+            console.log('Record Inserito Correttamente in Magazzino');
 
         }
 
@@ -675,18 +902,19 @@ function AggiornaQuantitaProdottiInMagazzinoV2(idProdotto, quantitaRimasti, prez
 }
 // *********************************************************************************
 
-//Inserisco la quantita di Prodotti Venduti
-function AggiornaQuantitaProdottiVenduti(idProdotto, idDistributore, idCliente, quantitaVenduti, prezzoTotaleVenduti, idOperatore, VenditaDiretta, numeroDDT, DataDDT, numeroLotto, dataScadenza, codiceLotto) {
+function aggiornaTabellaMySql(valoriTabella, nomeTabella) {
+    var righeAggiornate = [];
+    var righeCancellate = 0;
+    var righeInserite = 0;
+
     $.ajax({
         type: "POST",
         crossDomain: true,
-        contentType: "application/json; charset=utf-8",
-        //url: "http://www.giacomorabaglia.com/appdistributoridondi/WebServiceAppDondi.asmx/AggiornaQuantitaProdottiVenduti",
-        url: urlAggiornaQuantitaProdottiVenduti,
+        contentType: "application/json; charset=utf-8",       
+        url: urlQuantitaProdottiInMagazzinoV2,
         cache: false,
         async: true,
-        //            data: "idDisciplina=" + idDisciplina,
-        data: JSON.stringify({ idProdotto: idProdotto, idDistributore: idDistributore, idCliente: idCliente, quantita: quantitaVenduti, prezzoTotale: prezzoTotaleVenduti, idOperatore: idOperatore, VenditaDiretta: VenditaDiretta, numeroDDT: numeroDDT, DataDDT: DataDDT, NumeroLotto: numeroLotto, dataScadenza: dataScadenza, codiceLotto: codiceLotto }),
+        data: JSON.stringify({ idProdotto: idProdotto, quantita: quantitaRimasti, prezzoTotale: prezzoTotaleRimasti, idOperatore: idOperatore, note: note }),
         error: function (data) {
             console.log(data.responseText)
         },
@@ -700,7 +928,81 @@ function AggiornaQuantitaProdottiVenduti(idProdotto, idDistributore, idCliente, 
         }
 
     });
+
+    if (mydb) {
+        mydb.transaction(function (t) {
+
+            t.executeSql(valoriTabella, [], function (transaction, results) {
+                if (results.rowsAffected > 0) {
+                    righeInserite = results.rowsAffected;
+                    //console.log('Righe Inserite: ' + righeInserite);
+                    //console.log('***Aggiornamento Tabella: ' + nomeTabella + ' completato***');
+                    //$('.contentSyncroMagToTablet').html('');
+                    $('.contentSyncroMagToTablet').append('Righe Inserite: ' + righeInserite + '<br>');
+                    $('.contentSyncroMagToTablet').append('***Aggiornamento Tabella: ' + nomeTabella + ' completato***<br><br>');
+                    //righeAggiornate = [righeCancellate, righeInserite];
+                    //return righeAggiornate;
+                }
+
+            }, errorHandler);
+
+        });
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message + "<br>br>" + valoriTabella);
+        }
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+
 }
+
+//Inserisco la quantita di Prodotti Venduti
+function AggiornaQuantitaProdottiVenduti(idProdotto, idDistributore, idCliente, quantitaVenduti, prezzoTotaleVenduti, idOperatore, VenditaDiretta, numeroDDT, DataDDT, numeroLotto, dataScadenza, codiceLotto) {
+
+    if (mydb) {
+        //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+        mydb.transaction(function (t) {
+            t.executeSql("Insert into venduto (IdProdotto, IdDistributore, idCliente, Quantita, PrezzoTotale, IdOperatore, VenditaDiretta, numeroDDT, dataDDT, numeroLotto, dataScadenza, codiceLotto) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [idProdotto, idDistributore, idCliente, quantitaVenduti, prezzoTotaleVenduti, idOperatore, VenditaDiretta, numeroDDT, DataDDT, numeroLotto, dataScadenza, codiceLotto], function (transaction, results) {
+                               
+            }, errorHandler);
+                        
+            });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
+        }
+
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+      
+}
+
+//function AggiornaQuantitaProdottiVenduti(idProdotto, idDistributore, idCliente, quantitaVenduti, prezzoTotaleVenduti, idOperatore, VenditaDiretta, numeroDDT, DataDDT, numeroLotto, dataScadenza, codiceLotto) {
+//    $.ajax({
+//        type: "POST",
+//        crossDomain: true,
+//        contentType: "application/json; charset=utf-8",
+//        //url: "http://www.giacomorabaglia.com/appdistributoridondi/WebServiceAppDondi.asmx/AggiornaQuantitaProdottiVenduti",
+//        url: urlAggiornaQuantitaProdottiVenduti,
+//        cache: false,
+//        async: true,
+//        //            data: "idDisciplina=" + idDisciplina,
+//        data: JSON.stringify({ idProdotto: idProdotto, idDistributore: idDistributore, idCliente: idCliente, quantita: quantitaVenduti, prezzoTotale: prezzoTotaleVenduti, idOperatore: idOperatore, VenditaDiretta: VenditaDiretta, numeroDDT: numeroDDT, DataDDT: DataDDT, NumeroLotto: numeroLotto, dataScadenza: dataScadenza, codiceLotto: codiceLotto }),
+//        error: function (data) {
+//            console.log(data.responseText)
+//        },
+//        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+//        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+//        success: function (response) {
+//            risultati = response.d;
+
+//            //console.log(risultati);
+
+//        }
+
+//    });
+//}
 //****************************************************************** 
 function togliEvidenziatoCliente(idCliente, descCliente) {
     $.ajax({
@@ -778,88 +1080,108 @@ function togliEvidenziatoMagazzino() {
 }
 
 function AggiornaColoreProdottoInCliente(idCliente, idProdotto, colore) {
-    $.ajax({
-        type: "POST",
-        crossDomain: true,
-        contentType: "application/json; charset=utf-8",
-        url: urlAggiornaColoreProdottoInCliente,
-        cache: false,
-        async: true,
-        //            data: "idDisciplina=" + idDisciplina,
-        data: JSON.stringify({ idCliente: idCliente, idProdotto: idProdotto, colore: colore }),
-        error: function (data) {
-            console.log(data.responseText)
-        },
-        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
-        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
-        success: function (response) {
-            risultati = response.d;
+    if (mydb) {       
+        mydb.transaction(function (t) {
+            if (idProdotto == 0) {
+                var oggi = dataOdierna();
+                t.executeSql("UPDATE situazioneclienti set DataModifica = '" + oggi + "', colore = ? Where idCliente = ? and idProdotto = ? and modificato = 0", [colore, idCliente, idProdotto], function (transaction, results) {
 
-            //console.log(risultati);            
+                    //console.log(risultati);            
+                }, errorHandler);
+            }
+
+        });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
         }
 
-    });
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
 }
 
 function AggiornaColoreProdottoInDistributore(idDistributore, idProdotto, colore) {
-    $.ajax({
-        type: "POST",
-        crossDomain: true,
-        contentType: "application/json; charset=utf-8",
-        url: urlAggiornaColoreProdottoInDistributore,
-        cache: false,
-        async: true,
-        //            data: "idDisciplina=" + idDisciplina,
-        data: JSON.stringify({ idDistributore: idDistributore, idProdotto: idProdotto, colore: colore }),
-        error: function (data) {
-            console.log(data.responseText)
-        },
-        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
-        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
-        success: function (response) {
-            risultati = response.d;
+    if (mydb) {
+        //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+        mydb.transaction(function (t) {
+            if (idProdotto == 0) {
+                var oggi = dataOdierna();
+                t.executeSql("UPDATE situazionedistributori set DataModifica = '" + oggi + "', colore = ? Where idDistributore = ? and idProdotto = ? and modificato = 0", [colore, idDistributore, idProdotto], function (transaction, results) {
 
             //console.log(risultati);            
+        }, errorHandler);
+        }
+            
+            
+        });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
         }
 
-    });
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
 }
 
+
 function CorrezioneVendita(idVendita) {
-    $.ajax({
-        type: "POST",
-        crossDomain: true,
-        contentType: "application/json; charset=utf-8",
-        url: urlCorrezioneVendita,
-        cache: false,
-        async: true,
-        //            data: "idDisciplina=" + idDisciplina,
-        data: JSON.stringify({ idVendita: idVendita}),
-        error: function (data) {
-            console.log(data.responseText)
-        },
-        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
-        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
-        success: function (response) {
-            risultati = response.d;
+    if (mydb) {
+        //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+        mydb.transaction(function (t) {
+            var dataModifica = dataOdierna();
+            t.executeSql("delete from venduto Where idVendita = ?", [idVendita], function (transaction, results) {
+                //console.log(risultati);
+            }, errorHandler);     
 
-            //console.log(risultati);     
+        });
 
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
         }
 
-    });
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
 }
 
 function CorrezioneMagazzinoByIdProd(idMagazzino, idProdotto) {
+    if (mydb) {
+        //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+        mydb.transaction(function (t) {
+            var dataModifica = dataOdierna();
+            var query = "delete from magazzino Where idProdotto = ? and modificato = 0";
+            t.executeSql(query, [idProdotto], function (transaction, results) {
+                  
+            }, errorHandler);
+            var oggi = dataOdierna();
+            t.executeSql("update magazzino set modificato = 0, dataModifica = '" + oggi + "' where id = ?", [idMagazzino], function (transaction, results) {
+
+            }, errorHandler);
+
+        });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
+        }
+
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+}
+
+function AggiornaQuantitaProdottiVendutiServer(idVendita, idProdotto, idDistributore, idCliente, quantitaVenduti, prezzoTotaleVenduti, idOperatore, VenditaDiretta, numeroDDT, DataDDT, numeroLotto, dataScadenza, codiceLotto) {
     $.ajax({
         type: "POST",
         crossDomain: true,
         contentType: "application/json; charset=utf-8",
-        url: urlCorrezioneMagazzinoByIdProd,
+        //url: "http://www.giacomorabaglia.com/appdistributoridondi/WebServiceAppDondi.asmx/AggiornaQuantitaProdottiVenduti",
+        url: urlAggiornaQuantitaProdottiVenduti,
         cache: false,
         async: true,
         //            data: "idDisciplina=" + idDisciplina,
-        data: JSON.stringify({ idMagazzino: idMagazzino, idProdotto: idProdotto }),
+        data: JSON.stringify({ idVendita: idVendita, idProdotto: idProdotto, idDistributore: idDistributore, idCliente: idCliente, quantita: quantitaVenduti, prezzoTotale: prezzoTotaleVenduti, idOperatore: idOperatore, VenditaDiretta: VenditaDiretta, numeroDDT: numeroDDT, DataDDT: DataDDT, NumeroLotto: numeroLotto, dataScadenza: dataScadenza, codiceLotto: codiceLotto }),
         error: function (data) {
             console.log(data.responseText)
         },
@@ -868,7 +1190,7 @@ function CorrezioneMagazzinoByIdProd(idMagazzino, idProdotto) {
         success: function (response) {
             risultati = response.d;
 
-            //console.log(risultati);     
+            //console.log(risultati);
 
         }
 

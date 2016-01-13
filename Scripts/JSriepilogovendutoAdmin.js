@@ -894,168 +894,309 @@ function GetProdottiInMagazzinoResi() {
 
     location.hash = "RiepilogoResi";
 
-    $.ajax({
-        type: "POST",
-        crossDomain: true,
-        contentType: "application/json; charset=utf-8",
-        url: urlGetProdottiInMagazzinoResi,
-        cache: false,
-        async: true,
-        data: JSON.stringify({}),
-        error: function (data) {
-            console.log(data.responseText)
-        },
-        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
-        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
-        success: function (response) {
-            risultati = response.d;
+    if (mydb) {
+        //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+        mydb.transaction(function (t) {
+            //var dataModifica = dataOdierna();
+            var query = "SELECT  prodotti.Descrizione, prodotti.Foto, magazzinoresi.IdProdotto, magazzinoresi.NumeroLotto, magazzinoresi.Quantita, prodotti.Prezzo, magazzinoresi.PrezzoTotale, magazzinoresi.Id, operatori.Nome, " +
+                        "operatori.Cognome, prodotti.Aliquota, distributori.Descrizione AS DescDistributore, clienti.Descrizione AS DescCliente, magazzinoresi.DataInserimento " +
+                        "FROM   magazzinoresi INNER JOIN " +
+                        "prodotti ON magazzinoresi.IdProdotto = prodotti.IdProdotto INNER JOIN " +
+                        "operatori ON magazzinoresi.IdOperatore = operatori.IdOperatore LEFT OUTER JOIN " +
+                        "clienti ON magazzinoresi.IdCliente = clienti.IdCliente LEFT OUTER JOIN " +
+                        "distributori ON magazzinoresi.IdDistributore = distributori.IdDistributore " +
+                        "ORDER BY prodotti.ordine, magazzinoresi.numeroLotto";
+            t.executeSql(query, [], function (transaction, results) {
 
-            //console.log(risultati);
 
-            var dettaglio = '<table id="tabellaProdottiMagazzinoResi" class="display" cellspacing="0" width="100%">' +
-                                    '<thead>' +
-                                        '<tr>' +
-                                            '<th>Foto</th>' +
-                                            '<th>Desc.</th>' +
-                                            '<th>Quantità</th>' +
-                                            '<th>Totale perso</th>' +
-                                            '<th>Svuota</th>' +
-                                            //'<th>Cliente</th>' +
-                                            //'<th>Data Reso</th>' +
-                                            //'<th>Operatore</th>' +
-                                        '</tr>' +
-                                    '</thead>';
-            var idProd = '';
-            var idProdOld = '';
-            var numLotto = '';
-            var numLottoOld = '';
-            var rigaDettaglio = new Array();
-            var quantita = 0;
-            var quantitaOld = 0;
-            var quantitaTot = 0;
-            var prezzoTot = 0;
-            var prezzoTotProd = 0;
-            var totaleQuantita = 0;
-            for (var i = 0; i < risultati.length; i++) {
+                var dettaglio = '<table id="tabellaProdottiMagazzinoResi" class="display" cellspacing="0" width="100%">' +
+                                        '<thead>' +
+                                            '<tr>' +
+                                                '<th>Foto</th>' +
+                                                '<th>Desc.</th>' +
+                                                '<th>Quantità</th>' +
+                                                '<th>Totale perso</th>' +
+                                                '<th>Svuota</th>' +
+                                                //'<th>Cliente</th>' +
+                                                //'<th>Data Reso</th>' +
+                                                //'<th>Operatore</th>' +
+                                            '</tr>' +
+                                        '</thead>';
+                var idProd = '';
+                var idProdOld = '';
+                var numLotto = '';
+                var numLottoOld = '';
+                var rigaDettaglio = new Array();
+                var quantita = 0;
+                var quantitaOld = 0;
+                var quantitaTot = 0;
+                var prezzoTot = 0;
+                var prezzoTotProd = 0;
+                var totaleQuantita = 0;
+                for (var i = 0; i < results.rows.length; i++) {
+                    var row = results.rows.item(i);
 
-                //dettaglio = dettaglio + '<tr>';
-                //dettaglio = dettaglio + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></td>';
-                //dettaglio = dettaglio + '<td>' + risultati[i].descrizione + ' (' + parseJsonDateLettura(risultati[i].numeroLotto) + ')</td>';
-                //dettaglio = dettaglio + '<td class="quantita">' + risultati[i].quantita + '</td>';
-                //dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].prezzoTotale + '</td>';
-                //dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].descrizioneDistributore + '</td>';
-                //dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].descrizioneCliente + '</td>';
-                //dettaglio = dettaglio + '<td class="storicoVenduto">' + parseJsonDateSenzaTime(risultati[i].dataInserimento) + '</td>';
-                //dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].operatoreNome + ' ' + risultati[i].operatoreCognome + '</td>';
-                //dettaglio = dettaglio + '</tr>';
+                    idProd = row.IdProdotto;
+                    numLotto = row.NumeroLotto;
+                    //console.log(numLotto);
+                    quantita = row.Quantita;
+                    if (idProd != idProdOld) {
+                        quantitaTot = quantita;
+                        prezzoTotProd = row.PrezzoTotale;
+                        rigaDettaglio[i] = '<tr>';
+                        rigaDettaglio[i] = rigaDettaglio[i] + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + row.Foto + '"></td>';
+                        //rigaDettaglio[i] = rigaDettaglio[i] + '<td>' + row.descrizione + ' (' + parseJsonDateLettura(row.NumeroLotto) + ')</td>';
+                        rigaDettaglio[i] = rigaDettaglio[i] + '<td class="descrizioneReso' + row.IdProdotto + '">' + row.Descrizione + '</td>';
+                        rigaDettaglio[i] = rigaDettaglio[i] + '<td class="quantita">' + row.Quantita + '</td>';
+                        rigaDettaglio[i] = rigaDettaglio[i] + '<td class="medioGrande">' + row.PrezzoTotale + ' €</td>';
+                        rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto"><a href="#" data-idProdotto="' + row.IdProdotto + '" data-prezzo="' + row.Prezzo + '" class="ui-btn ui-corner-all ui-shadow ui-btn-active svuota ui-btnCarica">Svuota</a></td>';
+                        rigaDettaglio[i] = rigaDettaglio[i] + '</tr>';
 
-                idProd = risultati[i].idProdotto;
-                numLotto = risultati[i].numeroLotto;
-                //console.log(numLotto);
-                quantita = risultati[i].quantitaMagazzinoResi;
-                if (idProd != idProdOld) {
-                    quantitaTot = quantita;
-                    prezzoTotProd = risultati[i].prezzoTotale;
-                    rigaDettaglio[i] = '<tr>';
-                    rigaDettaglio[i] = rigaDettaglio[i] + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></td>';
-                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td>' + risultati[i].descrizione + ' (' + parseJsonDateLettura(risultati[i].numeroLotto) + ')</td>';
-                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="descrizioneReso' + risultati[i].idProdotto + '">' + risultati[i].descrizione + '</td>';
-                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="quantita">' + risultati[i].quantitaMagazzinoResi + '</td>';
-                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="medioGrande">' + risultati[i].prezzoTotale + ' €</td>';
-                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto"><a href="#" data-idProdotto="' + risultati[i].idProdotto + '" data-prezzo="' + risultati[i].prezzo + '" class="ui-btn ui-corner-all ui-shadow ui-btn-active rimasti ui-btnCarica">Svuota</a></td>';
-                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto">' + risultati[i].descrizioneCliente + '</td>';
-                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto">' + parseJsonDateSenzaTime(risultati[i].dataInserimento) + '</td>';
-                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto">' + risultati[i].operatoreNome + ' ' + risultati[i].operatoreCognome + '</td>';
-                    rigaDettaglio[i] = rigaDettaglio[i] + '</tr>';
+                    } else {
 
-                } else {
-                   
-                    rigaDettaglio[i - 1] = '';
-                    quantitaTot = (quantitaTot + quantita);
-                    prezzoTotProd = prezzoTotProd + risultati[i].prezzoTotale;
-                    rigaDettaglio[i] = '<tr>';
-                    rigaDettaglio[i] = rigaDettaglio[i] + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></td>';
-                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="descrizioneReso' + risultati[i].idProdotto + '">' + risultati[i].descrizione + '</td>';
-                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="quantita">' + quantitaTot + '</td>';
-                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="medioGrande">' + Number(prezzoTotProd).toFixed(2) + ' €</td>';
-                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto"><a href="#" data-idProdotto="' + risultati[i].idProdotto + '" class="ui-btn ui-corner-all ui-shadow ui-btn-active svuota ui-btnCarica">Svuota</a></td>';
-                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto">' + risultati[i].descrizioneCliente + '</td>';
-                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto">' + parseJsonDateSenzaTime(risultati[i].dataInserimento) + '</td>';
-                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto">' + risultati[i].operatoreNome + ' ' + risultati[i].operatoreCognome + '</td>';
-                    rigaDettaglio[i] = rigaDettaglio[i] + '</tr>';
-                   
+                        rigaDettaglio[i - 1] = '';
+                        quantitaTot = (quantitaTot + quantita);
+                        prezzoTotProd = prezzoTotProd + row.PrezzoTotale;
+                        rigaDettaglio[i] = '<tr>';
+                        rigaDettaglio[i] = rigaDettaglio[i] + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + row.Foto + '"></td>';
+                        rigaDettaglio[i] = rigaDettaglio[i] + '<td class="descrizioneReso' + row.IdProdotto + '">' + row.Descrizione + '</td>';
+                        rigaDettaglio[i] = rigaDettaglio[i] + '<td class="quantita">' + quantitaTot + '</td>';
+                        rigaDettaglio[i] = rigaDettaglio[i] + '<td class="medioGrande">' + Number(prezzoTotProd).toFixed(2) + ' €</td>';
+                        rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto"><a href="#" data-idProdotto="' + row.IdProdotto + '" data-prezzo="' + row.Prezzo + '" class="ui-btn ui-corner-all ui-shadow ui-btn-active svuota ui-btnCarica">Svuota</a></td>';
+                        rigaDettaglio[i] = rigaDettaglio[i] + '</tr>';
+
+                    }
+                    idProdOld = row.IdProdotto;
+                    //numLottoOld = row.NumeroLotto;
+                    quantitaOld = row.Quantita;
+                    prezzoTot = prezzoTot + row.PrezzoTotale;
+                    totaleQuantita = totaleQuantita + row.Quantita;
                 }
-                idProdOld = risultati[i].idProdotto;
-                //numLottoOld = risultati[i].numeroLotto;
-                quantitaOld = risultati[i].quantitaMagazzinoResi;
-                prezzoTot = prezzoTot + risultati[i].prezzoTotale;
-                totaleQuantita = totaleQuantita + risultati[i].quantitaMagazzinoResi;
-            }
-            //dettaglio = dettaglio + '</tbody> </table>';
-            
-            //console.log(dettaglio);
-            var righe = '';
+                //dettaglio = dettaglio + '</tbody> </table>';
 
-            for (var i = 0; i < risultati.length; i++) {
-                righe = righe + rigaDettaglio[i];
-            }
+                //console.log(dettaglio);
+                var righe = '';
 
-            //dettaglio = dettaglio + righe + '</tbody> </table>';
-            dettaglio = dettaglio + righe + '</tbody>' + '<tfoot>' +
-                                        '<tr>' +
-                                            '<th>Foto</th>' +
-                                            '<th>Desc.</th>' +
-                                            '<th>Totale Quantità: ' + totaleQuantita + '</th>' +
-                                            '<th>Totale Perso: ' + Number(prezzoTot).toFixed(2) + '€</th>' +
-                                            '<th>Svuota</th>' +
-                                            //'<th>Cliente</th>' +
-                                            //'<th>Data Reso</th>' +
-                                            //'<th>Operatore</th>' +
-                                        '</tr>' +
-                                    '</tfoot>' + ' </table>';
+                for (var i = 0; i < results.rows.length; i++) {
+                    righe = righe + rigaDettaglio[i];
+                }
 
-            $('.DettRiepilogoResi').html(dettaglio);            
+                //dettaglio = dettaglio + righe + '</tbody> </table>';
+                dettaglio = dettaglio + righe + '</tbody>' + '<tfoot>' +
+                                            '<tr>' +
+                                                '<th>Foto</th>' +
+                                                '<th>Desc.</th>' +
+                                                '<th>Totale Quantità: ' + totaleQuantita + '</th>' +
+                                                '<th>Totale Perso: ' + Number(prezzoTot).toFixed(2) + '€</th>' +
+                                                '<th>Svuota</th>' +
+                                                //'<th>Cliente</th>' +
+                                                //'<th>Data Reso</th>' +
+                                                //'<th>Operatore</th>' +
+                                            '</tr>' +
+                                        '</tfoot>' + ' </table>';
 
-            var table = $('#tabellaProdottiMagazzinoResi').DataTable(
-                { "paging": false, responsive: true, dom: 'T<"clear">lfrtip' }
-            );
+                $('.DettRiepilogoResi').html(dettaglio);
 
-            $(".svuota").on('click', function () {
+                var table = $('#tabellaProdottiMagazzinoResi').DataTable(
+                    { "paging": false, responsive: true, dom: 'T<"clear">lfrtip' }
+                );
+
+                $(".svuota").on('click', function () {
                 
-                var idProdotto = $(this).attr('data-idProdotto');
-                var labelQuantita = $(this).closest('td').prev('td').prev('td');                
-                labelQuantita.html('0');
-                AzzeraProdottoInMagazzinoResi(idProdotto);
+                    var idProdotto = $(this).attr('data-idProdotto');
+                    var labelQuantita = $(this).closest('td').prev('td').prev('td');                
+                    labelQuantita.html('0');
+                    AzzeraProdottoInMagazzinoResi(idProdotto);
 
-            });
+                });
 
-            displayNumeriLottoMagazzinoResi(0, 0);
+                if (results.rowsAffected > 0) {
+                    displayNumeriLottoMagazzinoResi(0, 0);
+                }
+
+            }, errorHandler);
+
+        });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
         }
-    });
 
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+    displayNumeriLottoMagazzinoResi(0, 0);
 }
 
+//function GetProdottiInMagazzinoResi() {
+
+//    location.hash = "RiepilogoResi";
+
+//    $.ajax({
+//        type: "POST",
+//        crossDomain: true,
+//        contentType: "application/json; charset=utf-8",
+//        url: urlGetProdottiInMagazzinoResi,
+//        cache: false,
+//        async: true,
+//        data: JSON.stringify({}),
+//        error: function (data) {
+//            console.log(data.responseText)
+//        },
+//        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+//        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+//        success: function (response) {
+//            risultati = response.d;
+
+//            //console.log(risultati);
+
+//            var dettaglio = '<table id="tabellaProdottiMagazzinoResi" class="display" cellspacing="0" width="100%">' +
+//                                    '<thead>' +
+//                                        '<tr>' +
+//                                            '<th>Foto</th>' +
+//                                            '<th>Desc.</th>' +
+//                                            '<th>Quantità</th>' +
+//                                            '<th>Totale perso</th>' +
+//                                            '<th>Svuota</th>' +
+//                                            //'<th>Cliente</th>' +
+//                                            //'<th>Data Reso</th>' +
+//                                            //'<th>Operatore</th>' +
+//                                        '</tr>' +
+//                                    '</thead>';
+//            var idProd = '';
+//            var idProdOld = '';
+//            var numLotto = '';
+//            var numLottoOld = '';
+//            var rigaDettaglio = new Array();
+//            var quantita = 0;
+//            var quantitaOld = 0;
+//            var quantitaTot = 0;
+//            var prezzoTot = 0;
+//            var prezzoTotProd = 0;
+//            var totaleQuantita = 0;
+//            for (var i = 0; i < risultati.length; i++) {
+
+//                //dettaglio = dettaglio + '<tr>';
+//                //dettaglio = dettaglio + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></td>';
+//                //dettaglio = dettaglio + '<td>' + risultati[i].descrizione + ' (' + parseJsonDateLettura(risultati[i].numeroLotto) + ')</td>';
+//                //dettaglio = dettaglio + '<td class="quantita">' + risultati[i].quantita + '</td>';
+//                //dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].prezzoTotale + '</td>';
+//                //dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].descrizioneDistributore + '</td>';
+//                //dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].descrizioneCliente + '</td>';
+//                //dettaglio = dettaglio + '<td class="storicoVenduto">' + parseJsonDateSenzaTime(risultati[i].dataInserimento) + '</td>';
+//                //dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].operatoreNome + ' ' + risultati[i].operatoreCognome + '</td>';
+//                //dettaglio = dettaglio + '</tr>';
+
+//                idProd = risultati[i].idProdotto;
+//                numLotto = risultati[i].numeroLotto;
+//                //console.log(numLotto);
+//                quantita = risultati[i].quantitaMagazzinoResi;
+//                if (idProd != idProdOld) {
+//                    quantitaTot = quantita;
+//                    prezzoTotProd = risultati[i].prezzoTotale;
+//                    rigaDettaglio[i] = '<tr>';
+//                    rigaDettaglio[i] = rigaDettaglio[i] + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></td>';
+//                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td>' + risultati[i].descrizione + ' (' + parseJsonDateLettura(risultati[i].numeroLotto) + ')</td>';
+//                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="descrizioneReso' + risultati[i].idProdotto + '">' + risultati[i].descrizione + '</td>';
+//                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="quantita">' + risultati[i].quantitaMagazzinoResi + '</td>';
+//                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="medioGrande">' + risultati[i].prezzoTotale + ' €</td>';
+//                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto"><a href="#" data-idProdotto="' + risultati[i].idProdotto + '" data-prezzo="' + risultati[i].prezzo + '" class="ui-btn ui-corner-all ui-shadow ui-btn-active rimasti ui-btnCarica">Svuota</a></td>';
+//                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto">' + risultati[i].descrizioneCliente + '</td>';
+//                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto">' + parseJsonDateSenzaTime(risultati[i].dataInserimento) + '</td>';
+//                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto">' + risultati[i].operatoreNome + ' ' + risultati[i].operatoreCognome + '</td>';
+//                    rigaDettaglio[i] = rigaDettaglio[i] + '</tr>';
+
+//                } else {
+                   
+//                    rigaDettaglio[i - 1] = '';
+//                    quantitaTot = (quantitaTot + quantita);
+//                    prezzoTotProd = prezzoTotProd + risultati[i].prezzoTotale;
+//                    rigaDettaglio[i] = '<tr>';
+//                    rigaDettaglio[i] = rigaDettaglio[i] + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></td>';
+//                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="descrizioneReso' + risultati[i].idProdotto + '">' + risultati[i].descrizione + '</td>';
+//                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="quantita">' + quantitaTot + '</td>';
+//                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="medioGrande">' + Number(prezzoTotProd).toFixed(2) + ' €</td>';
+//                    rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto"><a href="#" data-idProdotto="' + risultati[i].idProdotto + '" class="ui-btn ui-corner-all ui-shadow ui-btn-active svuota ui-btnCarica">Svuota</a></td>';
+//                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto">' + risultati[i].descrizioneCliente + '</td>';
+//                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto">' + parseJsonDateSenzaTime(risultati[i].dataInserimento) + '</td>';
+//                    //rigaDettaglio[i] = rigaDettaglio[i] + '<td class="storicoVenduto">' + risultati[i].operatoreNome + ' ' + risultati[i].operatoreCognome + '</td>';
+//                    rigaDettaglio[i] = rigaDettaglio[i] + '</tr>';
+                   
+//                }
+//                idProdOld = risultati[i].idProdotto;
+//                //numLottoOld = risultati[i].numeroLotto;
+//                quantitaOld = risultati[i].quantitaMagazzinoResi;
+//                prezzoTot = prezzoTot + risultati[i].prezzoTotale;
+//                totaleQuantita = totaleQuantita + risultati[i].quantitaMagazzinoResi;
+//            }
+//            //dettaglio = dettaglio + '</tbody> </table>';
+            
+//            //console.log(dettaglio);
+//            var righe = '';
+
+//            for (var i = 0; i < risultati.length; i++) {
+//                righe = righe + rigaDettaglio[i];
+//            }
+
+//            //dettaglio = dettaglio + righe + '</tbody> </table>';
+//            dettaglio = dettaglio + righe + '</tbody>' + '<tfoot>' +
+//                                        '<tr>' +
+//                                            '<th>Foto</th>' +
+//                                            '<th>Desc.</th>' +
+//                                            '<th>Totale Quantità: ' + totaleQuantita + '</th>' +
+//                                            '<th>Totale Perso: ' + Number(prezzoTot).toFixed(2) + '€</th>' +
+//                                            '<th>Svuota</th>' +
+//                                            //'<th>Cliente</th>' +
+//                                            //'<th>Data Reso</th>' +
+//                                            //'<th>Operatore</th>' +
+//                                        '</tr>' +
+//                                    '</tfoot>' + ' </table>';
+
+//            $('.DettRiepilogoResi').html(dettaglio);            
+
+//            var table = $('#tabellaProdottiMagazzinoResi').DataTable(
+//                { "paging": false, responsive: true, dom: 'T<"clear">lfrtip' }
+//            );
+
+//            $(".svuota").on('click', function () {
+                
+//                var idProdotto = $(this).attr('data-idProdotto');
+//                var labelQuantita = $(this).closest('td').prev('td').prev('td');                
+//                labelQuantita.html('0');
+//                AzzeraProdottoInMagazzinoResi(idProdotto);
+
+//            });
+
+//            displayNumeriLottoMagazzinoResi(0, 0);
+//        }
+//    });
+
+//}
+
 function AzzeraProdottoInMagazzinoResi(idProdotto) {
-    $.ajax({
-        type: "POST",
-        crossDomain: true,
-        contentType: "application/json; charset=utf-8",
-        url: urlAzzeraProdottoInMagazzinoResi,
-        cache: false,
-        async: true,
-        data: JSON.stringify({ idProdotto: idProdotto }),
-        error: function (data) {
-            console.log(data.responseText)
-        },
-        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
-        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
-        success: function (response) {
-            risultati = response.d;
+    if (mydb) {
+        //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+        mydb.transaction(function (t) {
+            //var dataModifica = dataOdierna();
+            var query = "delete from magazzinoresi where idProdotto = ?";
+            t.executeSql(query, [idProdotto], function (transaction, results) {
 
             //console.log(risultati);
-            displayNumeriLottoMagazzinoResi(idProdotto, 0);
+                
+                if (results.rowsAffected > 0) {
+                    displayNumeriLottoMagazzinoResi(0, 0);
+                }
+            }, errorHandler);
+
+        });
+
+            function errorHandler(transaction, error) {
+                console.log("Error : " + error.message);
+            }
+
+        } else {
+            alert("db not found, your browser does not support web sql!");
         }
-    });
 }
 
 function GetProdottiInMagazzinoResiFiltrato(dataDa, dataA){   
