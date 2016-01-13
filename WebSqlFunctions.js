@@ -403,7 +403,7 @@ function creaTabella(strutturaTabella, valoriTabella, nomeTabella) {
     
 }
 
-function aggiornaTabella(valoriTabella, nomeTabella) {
+function aggiornaTabella(valoriTabella, nomeTabella, callBackFunction) {
     var righeAggiornate = [];
     var righeCancellate = 0;
     var righeInserite = 0;
@@ -420,6 +420,7 @@ function aggiornaTabella(valoriTabella, nomeTabella) {
                     $('.contentSyncroMagToTablet').append('***Aggiornamento Tabella: ' + nomeTabella + ' completato***<br><br>');
                     //righeAggiornate = [righeCancellate, righeInserite];
                     //return righeAggiornate;
+                    callBackFunction;
                 }
 
             }, errorHandler);

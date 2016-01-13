@@ -445,12 +445,12 @@ function RecuperoDatiPerTabellaSituazioneDistributori() {
 
                 if (i < risultati.length - 1) {
                     if (i==0) {
-                        aggiornaTabella("Delete from situazionedistributori", "SituazioneDistributori");
+                        aggiornaTabella("Delete from situazionedistributori", "SituazioneDistributori", null);
                     }
                     if ((i > 0) && (i % 499) == 0) {
                         valoriInsert = valoriInsert + "(" + risultati[i].idSituazioneDistributore + ", " + risultati[i].idDistributore + ", " + risultati[i].idProdotto + ", " + numeroLotto + ", " + codiceLotto + ", " + risultati[i].quantita + ", " + risultati[i].prezzoTotale + ", " + dataScadenza + ", " + modificato + ", " + risultati[i].idOperatore + ", " + colore + ", " + dataModifica + ");";
                         //valoriInsert = valoriInsert + " INSERT INTO situazionedistributori(IdSituazioneDistributore, IdDistributore, IdProdotto, NumeroLotto, CodiceLotto, Quantita, PrezzoTotale, DataInserimento, DataModifica, DataScadenza, Modificato, IdOperatore, NumeroDDT, DataDDT, colore) VALUES ";
-                        aggiornaTabella(testoInsert + valoriInsert, 'SituazioneDistributori');
+                        aggiornaTabella(testoInsert + valoriInsert, 'SituazioneDistributori', null);
                         valoriInsert = "";
                         //console.log(testoInsert + valoriInsert + '<br><br>');
                         //return;
@@ -459,7 +459,7 @@ function RecuperoDatiPerTabellaSituazioneDistributori() {
                     }
                 } else {
                     valoriInsert = valoriInsert + "(" + risultati[i].idSituazioneDistributore + ", " + risultati[i].idDistributore + ", " + risultati[i].idProdotto + ", " + numeroLotto + ", " + codiceLotto + ", " + risultati[i].quantita + ", " + risultati[i].prezzoTotale + ", " + dataScadenza + ", " + modificato + ", " + risultati[i].idOperatore + ", " + colore + ", " + dataModifica + ");";
-                    aggiornaTabella(testoInsert + valoriInsert, 'SituazioneDistributori');
+                    aggiornaTabella(testoInsert + valoriInsert, 'SituazioneDistributori', null);
                 }
             }
 
@@ -477,6 +477,8 @@ function RecuperoDatiPerTabellaSituazioneDistributori() {
 }
 
 function RecuperoDatiPerTabellaVenduto() {
+
+    cancellaTabellaVenduto();
 
     $.ajax({
         type: "POST",
@@ -544,13 +546,11 @@ function RecuperoDatiPerTabellaVenduto() {
                 }
 
                 if (i < risultati.length - 1) {
-                    if (i == 0) {
-                        aggiornaTabella("Delete from venduto", "Venduto");
-                    }
+                    
                     if ((i > 0) && (i % 499) == 0) {
                         valoriInsert = valoriInsert + "(" + risultati[i].idVendita + ", " + risultati[i].idDistributore + ", " + risultati[i].idProdotto + ", " + numeroLotto + ", " + codiceLotto + ", " + risultati[i].quantita + ", " + risultati[i].prezzoTotale + ", " + dataRilevazione + ", " + dataScadenza + ", " + venditaDiretta + ", " + risultati[i].idOperatore + ", " + risultati[i].idCliente + ", " + note + ");";
                         //valoriInsert = valoriInsert + " INSERT INTO situazionedistributori(IdSituazioneDistributore, IdDistributore, IdProdotto, NumeroLotto, CodiceLotto, Quantita, PrezzoTotale, DataInserimento, DataModifica, DataScadenza, Modificato, IdOperatore, NumeroDDT, DataDDT, colore) VALUES ";
-                        aggiornaTabella(testoInsert + valoriInsert, 'Venduto');
+                        aggiornaTabella(testoInsert + valoriInsert, 'Venduto', null);
                         valoriInsert = "";
                         //console.log(testoInsert + valoriInsert + '<br><br>');
                         //return;
@@ -559,7 +559,7 @@ function RecuperoDatiPerTabellaVenduto() {
                     }
                 } else {
                     valoriInsert = valoriInsert + "(" + risultati[i].idVendita + ", " + risultati[i].idDistributore + ", " + risultati[i].idProdotto + ", " + numeroLotto + ", " + codiceLotto + ", " + risultati[i].quantita + ", " + risultati[i].prezzoTotale + ", " + dataRilevazione + ", " + dataScadenza + ", " + venditaDiretta + ", " + risultati[i].idOperatore + ", " + risultati[i].idCliente + ", " + note + ");";
-                    aggiornaTabella(testoInsert + valoriInsert, 'Venduto');
+                    aggiornaTabella(testoInsert + valoriInsert, 'Venduto', null);
                 }
             }
 
@@ -574,6 +574,10 @@ function RecuperoDatiPerTabellaVenduto() {
         }
 
     });
+}
+
+function cancellaTabellaVenduto() {
+    aggiornaTabella("Delete from venduto", "Venduto", null);
 }
 
 function RecuperoDatiPerTabellaMark() {
@@ -619,12 +623,12 @@ function RecuperoDatiPerTabellaMark() {
 
                 if (i < risultati.length - 1) {
                     if (i == 0) {
-                        aggiornaTabella("Delete from mark", "Mark");
+                        aggiornaTabella("Delete from mark", "Mark", null);
                     }
                     if ((i > 0) && (i % 499) == 0) {
                         valoriInsert = valoriInsert + "(" + risultati[i].id + ", " + codiceGettoniera + ", " + risultati[i].venduto + ", " + risultati[i].inviatoInCassa + ", " + risultati[i].dataRilevazioneMark + ", " + oraRilevazione + ", " + risultati[i].dataRilevazionePrecedenteMark + ", " + oraRilevazionePrecedente + ", " + nomeFile + ", " + risultati[i].banconote2 + ", " + risultati[i].idRilevazione + ");";
                         //valoriInsert = valoriInsert + " INSERT INTO situazionedistributori(IdSituazioneDistributore, IdDistributore, IdProdotto, NumeroLotto, CodiceLotto, Quantita, PrezzoTotale, DataInserimento, DataModifica, DataScadenza, Modificato, IdOperatore, NumeroDDT, DataDDT, colore) VALUES ";
-                        aggiornaTabella(testoInsert + valoriInsert, 'Mark');
+                        aggiornaTabella(testoInsert + valoriInsert, 'Mark', null);
                         valoriInsert = "";
                         //console.log(testoInsert + valoriInsert + '<br><br>');
                         //return;
@@ -633,7 +637,7 @@ function RecuperoDatiPerTabellaMark() {
                     }
                 } else {
                     valoriInsert = valoriInsert + "(" + risultati[i].id + ", " + codiceGettoniera + ", " + risultati[i].venduto + ", " + risultati[i].inviatoInCassa + ", " + risultati[i].dataRilevazioneMark + ", " + oraRilevazione + ", " + risultati[i].dataRilevazionePrecedenteMark + ", " + oraRilevazionePrecedente + ", " + nomeFile + ", " + risultati[i].banconote2 + ", " + risultati[i].idRilevazione + ");";
-                    aggiornaTabella(testoInsert + valoriInsert, 'Mark');
+                    aggiornaTabella(testoInsert + valoriInsert, 'Mark', null);
                 }
             }
 
@@ -731,12 +735,12 @@ function RecuperoDatiPerTabellaMagazzino() {
 
                 if (i < risultati.length - 1) {
                     if (i == 0) {
-                        aggiornaTabella("Delete from magazzino", "Magazzino");
+                        aggiornaTabella("Delete from magazzino", "Magazzino", null);
                     }
                     if ((i > 0) && (i % 499) == 0) {
                         valoriInsert = valoriInsert + "(" + risultati[i].id + ", " + risultati[i].idProdotto + ", " + numeroLotto + ", " + codiceLotto + ", " + risultati[i].quantita + ", " + risultati[i].prezzoTotale + ", " + dataInserimento + ", " + dataScadenza + ", " + dataModifica + ", " + modificato + ", " + risultati[i].idOperatore + ", " + note + ", " + smaltito + ", " + colore + ");";
                         //valoriInsert = valoriInsert + " INSERT INTO situazionedistributori(IdSituazioneDistributore, IdDistributore, IdProdotto, NumeroLotto, CodiceLotto, Quantita, PrezzoTotale, DataInserimento, DataModifica, DataScadenza, Modificato, IdOperatore, NumeroDDT, DataDDT, colore) VALUES ";
-                        aggiornaTabella(testoInsert + valoriInsert, 'Magazzino');
+                        aggiornaTabella(testoInsert + valoriInsert, 'Magazzino', null);
                         valoriInsert = "";
                         //console.log(testoInsert + valoriInsert + '<br><br>');
                         //return;
@@ -745,7 +749,7 @@ function RecuperoDatiPerTabellaMagazzino() {
                     }
                 } else {
                     valoriInsert = valoriInsert + "(" + risultati[i].id + ", " + risultati[i].idProdotto + ", " + numeroLotto + ", " + codiceLotto + ", " + risultati[i].quantita + ", " + risultati[i].prezzoTotale + ", " + dataInserimento + ", " + dataScadenza + ", " + dataModifica + ", " + modificato + ", " + risultati[i].idOperatore + ", " + note + ", " + smaltito + ", " + colore + ");";
-                    aggiornaTabella(testoInsert + valoriInsert, 'Magazzino');
+                    aggiornaTabella(testoInsert + valoriInsert, 'Magazzino', null);
                 }
             }
 
@@ -843,12 +847,12 @@ function RecuperoDatiPerTabellaMagazzinoResi() {
 
                 if (i < risultati.length - 1) {
                     if (i == 0) {
-                        aggiornaTabella("Delete from magazzinoresi", "MagazzinoResi");
+                        aggiornaTabella("Delete from magazzinoresi", "MagazzinoResi", null);
                     }
                     if ((i > 0) && (i % 499) == 0) {
                         valoriInsert = valoriInsert + "(" + risultati[i].id + ", " + risultati[i].idProdotto + ", " + numeroLotto + ", " + codiceLotto + ", " + risultati[i].quantita + ", " + risultati[i].prezzoTotale + ", " + dataInserimento + ", " + dataScadenza + ", " + dataModifica + ", " + modificato + ", " + risultati[i].idDistributore + ", " + risultati[i].idOperatore + ", " + risultati[i].idCliente + ");";
                         //valoriInsert = valoriInsert + " INSERT INTO situazionedistributori(IdSituazioneDistributore, IdDistributore, IdProdotto, NumeroLotto, CodiceLotto, Quantita, PrezzoTotale, DataInserimento, DataModifica, DataScadenza, Modificato, IdOperatore, NumeroDDT, DataDDT, colore) VALUES ";
-                        aggiornaTabella(testoInsert + valoriInsert, 'MagazzinoResi');
+                        aggiornaTabella(testoInsert + valoriInsert, 'MagazzinoResi', null);
                         valoriInsert = "";
                         //console.log(testoInsert + valoriInsert + '<br><br>');
                         //return;
@@ -857,7 +861,7 @@ function RecuperoDatiPerTabellaMagazzinoResi() {
                     }
                 } else {
                     valoriInsert = valoriInsert + "(" + risultati[i].id + ", " + risultati[i].idProdotto + ", " + numeroLotto + ", " + codiceLotto + ", " + risultati[i].quantita + ", " + risultati[i].prezzoTotale + ", " + dataInserimento + ", " + dataScadenza + ", " + dataModifica + ", " + modificato + ", " + risultati[i].idDistributore + ", " + risultati[i].idOperatore + ", " + risultati[i].idCliente + ");";
-                    aggiornaTabella(testoInsert + valoriInsert, 'MagazzinoResi');
+                    aggiornaTabella(testoInsert + valoriInsert, 'MagazzinoResi', null);
                 }
             }
 
