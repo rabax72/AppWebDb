@@ -4,7 +4,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.phonegap.appdondisqlitedb"
-        version   = "0.9.56">
+        version   = "0.9.6">
 
   <name>App Sqlite</name>
 
