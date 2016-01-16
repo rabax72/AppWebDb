@@ -1095,8 +1095,8 @@ function GetProdottiInDistributorePerRimasti(idDistributore, idProdotto, quantit
                 var lotti = '<br>Lotti: ';
                 numLotti = dataItaliana(row.NumeroLotto);
                 //var numeroLotto = stringToDate(numLotti, 'dd-MM-yyyy', '-');
-                var numeroLotto = dataItaliana(row.NumeroLotto);
-                dataScadenza = dataItaliana(row.DataScadenza);
+                var numeroLotto = row.NumeroLotto;
+                dataScadenza = row.DataScadenza;
                 //dataScadenza = stringToDate(dataScadenza, 'dd-MM-yyyy', '-');
                 codiceLotto = row.CodiceLotto;
                 var IdSituazioneDistributore = row.IdSituazioneDistributore;
@@ -1109,7 +1109,7 @@ function GetProdottiInDistributorePerRimasti(idDistributore, idProdotto, quantit
                 //}
 
                 var idCliente = 0;
-                var VenditaDiretta = false;
+                var VenditaDiretta = 0;
                 if (quantitaVenduti <= quantitaDistributore) {
                                        
                     StoricizzoStatoProdottoInDistributore(idDistributore, idProdotto, quantitaVenduti, quantitaDistributore, quantitaRimasti, prezzoTotaleRimasti, idOperatore, numeroLotto, dataScadenza, codiceLotto, IdSituazioneDistributore);
@@ -1181,7 +1181,7 @@ function GetProdottiInDistributorePerResi(idDistributore, idProdotto, quantitaRe
                 //}
 
                 var idCliente = 0;
-                var VenditaDiretta = false;
+                var VenditaDiretta = 0;
                 if (quantitaResi <= quantitaDistributore) {
 
                     StoricizzoStatoProdottoInDistributore(idDistributore, idProdotto, quantitaResi, quantitaDistributore, quantitaRimasti, prezzoTotaleRimasti, idOperatore, numeroLotto, dataScadenza, codiceLotto, IdSituazioneDistributore);
@@ -1250,7 +1250,7 @@ function GetProdottiInMagazzinoPerCaricare(idDistributore, idProdotto, quantitaD
 
                     quantitaMagazzino = row.Quantita;
                     var idCliente = 0;
-                    var VenditaDiretta = false;
+                    var VenditaDiretta = 0;
                     if (quantitaDaCaricare <= quantitaMagazzino) {
 
                         SmaltiscoProdottoInMagazzinoV3(row.Id, idProdotto, idOperatore, quantitaDaCaricare, parseInt(quantitaMagazzino), row.Prezzo, quantitaAggiornataMagazzino, codiceLotto, numeroLotto, dataScadenza, true, 'rosso');
@@ -1317,7 +1317,7 @@ function GetProdottiInMagazzinoPerScaricare(idDistributore, idProdotto, quantita
                         quantitaDistributore = row.Quantita;
                         var IdSituazioneDistributore = row.IdSituazioneDistributore;
                         var idCliente = 0;
-                        var VenditaDiretta = false;
+                        var VenditaDiretta = 0;
                         if (quantitaDaCaricare <= quantitaDistributore) {
 
                             StoricizzoStatoProdottoInDistributore(idDistributore, idProdotto, quantitaDaCaricare, quantitaDistributore, quantitaAggiornataDistributore, prezzoTotaleRimasti, idOperatore, numeroLotto, dataScadenza, codiceLotto, IdSituazioneDistributore);
@@ -1494,14 +1494,10 @@ function StoricizzoStatoProdottoInDistributore(idDistributore, idProdotto, quant
             if (quantitaVenduti < quantitaDistributore) {
                 var quantitaDaCaricare = (quantitaDistributore - quantitaVenduti);
                 var prezzoParziale = (quantitaDaCaricare * prezzo);
-                if (numeroLotto != "") {
-                    numeroLotto = dataItaliana(numeroLotto);
-                } else {
+                if (numeroLotto == "") {                   
                     numeroLotto = null
                 }
-                if (dataScadenza != "") {
-                    dataScadenza = dataItaliana(dataScadenza);
-                } else {
+                if (dataScadenza == "") {                    
                     dataScadenza = null;
                 }
                 t.executeSql("Insert into situazionedistributori (IdDistributore, IdProdotto, Quantita, PrezzoTotale, IdOperatore, NumeroLotto, colore, dataScadenza, codiceLotto) Values (?, ?, ?, ?, ?, ?, ?, ?, ?)", [idDistributore, idProdotto, quantitaDaCaricare, prezzoParziale, idOperatore, numeroLotto, 'azzurro', dataScadenza, codiceLotto], function (transaction, results) {

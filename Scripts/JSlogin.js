@@ -213,6 +213,7 @@ function stringPerDataA(_date, _format, _delimiter) {
 function dataItaliana(_date) {
     var formatedDate = '';
     if (_date != null) {
+        _date = _date.substring(0, 10);
         var dateItems = _date.split('-');
         formatedDate = dateItems[2] + '-' + dateItems[1] + '-' + dateItems[0];
     }

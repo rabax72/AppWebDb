@@ -4,6 +4,8 @@
 
 function GestioneMagazzino() {
     location.hash = "gestioneMagazzino";
+    $('#elencoGestioneMagazzino').html('Sto caricando i dati...');
+
     if (mydb) {
         //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
         mydb.transaction(function (t) {

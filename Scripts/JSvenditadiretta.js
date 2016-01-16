@@ -24,7 +24,6 @@ function ElencoProdottiInMagazzinoPerVenditaDiretta() {
 
             //console.log(risultati);
 
-
             var dettaglio = '<table id="tabellaProdottiInMagazzinoPerVenditaDiretta" class="display" cellspacing="0" width="100%">' +
                                     '<thead>' +
                                         '<tr>' +

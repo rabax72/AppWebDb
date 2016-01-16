@@ -192,6 +192,8 @@ function GetSituazioneCliente(IdCliente, descCliente) {
     $(".caricaDaCamion").attr("data-descCliente", descCliente);
     $(".h1DettCliente").html(descCliente);
 
+    $('.DettaglioCliente').html('Sto caricando i dati...');
+
     if (mydb) {
         //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
         mydb.transaction(function (t) {
@@ -988,7 +990,7 @@ function SalvaRimastiCliente(IdCliente, idProdotto, quantitaVenduti, quantitaRim
     //}
        
     //Inserisco la quantita di Prodotti Venduti
-    var VenditaDiretta = false;
+    var VenditaDiretta = 0;
     var idDistributore = 0;
 
     if (parseInt(quantitaVenduti) > 0) {
@@ -1089,14 +1091,10 @@ function StoricizzoStatoProdottoInCliente(idCliente, idProdotto, quantitaVenduti
             if (quantitaVenduti < quantitaCliente) {
                 var quantitaDaCaricare = (quantitaCliente - quantitaVenduti);
                 var prezzoParziale = (quantitaDaCaricare * prezzo);
-                if (numeroLotto != "") {
-                    numeroLotto = dataItaliana(numeroLotto);
-                } else {
+                if (numeroLotto == "") {                 
                     numeroLotto = null
                 }
-                if (dataScadenza != "") {
-                    dataScadenza = dataItaliana(dataScadenza);
-                } else {
+                if (dataScadenza == "") {                   
                     dataScadenza = null;
                 }
                 t.executeSql("Insert into situazioneclienti (IdCliente, IdProdotto, Quantita, PrezzoTotale, IdOperatore, NumeroLotto, colore, dataScadenza, codiceLotto) Values (?, ?, ?, ?, ?, ?, ?, ?, ?)", [idCliente, idProdotto, quantitaDaCaricare, prezzoParziale, idOperatore, numeroLotto, 'azzurro', dataScadenza, codiceLotto], function (transaction, results) {
@@ -1382,7 +1380,7 @@ function GetProdottiInMagazzinoPerCaricareCliente(idCliente, idProdotto, quantit
 
                                 quantitaMagazzino = row.Quantita;
                                 //var idCliente = 0;
-                                var VenditaDiretta = false;
+                                var VenditaDiretta = 0;
                                 if (quantitaDaCaricare <= quantitaMagazzino) {
 
                                     SmaltiscoProdottoInMagazzinoV3(row.Id, idProdotto, idOperatore, quantitaDaCaricare, parseInt(quantitaMagazzino), row.Prezzo, quantitaAggiornataMagazzino, codiceLotto, numeroLotto, dataScadenza, true, 'rosso');
@@ -1449,7 +1447,7 @@ function GetProdottiInMagazzinoPerScaricareCliente(idCliente, idProdotto, quanti
                                     quantitaCliente = row.Quantita;
                                     var IdSituazioneCliente = row.IdSituazioneCliente;
                                     
-                                    var VenditaDiretta = false;
+                                    var VenditaDiretta = 0;
                                     if (quantitaDaCaricare <= quantitaCliente) {
 
                                         StoricizzoStatoProdottoInCliente(idCliente, idProdotto, quantitaDaCaricare, quantitaCliente, quantitaAggiornataCliente, prezzoTotaleRimasti, idOperatore, numeroLotto, dataScadenza, codiceLotto, IdSituazioneCliente);
@@ -1505,8 +1503,8 @@ function GetProdottiInClientePerRimasti(idCliente, idProdotto, quantitaVenduti, 
                     var lotti = '<br>Lotti: ';
                     numLotti = dataItaliana(row.NumeroLotto);
                     //var numeroLotto = stringToDate(numLotti, 'dd-MM-yyyy', '-');
-                    var numeroLotto = dataItaliana(row.NumeroLotto);
-                    dataScadenza = dataItaliana(row.DataScadenza);
+                    var numeroLotto = row.NumeroLotto;
+                    dataScadenza = row.DataScadenza;
                     //dataScadenza = stringToDate(dataScadenza, 'dd-MM-yyyy', '-');
                     codiceLotto = row.CodiceLotto;
                     var IdSituazioneCliente = row.IdSituazioneCliente;
@@ -1519,7 +1517,7 @@ function GetProdottiInClientePerRimasti(idCliente, idProdotto, quantitaVenduti, 
                     //}
 
                     var idDistributore = 0;
-                    var VenditaDiretta = false;
+                    var VenditaDiretta = 0;
                     if (quantitaVenduti <= quantitaCliente) {
 
                         StoricizzoStatoProdottoInCliente(idCliente, idProdotto, quantitaVenduti, quantitaCliente, quantitaRimasti, prezzoTotaleRimasti, idOperatore, numeroLotto, dataScadenza, codiceLotto, IdSituazioneCliente);
@@ -1589,7 +1587,7 @@ function GetProdottiInClientePerResi(idCliente, idProdotto, quantitaResi, quanti
                     quantitaCliente = row.Quantita;
                     //}
                     
-                    var VenditaDiretta = false;
+                    var VenditaDiretta = 0;
                     if (quantitaResi <= quantitaCliente) {
 
                         StoricizzoStatoProdottoInCliente(idCliente, idProdotto, quantitaResi, quantitaCliente, quantitaRimasti, prezzoTotaleRimasti, idOperatore, numeroLotto, dataScadenza, codiceLotto, IdSituazioneCliente);
