@@ -1173,6 +1173,7 @@ function CorrezioneMagazzinoByIdProd(idMagazzino, idProdotto) {
 }
 
 function AggiornaQuantitaProdottiVendutiServer(idVendita, idProdotto, idDistributore, idCliente, quantitaVenduti, prezzoTotaleVenduti, idOperatore, VenditaDiretta, numeroDDT, DataDDT, numeroLotto, dataScadenza, codiceLotto) {
+    //console.log('idVendita=' + idVendita + '-' + 'idProdotto=' + idProdotto + '-' + 'idDistributore=' + idDistributore + '-' + 'idCliente=' + idCliente + '-' + 'quantitaVenduti=' + quantitaVenduti + '-' + 'prezzoTotaleVenduti=' + prezzoTotaleVenduti + '-' + 'idOperatore=' + idOperatore + '-' + 'VenditaDiretta=' + VenditaDiretta + '-' + 'numeroDDT=' + numeroDDT + '-' + 'DataDDT=' + DataDDT + '-' + 'numeroLotto=' + numeroLotto + '-' + 'dataScadenza=' + dataScadenza + '-' + 'codiceLotto=' + codiceLotto);
     $.ajax({
         type: "POST",
         crossDomain: true,

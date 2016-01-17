@@ -866,6 +866,8 @@ function RecuperoDatiPerTabellaMagazzinoResi() {
 }
 
 function SincronizzaVendutoDaTablet() {
+    if (!confirm("Sicuro che vuoi procedere all aggiornamento dei dati sul server???")) return;
+
     location.hash = "SyncronizzazioneTabletToVenduto";
     $('.contentSyncronizzazioneTabletToVenduto').html('');
 
@@ -1530,6 +1532,11 @@ function CheckNewItemInVenduto(lastId) {
                         IdCliente = row.IdCliente;
                     }
                     var venditaDiretta = row.VenditaDiretta;
+                    if (venditaDiretta == 0) {
+                        venditaDiretta = false;
+                    } else {
+                        venditaDiretta = true;
+                    }
                     var numeroLotto = row.NumeroLotto;
                     var codiceLotto = "";
                     if (row.CodiceLotto != "") {
