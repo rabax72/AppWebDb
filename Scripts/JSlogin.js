@@ -210,6 +210,25 @@ function stringPerDataA(_date, _format, _delimiter) {
     return formatedDate;
 }
 
+function stringPerDataEsatta(_date, _format, _delimiter) {
+    var formatedDate = '';
+    if (_date != '') {
+        var formatLowerCase = _format.toLowerCase();
+        var formatItems = formatLowerCase.split(_delimiter);
+        var dateItems = _date.split(_delimiter);
+        var monthIndex = formatItems.indexOf("mm");
+        var dayIndex = formatItems.indexOf("dd");
+        var yearIndex = formatItems.indexOf("yyyy");
+        var month = parseInt(dateItems[monthIndex]);
+        month -= 1;
+        formatedDate = new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
+        formatedDate.setDate(formatedDate.getDate());
+        formatedDate = formatedDate.getDate() + '-' + (1 + formatedDate.getMonth()) + '-' + formatedDate.getFullYear();
+
+    }
+    return formatedDate;
+}
+
 function dataItaliana(_date) {
     var formatedDate = '';
     if (_date != null) {

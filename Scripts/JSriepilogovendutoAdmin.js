@@ -10,7 +10,7 @@ function RiepilogoVendutoAdmin() {
     location.hash = "RiepilogoVendutoAdmin";
 }
 
-function VenditaDirettaAdmin(DataDa, DataA) {
+function VenditaDirettaAdmin(DataDa, DataA, numeroLotto, codiceLotto) {
     
     $.ajax({
         type: "POST",
@@ -19,7 +19,7 @@ function VenditaDirettaAdmin(DataDa, DataA) {
         url: urlGetVendutoDirettamente,
         cache: false,
         async: true,
-        data: JSON.stringify({ DataDa: DataDa, DataA: DataA }),
+        data: JSON.stringify({ DataDa: DataDa, DataA: DataA, numeroLotto: numeroLotto, codiceLotto: codiceLotto }),
         error: function (data) {
             console.log(data.responseText)
         },
@@ -31,6 +31,9 @@ function VenditaDirettaAdmin(DataDa, DataA) {
             //console.log(risultati);
 
             var dettaglio = '<div>' +
+                                'NumeroLotto <input type="text" id="ProdottiVendutiDirettamenteNumeroLottoAdmin"  class="calendario" data-theme="a" /> CodiceLotto <input type="text" id="ProdottiVendutiDirettamenteCodiceLottoAdmin" data-theme="a" />' +
+                            '</div>' +
+                            '<div>' +
                                 'Data Da <input type="text" id="ProdottiVendutiDirettamenteDataDaAdmin" class="calendario" data-theme="a" /> Data A <input type="text" id="ProdottiVendutiDirettamenteDataAAdmin" class="calendario" data-theme="a" /> <button id="filtraProdottiVendutiDirettamenteAdmin" value="Filtra" class="filtraProdottiVendutiDirettamenteAdmin">Filtra</button>' +
                             '</div><table id="tabellaProdottiVendutiDirettamenteAdmin" class="display" cellspacing="0" width="100%">' +
                                     '<thead>' +
@@ -39,8 +42,8 @@ function VenditaDirettaAdmin(DataDa, DataA) {
                                             '<th>Desc.</th>' +
                                             '<th>Quantità</th>' +
                                             '<th>Prezzo Tot.</th>' +
-                                            //'<th>N° DDT</th>' +
-                                            //'<th>Data DDT</th>' +
+                                            '<th>Cod. Lotto</th>' +
+                                            '<th>Num. Lotto</th>' +
                                             '<th>Data Ril.</th>' +
                                             '<th>Operatore</th>' +                                            
                                         '</tr>' +
@@ -56,13 +59,21 @@ function VenditaDirettaAdmin(DataDa, DataA) {
                 else {
                     dataDdt = '';
                 }
+                var numLotto = '';
+                if (parseJsonDateLettura(risultati[i].numeroLotto) != '') {
+                    numLotto = parseJsonDateLettura(risultati[i].numeroLotto);
+                }
+                var codLotto = '';
+                if (risultati[i].codiceLotto != null) {
+                    codLotto = risultati[i].codiceLotto;
+                }
                 dettaglio = dettaglio + '<tr>';
                 dettaglio = dettaglio + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></td>';
                 dettaglio = dettaglio + '<td>' + risultati[i].descrizione + '</td>';
                 dettaglio = dettaglio + '<td class="quantita">' + risultati[i].quantitaVenduto + '</td>';
                 dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].prezzoTotale + ' €</td>';
-                //dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].numeroDDT + '</td>';
-                //dettaglio = dettaglio + '<td class="medioGrande">' + dataDdt + '</td>';
+                dettaglio = dettaglio + '<td class="storicoVenduto">' + codLotto + '</td>';
+                dettaglio = dettaglio + '<td class="storicoVenduto">' + numLotto + '</td>';
                 dettaglio = dettaglio + '<td class="storicoVenduto">' + parseJsonDateSenzaTime(risultati[i].dataUltimaModifica) + '</td>';
                 dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].operatoreNome + ' ' + risultati[i].operatoreCognome + '</td>';
                 dettaglio = dettaglio + '</tr>';
@@ -75,8 +86,8 @@ function VenditaDirettaAdmin(DataDa, DataA) {
                                             '<th>Desc.</th>' +
                                             '<th>Totale Quantità: ' + totaleQuantita + '</th>' +
                                             '<th>Totale Venduto: ' + Number(prezzoTot).toFixed(2) + ' €</th>' +
-                                            //'<th>N° DDT</th>' +
-                                            //'<th>Data DDT</th>' +     
+                                            '<th>Cod. Lotto</th>' +
+                                            '<th>Num. Lotto</th>' +
                                             '<th>Data Ril.</th>' +
                                             '<th>Operatore</th>' +
                                         '</tr>' +
@@ -99,22 +110,21 @@ function VenditaDirettaAdmin(DataDa, DataA) {
             );
 
             $('.filtraProdottiVendutiDirettamenteAdmin').click(function () {
-                //var DataDa = stringToDate($('#ProdottiVendutiDirettamenteDataDaAdmin').val(), "dd-MM-yyyy", "-");
-                //var DataA = stringToDate($('#ProdottiVendutiDirettamenteDataAAdmin').val(), "dd-MM-yyyy", "-");
+                var codiceLotto = $('#ProdottiVendutiDirettamenteCodiceLottoAdmin').val();
+                var numeroLotto = stringPerDataEsatta($('#ProdottiVendutiDirettamenteNumeroLottoAdmin').val(), "dd-MM-yyyy", "-");
+
                 var DataDa = $('#ProdottiVendutiDirettamenteDataDaAdmin').val();
-                var DataA = stringPerDataA($('#ProdottiVendutiDirettamenteDataAAdmin').val(), "dd-MM-yyyy", "-");
+                var DataA = stringPerDataEsatta($('#ProdottiVendutiDirettamenteDataAAdmin').val(), "dd-MM-yyyy", "-");
                 //alert("filtraVendutiByIdProdotto" + DataDa + " " + DataA);
-                VenditaDirettaAdmin(DataDa, DataA);
+                VenditaDirettaAdmin(DataDa, DataA, numeroLotto, codiceLotto);
             });
-            
-            
+                        
         }
     });
     
 }
 
-function VendutoPerProdottoAdmin() {
-    // location.hash = "VenditaDirettaAdmin";
+function VendutoPerProdottoAdmin() {    
 
     $.ajax({
         type: "POST",
@@ -162,11 +172,11 @@ function VendutoPerProdottoAdmin() {
                 //var numLotto = parseJsonDateLettura(risultati[i].numeroLotto);
                 //numLotto = '\'' + numLotto + '\'';
                 dettaglio = dettaglio + '<tr>';
-                dettaglio = dettaglio + '<td><a href="javascript:GetVendutoByIdProdottoAdmin(' + risultati[i].idProdotto + ', null, ' + desc + ', null, null);"><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></a></td>';
+                dettaglio = dettaglio + '<td><a href="javascript:GetVendutoByIdProdottoAdmin(' + risultati[i].idProdotto + ', null, ' + desc + ', null, null, null);"><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></a></td>';
                 dettaglio = dettaglio + '<td>' + risultati[i].descrizione + '</td>';
                 dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].prezzo + ' €</td>';
                 dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].aliquota + '</td>';
-                dettaglio = dettaglio + '<td class="medioGrande"><a href="javascript:GetVendutoByIdProdottoAdmin(' + risultati[i].idProdotto + ', null, ' + desc + ', null, null);">Dettaglio</a></td>';
+                dettaglio = dettaglio + '<td class="medioGrande"><a href="javascript:GetVendutoByIdProdottoAdmin(' + risultati[i].idProdotto + ', null, ' + desc + ', null, null, null);">Dettaglio</a></td>';
                 dettaglio = dettaglio + '</tr>';
 
             }
@@ -189,8 +199,7 @@ function VendutoPerProdottoAdmin() {
 
 }
 
-function VendutoPerProdottoLottoAdmin() {
-    // location.hash = "VenditaDirettaAdmin";
+function VendutoPerProdottoLottoAdmin() {   
 
     $.ajax({
         type: "POST",
@@ -238,7 +247,7 @@ function VendutoPerProdottoLottoAdmin() {
                 var numLotto = parseJsonDateLettura(risultati[i].numeroLotto);
                 numLotto = '\'' + numLotto + '\'';
                 dettaglio = dettaglio + '<tr>';
-                dettaglio = dettaglio + '<td><a href="javascript:GetVendutoByIdProdottoAdmin(' + risultati[i].idProdotto + ', ' + numLotto + ', ' + desc + ', null, null);"><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></a></td>';
+                dettaglio = dettaglio + '<td><a href="javascript:GetVendutoByIdProdottoAdmin(' + risultati[i].idProdotto + ', ' + numLotto + ', ' + desc + ', null, null, null);"><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></a></td>';
                 dettaglio = dettaglio + '<td>' + risultati[i].descrizione + '</td>';
                 dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].prezzo + ' €</td>';
                 dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].aliquota + '</td>';
@@ -265,12 +274,11 @@ function VendutoPerProdottoLottoAdmin() {
 
 }
 
-function GetVendutoByIdProdottoAdmin(idProdotto, numeroLotto, descrizione, DataDa, DataA) {
-    // location.hash = "VenditaDirettaAdmin";
+function GetVendutoByIdProdottoAdmin(idProdotto, numeroLotto, descrizione, DataDa, DataA, codiceLotto) {    
     
-    if (numeroLotto != null) {
-        numeroLotto = stringToDate(numeroLotto, "dd/MM/yyyy", "/");
-    }
+    //if (numeroLotto != null) {
+    //    numeroLotto = stringToDate(numeroLotto, "dd/MM/yyyy", "/");
+    //}
     
     $.ajax({
         type: "POST",
@@ -279,7 +287,7 @@ function GetVendutoByIdProdottoAdmin(idProdotto, numeroLotto, descrizione, DataD
         url: urlGetVendutoByIdProdotto,
         cache: false,
         async: true,
-        data: JSON.stringify({ idProdotto: idProdotto, numeroLotto:numeroLotto, DataDa: DataDa, DataA: DataA }),
+        data: JSON.stringify({ idProdotto: idProdotto, numeroLotto: numeroLotto, DataDa: DataDa, DataA: DataA, codiceLotto: codiceLotto }),
         error: function (data) {
             console.log(data.responseText);
             $('.DettRiepilogoVendutoAdmin').html(data.responseText);
@@ -291,7 +299,11 @@ function GetVendutoByIdProdottoAdmin(idProdotto, numeroLotto, descrizione, DataD
 
             //console.log(risultati);
 
-            var dettaglio = '<h1>Filtro per: ' + descrizione + '</h1>' + '<div>' +
+            var dettaglio = '<h1>Filtro per: ' + descrizione + '</h1>' +
+                            '<div>' +
+                                'NumeroLotto <input type="text" id="VendutiByIdProdottoNumeroLottoAdmin"  class="calendario" data-theme="a" /> CodiceLotto <input type="text" id="VendutiByIdProdottoCodiceLottoAdmin" data-theme="a" />' +
+                            '</div>' +
+                            '<div>' +
                                 'Data Da <input type="text" id="VendutiByIdProdottoDataDaAdmin"  class="calendario" data-theme="a" /> Data A <input type="text" id="VendutiByIdProdottoDataAAdmin"  class="calendario" data-theme="a" /> <button id="filtraVendutiByIdProdottoAdmin" value="Filtra" class="filtraVendutiByIdProdottoAdmin">Filtra</button>' +
                             '</div><table id="tabellaVendutiByIdProdottoAdmin" class="display" cellspacing="0" width="100%">' +
                                     '<thead>' +
@@ -300,8 +312,8 @@ function GetVendutoByIdProdottoAdmin(idProdotto, numeroLotto, descrizione, DataD
                                             '<th>Desc.</th>' +
                                             '<th>Quantità</th>' +
                                             '<th>Prezzo Tot.</th>' +
-                                            //'<th>N° DDT</th>' +
-                                            //'<th>Data DDT</th>' +
+                                            '<th>Cod. Lotto</th>' +
+                                            '<th>Num. Lotto</th>' +
                                             '<th>Distributore</th>' +
                                             //'<th>Cliente</th>' +
                                             '<th>Data Ril.</th>' +
@@ -311,14 +323,21 @@ function GetVendutoByIdProdottoAdmin(idProdotto, numeroLotto, descrizione, DataD
             var prezzoTot = 0;
             var totaleQuantita = 0;
             for (var i = 0; i < risultati.length; i++) {
-
+                var numLotto = '';
+                if (parseJsonDateLettura(risultati[i].numeroLotto) != '') {
+                    numLotto = parseJsonDateLettura(risultati[i].numeroLotto);
+                }
+                var codLotto = '';
+                if (risultati[i].codiceLotto != null) {
+                    codLotto = risultati[i].codiceLotto;
+                }
                 dettaglio = dettaglio + '<tr>';
                 dettaglio = dettaglio + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></td>';
                 dettaglio = dettaglio + '<td>' + risultati[i].descrizione + '</td>';
                 dettaglio = dettaglio + '<td class="quantita">' + risultati[i].quantitaVenduto + '</td>';
                 dettaglio = dettaglio + '<td class="quantita">' + risultati[i].prezzoTotale + ' €</td>';
-                //dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].numeroDDT + '</td>';
-                //dettaglio = dettaglio + '<td class="storicoVenduto">' + parseJsonDateLettura(risultati[i].dataDDT) + '</td>';
+                dettaglio = dettaglio + '<td class="storicoVenduto">' + codLotto + '</td>';
+                dettaglio = dettaglio + '<td class="storicoVenduto">' + numLotto + '</td>';
                 dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].descrizioneDistributore + '</td>';
                 //dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].descrizioneCliente + '</td>';
                 //dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].operatoreNome + ' ' + risultati[i].operatoreCognome + '</td>';
@@ -333,8 +352,8 @@ function GetVendutoByIdProdottoAdmin(idProdotto, numeroLotto, descrizione, DataD
                                             '<th>Desc.</th>' +
                                             '<th>Totale:<br>' + totaleQuantita + '</th>' +
                                             '<th>Totale:<br>' + Number(prezzoTot).toFixed(2) + '€</th>' +
-                                            //'<th>N° DDT</th>' +
-                                            //'<th>Data DDT</th>' +
+                                            '<th>Cod. Lotto</th>' +
+                                            '<th>Num. Lotto</th>' +
                                             '<th>Distributore</th>' +
                                             '<th>Data Ril.</th>' +
                                         '</tr>' +
@@ -357,12 +376,13 @@ function GetVendutoByIdProdottoAdmin(idProdotto, numeroLotto, descrizione, DataD
             );
             
             $('.filtraVendutiByIdProdottoAdmin').click(function () {
-                //var DataDa = stringToDate($('#VendutiByIdProdottoDataDaAdmin').val(), "dd-MM-yyyy", "-");
-                //var DataA = stringToDate($('#VendutiByIdProdottoDataAAdmin').val(), "dd-MM-yyyy", "-");
+                var codiceLotto = $('#VendutiByIdProdottoCodiceLottoAdmin').val();
+                var numeroLotto = stringPerDataEsatta($('#VendutiByIdProdottoNumeroLottoAdmin').val(), "dd-MM-yyyy", "-");
+
                 var DataDa = $('#VendutiByIdProdottoDataDaAdmin').val();
-                var DataA = stringPerDataA($('#VendutiByIdProdottoDataAAdmin').val(), "dd-MM-yyyy", "-");
+                var DataA = stringPerDataEsatta($('#VendutiByIdProdottoDataAAdmin').val(), "dd-MM-yyyy", "-");
                 //alert("filtraVendutiByIdProdotto" + DataDa + " " + DataA);
-                GetVendutoByIdProdottoAdmin(idProdotto, numeroLotto, descrizione, DataDa, DataA);
+                GetVendutoByIdProdottoAdmin(idProdotto, numeroLotto, descrizione, DataDa, DataA, codiceLotto);
             });
 
         }
@@ -370,8 +390,7 @@ function GetVendutoByIdProdottoAdmin(idProdotto, numeroLotto, descrizione, DataD
 
 }
 
-function VendutoPerTuttiDistributoriAdmin(DataDa, DataA) {
-    // location.hash = "VenditaDirettaAdmin";
+function VendutoPerTuttiDistributoriAdmin(DataDa, DataA, numeroLotto, codiceLotto) {   
 
     $.ajax({
         type: "POST",
@@ -380,7 +399,7 @@ function VendutoPerTuttiDistributoriAdmin(DataDa, DataA) {
         url: urlGetVendutoPerTuttiDistributori,
         cache: false,
         async: true,
-        data: JSON.stringify({ DataDa: DataDa, DataA: DataA }),
+        data: JSON.stringify({ DataDa: DataDa, DataA: DataA, numeroLotto: numeroLotto, codiceLotto: codiceLotto }),
         error: function (data) {
             console.log(data.responseText)
         },
@@ -391,6 +410,9 @@ function VendutoPerTuttiDistributoriAdmin(DataDa, DataA) {
 
             var dettaglio = '<h1>Riepilogo Venduto per Tutti i Distributori</h1>' +
                             '<div>' +
+                                'NumeroLotto <input type="text" id="VendutoPerTuttiDitributoriAdminNumeroLotto"  class="calendario" data-theme="a" /> CodiceLotto <input type="text" id="VendutoPerTuttiDitributoriAdminCodiceLotto" data-theme="a" />' +
+                            '</div>' +
+                            '<div>' +
                                 'Data Da <input type="text" id="VendutoPerTuttiDitributoriDataDaAdmin"  class="calendario" data-theme="a" /> Data A <input type="text" id="VendutoPerTuttiDitributoriDataAAdmin"  class="calendario" data-theme="a" /> <button id="filtraVendutoDitributoreAdmin" value="Filtra" class="filtraVendutoPerTuttiDitributoriAdmin">Filtra</button>' +
                             '</div><table id="tabellaVendutoPerTuttiDitributoriAdmin" class="display" cellspacing="0" width="100%">' +
                                     '<thead>' +
@@ -400,16 +422,20 @@ function VendutoPerTuttiDistributoriAdmin(DataDa, DataA) {
                                             '<th>Quantità</th>' +
                                             '<th>Prezzo Tot.</th>' +
                                             '<th>Data Ril.</th>' +
-                                            //'<th>N° DDT</th>' +
-                                            //'<th>Data DDT</th>' +
+                                            '<th>Cod. Lotto</th>' +
+                                            '<th>Num. Lotto</th>' +
                                             '<th>Distributore</th>' +
-                                            '<th>Operatore</th>' +
+                                            //'<th>Operatore</th>' +
                                         '</tr>' +
                                     '</thead>' +
                                     '<tbody>';
             var prezzoTot = 0;
             var totaleQuantita = 0;
             for (var i = 0; i < risultati.length; i++) {
+                var numLotto = '';
+                if (parseJsonDateLettura(risultati[i].numeroLotto) != '') {
+                    numLotto = parseJsonDateLettura(risultati[i].numeroLotto);
+                }
 
                 dettaglio = dettaglio + '<tr>';
                 dettaglio = dettaglio + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></td>';
@@ -417,10 +443,10 @@ function VendutoPerTuttiDistributoriAdmin(DataDa, DataA) {
                 dettaglio = dettaglio + '<td class="quantita">' + risultati[i].quantitaVenduto + '</td>';
                 dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].prezzoTotale + ' €</td>';
                 dettaglio = dettaglio + '<td class="storicoVenduto">' + parseJsonDateSenzaTime(risultati[i].dataUltimaModifica) + '</td>';
-                //dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].numeroDDT + '</td>';
-                //dettaglio = dettaglio + '<td class="storicoVenduto">' + parseJsonDateLettura(risultati[i].dataDDT) + '</td>';
+                dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].codiceLotto + '</td>';
+                dettaglio = dettaglio + '<td class="storicoVenduto">' + numLotto + '</td>';
                 dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].descrizioneDistributore + '</td>';
-                dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].operatoreNome + ' ' + risultati[i].operatoreCognome + '</td>';
+                //dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].operatoreNome + ' ' + risultati[i].operatoreCognome + '</td>';
                 dettaglio = dettaglio + '</tr>';
                 prezzoTot = prezzoTot + risultati[i].prezzoTotale;
                 totaleQuantita = totaleQuantita + risultati[i].quantitaVenduto;
@@ -434,9 +460,10 @@ function VendutoPerTuttiDistributoriAdmin(DataDa, DataA) {
                                             '<th>Totale Quantità: ' + totaleQuantita + '</th>' +
                                             '<th>Totale Venduto: ' + Number(prezzoTot).toFixed(2) + '€</th>' +
                                             '<th>Venduto Mark: </th>' +
-                                            //'<th>Data DDT</th>' +
+                                            '<th>Cod. Lotto</th>' +
+                                            '<th>Num. Lotto</th>' +
                                             '<th>Distributore</th>' +
-                                            '<th>Operatore</th>' +
+                                            //'<th>Operatore</th>' +
                                         '</tr>' +
                                     '</tfoot>' + ' </table>';
 
@@ -459,12 +486,13 @@ function VendutoPerTuttiDistributoriAdmin(DataDa, DataA) {
             );
 
             $('.filtraVendutoPerTuttiDitributoriAdmin').click(function () {
-                //var DataDa = stringToDate($('#VendutoPerTuttiDitributoriDataDaAdmin').val(), "dd-MM-yyyy", "-");
-                //var DataA = stringToDate($('#VendutoPerTuttiDitributoriDataAAdmin').val(), "dd-MM-yyyy", "-");
+                var codiceLotto = $('#VendutoPerTuttiDitributoriAdminCodiceLotto').val();
+                var numeroLotto = stringPerDataEsatta($('#VendutoPerTuttiDitributoriAdminNumeroLotto').val(), "dd-MM-yyyy", "-");
+
                 var DataDa = $('#VendutoPerTuttiDitributoriDataDaAdmin').val();
-                var DataA = stringPerDataA($('#VendutoPerTuttiDitributoriDataAAdmin').val(), "dd-MM-yyyy", "-");
+                var DataA = stringPerDataEsatta($('#VendutoPerTuttiDitributoriDataAAdmin').val(), "dd-MM-yyyy", "-");
                 //alert("filtraVendutiByIdProdotto" + DataDa + " " + DataA);
-                VendutoPerTuttiDistributoriAdmin(DataDa, DataA);
+                VendutoPerTuttiDistributoriAdmin(DataDa, DataA, numeroLotto, codiceLotto);
             });
 
         }
@@ -472,8 +500,7 @@ function VendutoPerTuttiDistributoriAdmin(DataDa, DataA) {
 
 }
 
-function VendutoPerTuttiDistributoriStampaAdmin(DataDa, DataA) {
-    // location.hash = "VenditaDirettaAdmin";
+function VendutoPerTuttiDistributoriStampaAdmin(DataDa, DataA) {    
 
     $.ajax({
         type: "POST",
@@ -569,7 +596,7 @@ function VendutoPerTuttiDistributoriStampaAdmin(DataDa, DataA) {
                 //var DataDa = stringToDate($('#VendutoPerTuttiDitributoriStampaDataDaAdmin').val(), "dd-MM-yyyy", "-");
                 //var DataA = stringToDate($('#VendutoPerTuttiDitributoriStampaDataAAdmin').val(), "dd-MM-yyyy", "-");
                 var DataDa = $('#VendutoPerTuttiDitributoriStampaDataDaAdmin').val();
-                var DataA = stringPerDataA($('#VendutoPerTuttiDitributoriStampaDataAAdmin').val(), "dd-MM-yyyy", "-");
+                var DataA = stringPerDataEsatta($('#VendutoPerTuttiDitributoriStampaDataAAdmin').val(), "dd-MM-yyyy", "-");
                 //alert("filtraVendutiByIdProdotto" + DataDa + " " + DataA);
                 VendutoPerTuttiDistributoriStampaAdmin(DataDa, DataA);
             });
@@ -579,8 +606,7 @@ function VendutoPerTuttiDistributoriStampaAdmin(DataDa, DataA) {
 
 }
 
-function VendutoPerDistributoreAdmin() {
-    // location.hash = "VenditaDirettaAdmin";
+function VendutoPerDistributoreAdmin() {    
 
     $.ajax({
         type: "POST",
@@ -614,7 +640,7 @@ function VendutoPerDistributoreAdmin() {
                     dettaglio = dettaglio + '<li data-role="list-divider" class="ui-li-divider">' + Citta + '</li>';
                 }
 
-                dettaglio = dettaglio + '<li><a href="javascript:GetVendutoByIdDistributoreAdmin(' + risultati[i].idDistributore + ', ' + desc + ', null, null);" class="ui-btn ui-btn-icon-right ui-icon-carat-r vociVenduto" >' + risultati[i].descrizione + '<br><span class="miniText">' + indirizzo + '</span></a></li>';
+                dettaglio = dettaglio + '<li><a href="javascript:GetVendutoByIdDistributoreAdmin(' + risultati[i].idDistributore + ', ' + desc + ', null, null, null, null);" class="ui-btn ui-btn-icon-right ui-icon-carat-r vociVenduto" >' + risultati[i].descrizione + '<br><span class="miniText">' + indirizzo + '</span></a></li>';
                 CittaOld = risultati[i].Citta;
             }
             dettaglio = dettaglio + '</ul>';
@@ -632,7 +658,7 @@ function VendutoPerDistributoreAdmin() {
 
 }
 
-function GetVendutoByIdDistributoreAdmin(idDistributore, descrizione, DataDa, DataA) {    
+function GetVendutoByIdDistributoreAdmin(idDistributore, descrizione, DataDa, DataA, numeroLotto, codiceLotto) {    
 
     $.ajax({
         type: "POST",
@@ -641,7 +667,7 @@ function GetVendutoByIdDistributoreAdmin(idDistributore, descrizione, DataDa, Da
         url: urlGetVendutoByIdDistributore,
         cache: false,
         async: true,
-        data: JSON.stringify({ idDistributore: idDistributore, DataDa: DataDa, DataA: DataA }),
+        data: JSON.stringify({ idDistributore: idDistributore, DataDa: DataDa, DataA: DataA, numeroLotto: numeroLotto, codiceLotto: codiceLotto }),
         error: function (data) {
             console.log(data.responseText)
         },
@@ -654,6 +680,9 @@ function GetVendutoByIdDistributoreAdmin(idDistributore, descrizione, DataDa, Da
 
             var dettaglio = '<h1>Riepilogo Venduto per Distributore: ' + descrizione + '</h1>' +
                             '<div>' +
+                                'NumeroLotto <input type="text" id="VendutoDitributoreNumeroLottoAdmin"  class="calendario" data-theme="a" /> CodiceLotto <input type="text" id="VendutoDitributoreCodiceLottoAdmin" data-theme="a" />' +
+                            '</div>' +
+                            '<div>' +
                                 'Data Da <input type="text" id="VendutoDitributoreDataDaAdmin"  class="calendario" data-theme="a" /> Data A <input type="text" id="VendutoDitributoreDataAAdmin"  class="calendario" data-theme="a" /> <button id="filtraVendutoDitributoreAdmin" value="Filtra" class="filtraVendutoDitributoreAdmin">Filtra</button>' +
                             '</div><table id="tabellaVendutiByIdDistributoreAdmin" class="display" cellspacing="0" width="100%">' +
                                     '<thead>' +
@@ -663,8 +692,8 @@ function GetVendutoByIdDistributoreAdmin(idDistributore, descrizione, DataDa, Da
                                             '<th>Quantità</th>' +
                                             '<th>Prezzo Tot.</th>' +
                                             '<th>Data Ril.</th>' +
-                                            //'<th>N° DDT</th>' +
-                                            //'<th>Data DDT</th>' +
+                                            '<th>Cod. Lotto</th>' +
+                                            '<th>Num. Lotto</th>' +
                                             '<th>Distributore</th>' +                                            
                                             '<th>Operatore</th>' +
                                         '</tr>' +
@@ -673,15 +702,22 @@ function GetVendutoByIdDistributoreAdmin(idDistributore, descrizione, DataDa, Da
             var prezzoTot = 0;
             var totaleQuantita = 0;
             for (var i = 0; i < risultati.length; i++) {
-
+                var numLotto = '';
+                if (parseJsonDateLettura(risultati[i].numeroLotto) != '') {
+                    numLotto = parseJsonDateLettura(risultati[i].numeroLotto);
+                }
+                var codLotto = '';
+                if (risultati[i].codiceLotto != null) {
+                    codLotto = risultati[i].codiceLotto;
+                }
                 dettaglio = dettaglio + '<tr>';
                 dettaglio = dettaglio + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></td>';
                 dettaglio = dettaglio + '<td>' + risultati[i].descrizione + '</td>';
                 dettaglio = dettaglio + '<td class="quantita">' + risultati[i].quantitaVenduto + '</td>';
                 dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].prezzoTotale + ' €</td>';
                 dettaglio = dettaglio + '<td class="storicoVenduto">' + parseJsonDateSenzaTime(risultati[i].dataUltimaModifica) + '</td>';
-                //dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].numeroDDT + '</td>';
-                //dettaglio = dettaglio + '<td class="storicoVenduto">' + parseJsonDateLettura(risultati[i].dataDDT) + '</td>';
+                dettaglio = dettaglio + '<td class="storicoVenduto">' + codLotto + '</td>';
+                dettaglio = dettaglio + '<td class="storicoVenduto">' + numLotto + '</td>';
                 dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].descrizioneDistributore + '</td>';
                 dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].operatoreNome + ' ' + risultati[i].operatoreCognome + '</td>';
                 dettaglio = dettaglio + '</tr>';
@@ -705,8 +741,8 @@ function GetVendutoByIdDistributoreAdmin(idDistributore, descrizione, DataDa, Da
                                             '<th>Desc.</th>' +
                                             '<th>Totale Quantità: ' + totaleQuantita + '</th>' +
                                             '<th>Totale Venduto: ' + Number(prezzoTot).toFixed(2) + '€</th>' +
-                                            //'<th>N° DDT</th>' +
-                                            //'<th>Data DDT</th>' +
+                                            '<th>Cod. Lotto</th>' +
+                                            '<th>Num. Lotto</th>' +
                                             '<th>Distributore</th>' +
                                             '<th>Operatore</th>' +
                                         '</tr>' +
@@ -729,12 +765,13 @@ function GetVendutoByIdDistributoreAdmin(idDistributore, descrizione, DataDa, Da
             );
 
             $('.filtraVendutoDitributoreAdmin').click(function () {
-                //var DataDa = stringToDate($('#VendutoDitributoreDataDaAdmin').val(), "dd-MM-yyyy", "-");
-                //var DataA = stringToDate($('#VendutoDitributoreDataAAdmin').val(), "dd-MM-yyyy", "-");
+                var codiceLotto = $('#VendutoDitributoreCodiceLottoAdmin').val();
+                var numeroLotto = stringPerDataEsatta($('#VendutoDitributoreNumeroLottoAdmin').val(), "dd-MM-yyyy", "-");
+
                 var DataDa = $('#VendutoDitributoreDataDaAdmin').val();
-                var DataA = stringPerDataA($('#VendutoDitributoreDataAAdmin').val(), "dd-MM-yyyy", "-");
+                var DataA = stringPerDataEsatta($('#VendutoDitributoreDataAAdmin').val(), "dd-MM-yyyy", "-");
                 //alert("filtraVendutiByIdProdotto" + DataDa + " " + DataA);
-                GetVendutoByIdDistributoreAdmin(idDistributore, descrizione, DataDa, DataA);
+                GetVendutoByIdDistributoreAdmin(idDistributore, descrizione, DataDa, DataA, numeroLotto, codiceLotto);
             });
 
         }
@@ -765,11 +802,14 @@ function VendutoPerClienteAdmin() {
             var dettaglio = '<h1>Filtra per Cliente:</h1><ul data-role="listview" data-filter="true" data-filter-placeholder="Cerca il distributore..." data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">';
 
             for (var i = 0; i < risultati.length; i++) {
-                var indirizzo = risultati[i].indirizzo;
+                var indirizzo = '';
+                if (risultati[i].indirizzo != null) {
+                    indirizzo = risultati[i].indirizzo;
+                }
                 var desc = risultati[i].descrizione;
                 desc = desc.replace("'", "\\'");
                 desc = '\'' + desc + '\'';
-                dettaglio = dettaglio + '<li><a href="javascript:GetVendutoByIdClienteAdmin(' + risultati[i].idCliente + ', ' + desc + ', null, null);" class="ui-btn ui-btn-icon-right ui-icon-carat-r vociVenduto" >' + risultati[i].descrizione + '<br><span class="miniText">' + indirizzo + '</span></a></li>';
+                dettaglio = dettaglio + '<li><a href="javascript:GetVendutoByIdClienteAdmin(' + risultati[i].idCliente + ', ' + desc + ', null, null, null, null);" class="ui-btn ui-btn-icon-right ui-icon-carat-r vociVenduto" >' + risultati[i].descrizione + '<br><span class="miniText">' + indirizzo + '</span></a></li>';
             }
             dettaglio = dettaglio + '</ul>';
 
@@ -786,7 +826,7 @@ function VendutoPerClienteAdmin() {
 
 }
 
-function GetVendutoByIdClienteAdmin(idCliente, descrizione, DataDa, DataA) {    
+function GetVendutoByIdClienteAdmin(idCliente, descrizione, DataDa, DataA, numeroLotto, codiceLotto) {    
 
     $.ajax({
         type: "POST",
@@ -795,7 +835,7 @@ function GetVendutoByIdClienteAdmin(idCliente, descrizione, DataDa, DataA) {
         url: urlGetVendutoByIdCliente,
         cache: false,
         async: true,
-        data: JSON.stringify({ idCliente: idCliente, DataDa: DataDa, DataA: DataA }),
+        data: JSON.stringify({ idCliente: idCliente, DataDa: DataDa, DataA: DataA, numeroLotto: numeroLotto, codiceLotto: codiceLotto }),
         error: function (data) {
             console.log(data.responseText)
         },
@@ -809,6 +849,9 @@ function GetVendutoByIdClienteAdmin(idCliente, descrizione, DataDa, DataA) {
 
             var dettaglio = '<h1>Filtro per Cliente: ' + descrizione + '</h1>' +
                             '<div>' +
+                                'NumeroLotto <input type="text" id="VendutiByIdClienteNumeroLottoAdmin"  class="calendario" data-theme="a" /> CodiceLotto <input type="text" id="VendutiByIdClienteCodiceLottoAdmin" data-theme="a" />' +
+                            '</div>' +
+                            '<div>' +
                                 'Data Da <input type="text" id="VendutiByIdClienteDataDaAdmin" class="calendario" data-theme="a" /> Data A <input type="text" id="VendutiByIdClienteDataAAdmin"  class="calendario" data-theme="a" /> <button id="filtraVendutiByIdClienteAdmin" value="Filtra" class="filtraVendutiByIdClienteAdmin">Filtra</button>' +
                             '</div><table id="tabellaVendutiByIdClienteAdmin" class="display" cellspacing="0" width="100%">' +
                                     '<thead>' +
@@ -818,8 +861,8 @@ function GetVendutoByIdClienteAdmin(idCliente, descrizione, DataDa, DataA) {
                                             '<th>Quantità</th>' +
                                             '<th>Prezzo Tot.</th>' +
                                             '<th>Data Ril.</th>' +
-                                            //'<th>N° DDT</th>' +
-                                            //'<th>Data DDT</th>' +
+                                            '<th>Cod. Lotto</th>' +
+                                            '<th>Num. Lotto</th>' +
                                             //'<th>Cliente</th>' +
                                             '<th>Operatore</th>' +
                                         '</tr>' +
@@ -828,15 +871,22 @@ function GetVendutoByIdClienteAdmin(idCliente, descrizione, DataDa, DataA) {
             var prezzoTot = 0;
             var totaleQuantita = 0;
             for (var i = 0; i < risultati.length; i++) {
-
+                var numLotto = '';
+                if (parseJsonDateLettura(risultati[i].numeroLotto) != '') {
+                    numLotto = parseJsonDateLettura(risultati[i].numeroLotto);
+                }
+                var codLotto = '';
+                if (risultati[i].codiceLotto != null) {
+                    codLotto = risultati[i].codiceLotto;
+                }
                 dettaglio = dettaglio + '<tr>';
                 dettaglio = dettaglio + '<td><img src="http://www.giacomorabaglia.com/public/appdistributoridoldi/fotoprodotti/' + risultati[i].foto + '"></td>';
                 dettaglio = dettaglio + '<td>' + risultati[i].descrizione + ' (' + parseJsonDateLettura(risultati[i].numeroLotto) + ')</td>';
                 dettaglio = dettaglio + '<td class="quantita">' + risultati[i].quantitaVenduto + '</td>';
                 dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].prezzoTotale + ' €</td>';
                 dettaglio = dettaglio + '<td class="storicoVenduto">' + parseJsonDateSenzaTime(risultati[i].dataUltimaModifica) + '</td>';
-                //dettaglio = dettaglio + '<td class="medioGrande">' + risultati[i].numeroDDT + '</td>';
-                //dettaglio = dettaglio + '<td class="storicoVenduto">' + parseJsonDateLettura(risultati[i].dataDDT) + '</td>';
+                dettaglio = dettaglio + '<td class="storicoVenduto">' + codLotto + '</td>';
+                dettaglio = dettaglio + '<td class="storicoVenduto">' + numLotto + '</td>';
                 //dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].descrizioneCliente + '</td>';
                 dettaglio = dettaglio + '<td class="storicoVenduto">' + risultati[i].operatoreNome + ' ' + risultati[i].operatoreCognome + '</td>';
                 dettaglio = dettaglio + '</tr>';
@@ -850,8 +900,8 @@ function GetVendutoByIdClienteAdmin(idCliente, descrizione, DataDa, DataA) {
                                             '<th>Totale Quantità: ' + totaleQuantita + '</th>' +
                                             '<th>Totale Venduto: ' + Number(prezzoTot).toFixed(2) + '€</th>' +
                                             '<th>Data Ril.</th>' +
-                                            //'<th>N° DDT</th>' +
-                                            //'<th>Data DDT</th>' +
+                                            '<th>Cod. Lotto</th>' +
+                                            '<th>Num. Lotto</th>' +
                                             //'<th>Cliente</th>' +
                                             '<th>Operatore</th>' +
                                         '</tr>' +
@@ -874,15 +924,16 @@ function GetVendutoByIdClienteAdmin(idCliente, descrizione, DataDa, DataA) {
             );
 
             $('.filtraVendutiByIdClienteAdmin').click(function () {
-                //var DataDa = stringToDate($('#VendutiByIdClienteDataDaAdmin').val(), "dd-MM-yyyy", "-");
-                //var DataA = stringToDate($('#VendutiByIdClienteDataAAdmin').val(), "dd-MM-yyyy", "-");
+                var codiceLotto = $('#VendutiByIdClienteCodiceLottoAdmin').val();
+                var numeroLotto = stringPerDataEsatta($('#VendutiByIdClienteNumeroLottoAdmin').val(), "dd-MM-yyyy", "-");
+
                 var DataDa = $('#VendutiByIdClienteDataDaAdmin').val();
-                var DataA = stringPerDataA($('#VendutiByIdClienteDataAAdmin').val(), "dd-MM-yyyy", "-");
+                var DataA = stringPerDataEsatta($('#VendutiByIdClienteDataAAdmin').val(), "dd-MM-yyyy", "-");
                 //alert("filtraVendutiByIdProdotto" + DataDa + " " + DataA);
                 var desc = descrizione;
                 //desc = desc.replace("'", "\\'");
                 //desc = '\'' + desc + '\'';
-                GetVendutoByIdClienteAdmin(idCliente, desc, DataDa, DataA);
+                GetVendutoByIdClienteAdmin(idCliente, desc, DataDa, DataA, numeroLotto, codiceLotto);
             });
 
         }

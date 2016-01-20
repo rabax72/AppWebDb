@@ -4,12 +4,12 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.phonegap.appdondisqlitedb"
-        version   = "0.9.81">
+        version   = "0.9.82">
 
-  <name>App Sqlite</name>
+  <name>App Distributori</name>
 
   <description>
-    App Sqlite
+    App Distributori Automatici Latte di Campagna
   </description>
 
   <author href="http://www.giacomorabaglia.com" email="rabax@hotmail.com">
