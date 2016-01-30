@@ -871,49 +871,103 @@ function SincronizzaVendutoDaTablet() {
     location.hash = "SyncronizzazioneTabletToVenduto";
     $('.contentSyncronizzazioneTabletToVenduto').html('');
 
-    syncroUpdateRecordMagazzino();
-    syncroUpdateRecordMagazzinoResi();
-    syncroUpdateRecordSituazioneDistributore();
-    EliminaVendutiCancellati();
+    if (mydb) {
 
-    syncroNuoviRecordMagazzino();
-    syncroNuoviRecordMagazzinoResi();
-    syncroNuoviRecordSituazioneDistributori();
+        mydb.transaction(function (t) {
+
+            t.executeSql("SELECT ultimoaggiornamento FROM  sincronizzazioni order by ultimoaggiornamento desc limit 0,1 ", [], function (transaction, results) {
+                for (var i = 0; i < results.rows.length; i++) {
+                    var row = results.rows.item(i);
+                    var ultimoaggiornamento = row.ultimoAggiornamento;
+                    //console.log(ultimoaggiornamento);
+                    
+                    syncroUpdateRecordMagazzino(ultimoaggiornamento);
+                    return;
+
+                        syncroUpdateRecordMagazzinoResi();
+                        syncroUpdateRecordSituazioneDistributore();
+                        EliminaVendutiCancellati();
+
+                        //syncroNuoviRecordMagazzino();
+                        syncroNuoviRecordMagazzinoResi();
+                        syncroNuoviRecordSituazioneDistributori();
+
+                }
+                
+                //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
+
+            }, errorHandler);
+        });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
+        }
+
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
     
 }
 
-function syncroUpdateRecordMagazzino() {
-    var nomeCampoId = "id";
-    var nomeTabella = "magazzino";
-    $.ajax({
-        type: "POST",
-        crossDomain: true,
-        contentType: "application/json; charset=utf-8",
-        url: urlGetMagazzinoPerSyncro,
-        cache: false,
-        async: true,
-        data: JSON.stringify({ }),
-        error: function (data) {
-            console.log(data.responseText)
-        },
-        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
-        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
-        success: function (response) {
-            risultati = response.d;
+function syncroUpdateRecordMagazzino(ultimoaggiornamento) {
+    if (mydb) {
 
-            for (var i = 0; i < risultati.length; i++) {
-                var id = risultati[i].id;
-                var dataModifica = dataItaliana(parseJsonDateLettura(risultati[i].dataModifica));
-                if (dataModifica == "1-01-02") {
-                    dataModifica = null;
+        mydb.transaction(function (t) {
+
+            t.executeSql("SELECT * FROM  magazzino where datamodifica > ?", [ultimoaggiornamento], function (transaction, results) {
+                for (var i = 0; i < results.rows.length; i++) {
+                    var row = results.rows.item(i);
+                     
+                    SincronizzoDatiInMagazzino(row.Id, row.dataModifica);
                 }
-                checkUpdateInMagazzino(id, dataModifica);
+
+                //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
+
+            }, errorHandler);
+        });
+
+            function errorHandler(transaction, error) {
+                console.log("Error : " + error.message);
             }
-            //console.log(risultati[0].codiceLotto);            
+
+        } else {
+            alert("db not found, your browser does not support web sql!");
         }
 
-    });
 }
+
+//function syncroUpdateRecordMagazzino() {
+//    var nomeCampoId = "id";
+//    var nomeTabella = "magazzino";
+//    $.ajax({
+//        type: "POST",
+//        crossDomain: true,
+//        contentType: "application/json; charset=utf-8",
+//        url: urlGetMagazzinoPerSyncro,
+//        cache: false,
+//        async: true,
+//        data: JSON.stringify({ }),
+//        error: function (data) {
+//            console.log(data.responseText)
+//        },
+//        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+//        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+//        success: function (response) {
+//            risultati = response.d;
+
+//            for (var i = 0; i < risultati.length; i++) {
+//                var id = risultati[i].id;
+//                var dataModifica = dataItaliana(parseJsonDateLettura(risultati[i].dataModifica));
+//                if (dataModifica == "1-01-02") {
+//                    dataModifica = null;
+//                }
+//                checkUpdateInMagazzino(id, dataModifica);
+//            }
+//            //console.log(risultati[0].codiceLotto);            
+//        }
+
+//    });
+//}
 
 function syncroUpdateRecordMagazzinoResi() {
     var nomeCampoId = "id";
@@ -1164,8 +1218,13 @@ function SincronizzoDatiInMagazzino(Id, dataModifica) {
             risultati = response.d;
 
             //console.log(risultati);
-            $('.contentSyncronizzazioneTabletToVenduto').append(risultati + '<br>');
-
+            if (risultati == "Insert") {
+                //bisogna inserire il nuovo record nella tabella magazzino
+                CheckNewItemInMagazzino(Id);
+            } else {
+                //il record era già presente ed è stato aggiornato
+                $('.contentSyncronizzazioneTabletToVenduto').append(risultati + '<br>');
+            }
         }
 
     });
@@ -1335,7 +1394,7 @@ function CheckNewItemInMagazzino(lastId) {
         
         mydb.transaction(function (t) {
             
-            t.executeSql("SELECT  * FROM  magazzino where id > ?", [lastId], function (transaction, results) {
+            t.executeSql("SELECT  * FROM  magazzino where id = ?", [lastId], function (transaction, results) {
                 var ids = new Array();
                 for (var i = 0; i < results.rows.length; i++) {
                     var row = results.rows.item(i);

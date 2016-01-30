@@ -143,6 +143,14 @@
                             "(19, 'PRIMOSALE', 'AtBoPHGaFIRp-bBOp5l2GtBfh3LVjYAuxR7jrm6DGm3G_100x75.jpg', '2.60', 10, NULL, NULL, '2015-06-09 06:00:29', NULL, 0, 19)," +
                             "(21, 'ESTATE'' ', 'Te.jpg', '0.80', 22, NULL, NULL, '2015-07-26 18:29:57', NULL, 0, 20);";
 
+    //var strutturaSincronizzazioni = "CREATE TABLE IF NOT EXISTS  sincronizzazioni  ( " +
+    //                                 "  id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+    //                                 "  ultimoAggiornamento  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+    //                                 "  idOperatore  int(11) NOT NULL" +
+    //                                ")";
+
+    //var valoriSincronizzazioni = "Select count(id) from sincronizzazioni;";
+
     var strutturaSituazioneClienti = "CREATE TABLE IF NOT EXISTS situazioneclienti ( " +
                                      " IdSituazioneCliente INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                                      " IdCliente int(11) NOT NULL," +
@@ -316,6 +324,7 @@
     creaTabella(strutturaMezzi, valoriMezzi, 'Mezzi');
     creaTabella(strutturaOperatori, valoriOperatori, 'Operatori');
     creaTabella(strutturaProdotti, valoriProdotti, 'Prodotti');
+    //creaTabella(strutturaSincronizzazioni, valoriSincronizzazioni, 'Sincronizzazioni');
     creaTabella(strutturaSituazioneClienti, valoriSituazioneClienti, 'SituazioneClienti');
     creaTabella(strutturaSituazioneDistributori, valoriSituazioneDistributori, 'SituazioneDistributori');
     creaTabella(strutturaVenduto, valoriVenduto, 'Venduto');

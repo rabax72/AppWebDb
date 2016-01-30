@@ -1,5 +1,5 @@
 ﻿//Connessioni ai WebServices
-var tipoDiConn = "preprod";
+var tipoDiConn = "prod";
 var urlProd = 'http://www.giacomorabaglia.com/appdistributoridondi/WebServiceAppDondi.asmx/';
 
 if (tipoDiConn == "test") {
@@ -204,7 +204,8 @@ function stringPerDataA(_date, _format, _delimiter) {
         month -= 1;
         formatedDate = new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
         formatedDate.setDate(formatedDate.getDate() + 1);
-        formatedDate = formatedDate.getDate() + '-' + (1 + formatedDate.getMonth()) + '-' + formatedDate.getFullYear();
+        var mese = (1 + formatedDate.getMonth());
+        formatedDate = padLeft(formatedDate.getDate(), 2) + '-' + padLeft(mese, 2) + '-' + formatedDate.getFullYear();
 
     }
     return formatedDate;
@@ -223,7 +224,8 @@ function stringPerDataEsatta(_date, _format, _delimiter) {
         month -= 1;
         formatedDate = new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
         formatedDate.setDate(formatedDate.getDate());
-        formatedDate = formatedDate.getDate() + '-' + (1 + formatedDate.getMonth()) + '-' + formatedDate.getFullYear();
+        var mese = (1 + formatedDate.getMonth());
+        formatedDate = padLeft(formatedDate.getDate(),2) + '-' + padLeft(mese,2) + '-' + formatedDate.getFullYear();
 
     }
     return formatedDate;
