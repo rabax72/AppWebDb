@@ -1555,7 +1555,7 @@ function InsertProdottiInDistributore(idDistributore, idProdotto, quantita, quan
            
 }
 
-function AggiornaQuantitaProdottoInDistributoreV3(idSituazioneDistributore, idDistributore, idProdotto, codiceLotto, numeroLotto, quantita, prezzoTotale, dataModifica, dataScadenza, modificato, idOperatore, colore) {
+function AggiornaQuantitaProdottoInDistributoreV3(idDistributore, idProdotto, codiceLotto, numeroLotto, quantita, prezzoTotale, dataModifica, dataScadenza, modificato, idOperatore, colore) {
 
     $.ajax({
         type: "POST",
@@ -1564,7 +1564,7 @@ function AggiornaQuantitaProdottoInDistributoreV3(idSituazioneDistributore, idDi
         url: urlAggiornoQuantitaProdottiInDistributoreV3,
         cache: false,
         async: true,
-        data: JSON.stringify({ idSituazioneDistributore: idSituazioneDistributore, idDistributore: idDistributore, idProdotto: idProdotto, codiceLotto: codiceLotto, numeroLotto: numeroLotto, quantita: quantita, prezzoTotale: prezzoTotale, dataModifica: dataModifica, dataScadenza: dataScadenza, modificato: modificato, idOperatore: idOperatore, colore: colore }),
+        data: JSON.stringify({ idDistributore: idDistributore, idProdotto: idProdotto, codiceLotto: codiceLotto, numeroLotto: numeroLotto, quantita: quantita, prezzoTotale: prezzoTotale, dataModifica: dataModifica, dataScadenza: dataScadenza, modificato: modificato, idOperatore: idOperatore, colore: colore }),
         error: function (data) {
             console.log(data.responseText)
         },

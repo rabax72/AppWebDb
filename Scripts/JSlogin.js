@@ -95,7 +95,11 @@ var urlGetMaxId = urlProd + 'GetMaxId';
 var urlSincronizzoDatiInMagazzino = urlProd + 'SincronizzoDatiInMagazzino';
 var urlSincronizzoDatiInMagazzinoResi = urlProd + 'SincronizzoDatiInMagazzinoResi';
 var urlSincronizzoDatiInSituazioneDistributori = urlProd + 'SincronizzoDatiInSituazioneDistributori';
+var urlSincronizzoDatiInSituazioneCliente = urlProd + 'SincronizzoDatiInSituazioneCliente';
+var urlSincronizzoDatiInVenduto = urlProd + 'SincronizzoDatiInVenduto';
 var urlAggiornaRecordCancellatiInVenduto = urlProd + 'AggiornaRecordCancellatiInVenduto';
+var urlAggiornaTabellaSincronizzazioni = urlProd + 'AggiornaTabellaSincronizzazioni';
+var urlUltimoAggiornamentoByIdOperatore = urlProd + 'UltimoAggiornamentoByIdOperatore';
 
 $(function () {    
 
@@ -248,17 +252,20 @@ function padLeft(nr, n, str) {
 function stringPerDataAmericana(_date, _format, _delimiter) {
     var formatedDate = '';
     if (_date != '') {
-        var formatLowerCase = _format.toLowerCase();
-        var formatItems = formatLowerCase.split(_delimiter);
-        var dateItems = _date.split(_delimiter);
-        var monthIndex = formatItems.indexOf("mm");
-        var dayIndex = formatItems.indexOf("dd");
-        var yearIndex = formatItems.indexOf("yyyy");
-        var month = parseInt(dateItems[monthIndex]);
-        month -= 1;
-        formatedDate = new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
+        var dataSpezzata = _date.split(' ');
+        var soloData = dataSpezzata[0];
+        var orario = dataSpezzata[1];
+        //var formatLowerCase = _format.toLowerCase();
+        //var formatItems = formatLowerCase.split(_delimiter);
+        var dateItems = soloData.split(_delimiter);
+        //var monthIndex = formatItems.indexOf("mm");
+        //var dayIndex = formatItems.indexOf("dd");
+        //var yearIndex = formatItems.indexOf("yyyy");
+        //var month = parseInt(dateItems[1]);
+        //month -= 1;
+        //formatedDate = new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
         //formatedDate.setDate(formatedDate.getDate() + 1);
-        formatedDate = formatedDate.getFullYear() + '-' + padLeft((1 + formatedDate.getMonth()),2) + '-' + formatedDate.getDate();
+        formatedDate = dateItems[2] + '-' + dateItems[1] + '-' + dateItems[0] + ' ' + orario;
     }
     return formatedDate;
 }
@@ -1193,7 +1200,7 @@ function CorrezioneMagazzinoByIdProd(idMagazzino, idProdotto) {
     }
 }
 
-function AggiornaQuantitaProdottiVendutiServer(idVendita, idProdotto, idDistributore, idCliente, quantitaVenduti, prezzoTotaleVenduti, idOperatore, VenditaDiretta, numeroDDT, DataDDT, numeroLotto, dataScadenza, codiceLotto) {
+function AggiornaQuantitaProdottiVendutiServer(idProdotto, idDistributore, idCliente, quantitaVenduti, prezzoTotaleVenduti, idOperatore, VenditaDiretta, numeroDDT, DataDDT, numeroLotto, dataScadenza, codiceLotto) {
     //console.log('idVendita=' + idVendita + '-' + 'idProdotto=' + idProdotto + '-' + 'idDistributore=' + idDistributore + '-' + 'idCliente=' + idCliente + '-' + 'quantitaVenduti=' + quantitaVenduti + '-' + 'prezzoTotaleVenduti=' + prezzoTotaleVenduti + '-' + 'idOperatore=' + idOperatore + '-' + 'VenditaDiretta=' + VenditaDiretta + '-' + 'numeroDDT=' + numeroDDT + '-' + 'DataDDT=' + DataDDT + '-' + 'numeroLotto=' + numeroLotto + '-' + 'dataScadenza=' + dataScadenza + '-' + 'codiceLotto=' + codiceLotto);
     $.ajax({
         type: "POST",
@@ -1204,7 +1211,7 @@ function AggiornaQuantitaProdottiVendutiServer(idVendita, idProdotto, idDistribu
         cache: false,
         async: true,
         //            data: "idDisciplina=" + idDisciplina,
-        data: JSON.stringify({ idVendita: idVendita, idProdotto: idProdotto, idDistributore: idDistributore, idCliente: idCliente, quantita: quantitaVenduti, prezzoTotale: prezzoTotaleVenduti, idOperatore: idOperatore, VenditaDiretta: VenditaDiretta, numeroDDT: numeroDDT, DataDDT: DataDDT, NumeroLotto: numeroLotto, dataScadenza: dataScadenza, codiceLotto: codiceLotto }),
+        data: JSON.stringify({ idProdotto: idProdotto, idDistributore: idDistributore, idCliente: idCliente, quantita: quantitaVenduti, prezzoTotale: prezzoTotaleVenduti, idOperatore: idOperatore, VenditaDiretta: VenditaDiretta, numeroDDT: numeroDDT, DataDDT: DataDDT, NumeroLotto: numeroLotto, dataScadenza: dataScadenza, codiceLotto: codiceLotto }),
         error: function (data) {
             console.log(data.responseText)
         },
@@ -1214,7 +1221,33 @@ function AggiornaQuantitaProdottiVendutiServer(idVendita, idProdotto, idDistribu
             risultati = response.d;
 
             //console.log(risultati);
+            //AggiornaTabellaSincronizzazioni();
+        }
 
+    });
+}
+
+function AggiornaTabellaSincronizzazioni() {
+    var idOperatore = localStorage.idOperatore;
+    $.ajax({
+        type: "POST",
+        crossDomain: true,
+        contentType: "application/json; charset=utf-8",        
+        url: urlAggiornaTabellaSincronizzazioni,
+        cache: false,
+        async: true,
+        //            data: "idDisciplina=" + idDisciplina,
+        data: JSON.stringify({  idOperatore: idOperatore}),
+        error: function (data) {
+            console.log(data.responseText)
+        },
+        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+        success: function (response) {
+            risultati = response.d;
+            $('.contentSyncronizzazioneTabletToVenduto').append('<br><br>' + risultati);
+            //console.log(risultati);
+         
         }
 
     });

@@ -870,44 +870,91 @@ function SincronizzaVendutoDaTablet() {
 
     location.hash = "SyncronizzazioneTabletToVenduto";
     $('.contentSyncronizzazioneTabletToVenduto').html('');
-
-    if (mydb) {
-
-        mydb.transaction(function (t) {
-
-            t.executeSql("SELECT ultimoaggiornamento FROM  sincronizzazioni order by ultimoaggiornamento desc limit 0,1 ", [], function (transaction, results) {
-                for (var i = 0; i < results.rows.length; i++) {
-                    var row = results.rows.item(i);
-                    var ultimoaggiornamento = row.ultimoAggiornamento;
+    var idOperatore = localStorage.idOperatore;
+    $.ajax({
+        type: "POST",
+        crossDomain: true,
+        contentType: "application/json; charset=utf-8",
+        url: urlUltimoAggiornamentoByIdOperatore,
+        cache: false,
+        async: true,
+        data: JSON.stringify({idOperatore: idOperatore}),
+        error: function (data) {
+            console.log(data.responseText)
+        },
+        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+        success: function (response) {
+            risultati = response.d;
+            if (risultati != "") {                    
+                var ultimoaggiornamento = stringPerDataAmericana(risultati,'ddmmyyyy','/');
                     //console.log(ultimoaggiornamento);
                     
-                    syncroUpdateRecordMagazzino(ultimoaggiornamento);
-                    return;
-
-                        syncroUpdateRecordMagazzinoResi();
-                        syncroUpdateRecordSituazioneDistributore();
-                        EliminaVendutiCancellati();
-
-                        //syncroNuoviRecordMagazzino();
-                        syncroNuoviRecordMagazzinoResi();
-                        syncroNuoviRecordSituazioneDistributori();
-
-                }
+                syncroUpdateRecordMagazzino(ultimoaggiornamento);
+                CheckNewItemInMagazzino(ultimoaggiornamento);                
+                syncroUpdateRecordMagazzinoResi(ultimoaggiornamento);
+                CheckNewItemInMagazzinoResi(ultimoaggiornamento);
+                syncroUpdateRecordSituazioneDistributore(ultimoaggiornamento);
+                CheckNewItemInSituazioneDistributore(ultimoaggiornamento);
+                syncroUpdateRecordSituazioneClienti(ultimoaggiornamento);
+                CheckNewItemInSituazioneCliente(ultimoaggiornamento);
+                    //syncroUpdateRecordVenduti(ultimoaggiornamento);
+                EliminaVendutiCancellati(ultimoaggiornamento);
+                CheckNewItemInVenduto(ultimoaggiornamento);
+                    //syncroNuoviRecordMagazzino();
+                    //syncroNuoviRecordMagazzinoResi();
+                    //syncroNuoviRecordSituazioneDistributori();
+                AggiornaTabellaSincronizzazioni();
+            }
                 
-                //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
-
-            }, errorHandler);
-        });
-
-        function errorHandler(transaction, error) {
-            console.log("Error : " + error.message);
+                //console.log(aggClienti);
         }
 
-    } else {
-        alert("db not found, your browser does not support web sql!");
-    }
-    
+    });
+
 }
+
+//function SincronizzaVendutoDaTablet() {
+//    if (!confirm("Sicuro che vuoi procedere all aggiornamento dei dati sul server???")) return;
+
+//    location.hash = "SyncronizzazioneTabletToVenduto";
+//    $('.contentSyncronizzazioneTabletToVenduto').html('');
+//    var idOperatore = localStorage.idOperatore;
+//    if (mydb) {
+
+//        mydb.transaction(function (t) {
+
+//            t.executeSql("SELECT ultimoaggiornamento FROM  sincronizzazioni where idoperatore = ? order by ultimoaggiornamento desc limit 0,1 ", [idOperatore], function (transaction, results) {
+//                for (var i = 0; i < results.rows.length; i++) {
+//                    var row = results.rows.item(i);
+//                    var ultimoaggiornamento = row.ultimoAggiornamento;
+//                    //console.log(ultimoaggiornamento);
+                    
+//                    syncroUpdateRecordMagazzino(ultimoaggiornamento);
+//                    syncroUpdateRecordMagazzinoResi(ultimoaggiornamento);
+//                    syncroUpdateRecordSituazioneDistributore(ultimoaggiornamento);
+//                    //syncroUpdateRecordVenduti(ultimoaggiornamento);
+//                    EliminaVendutiCancellati(ultimoaggiornamento);
+//                        //syncroNuoviRecordMagazzino();
+//                        //syncroNuoviRecordMagazzinoResi();
+//                        //syncroNuoviRecordSituazioneDistributori();
+
+//                }
+                
+//                //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
+
+//            }, errorHandler);
+//        });
+
+//        function errorHandler(transaction, error) {
+//            console.log("Error : " + error.message);
+//        }
+
+//    } else {
+//        alert("db not found, your browser does not support web sql!");
+//    }
+    
+//}
 
 function syncroUpdateRecordMagazzino(ultimoaggiornamento) {
     if (mydb) {
@@ -918,7 +965,7 @@ function syncroUpdateRecordMagazzino(ultimoaggiornamento) {
                 for (var i = 0; i < results.rows.length; i++) {
                     var row = results.rows.item(i);
                      
-                    SincronizzoDatiInMagazzino(row.Id, row.dataModifica);
+                    SincronizzoDatiInMagazzino(row.Id, row.DataModifica);
                 }
 
                 //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
@@ -969,72 +1016,154 @@ function syncroUpdateRecordMagazzino(ultimoaggiornamento) {
 //    });
 //}
 
-function syncroUpdateRecordMagazzinoResi() {
-    var nomeCampoId = "id";
-    var nomeTabella = "magazzinoresi";
-    $.ajax({
-        type: "POST",
-        crossDomain: true,
-        contentType: "application/json; charset=utf-8",
-        url: urlGetMagazzinoPerSyncro,
-        cache: false,
-        async: true,
-        data: JSON.stringify({}),
-        error: function (data) {
-            console.log(data.responseText)
-        },
-        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
-        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
-        success: function (response) {
-            risultati = response.d;
-
-            for (var i = 0; i < risultati.length; i++) {
-                var id = risultati[i].id;
-                var dataModifica = dataItaliana(parseJsonDateLettura(risultati[i].dataModifica));
-                if (dataModifica == "1-01-02") {
-                    dataModifica = null;
-                }
-                checkUpdateInMagazzinoResi(id, dataModifica);
-            }
-            //console.log(risultati[0].codiceLotto);            
-        }
-
-    });
-}
-
-function syncroUpdateRecordSituazioneDistributore() {
+function syncroUpdateRecordMagazzinoResi(ultimoaggiornamento) {
     
-    $.ajax({
-        type: "POST",
-        crossDomain: true,
-        contentType: "application/json; charset=utf-8",
-        url: urlGetSituazioneDistributoriPerSyncro,
-        cache: false,
-        async: true,
-        data: JSON.stringify({}),
-        error: function (data) {
-            console.log(data.responseText)
-        },
-        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
-        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
-        success: function (response) {
-            risultati = response.d;
+    if (mydb) {
 
-            for (var i = 0; i < risultati.length; i++) {
-                var id = risultati[i].idSituazioneDistributore;
-                var dataModifica = dataItaliana(parseJsonDateLettura(risultati[i].dataModifica));
-                if (dataModifica == "1-01-02") {
-                    dataModifica = null;
+        mydb.transaction(function (t) {
+
+            t.executeSql("SELECT * FROM  magazzinoresi where datamodifica > ?", [ultimoaggiornamento], function (transaction, results) {
+                for (var i = 0; i < results.rows.length; i++) {
+                    var row = results.rows.item(i);
+
+                    SincronizzoDatiInMagazzinoResi(row.Id, row.DataModifica);
                 }
-                checkUpdateInSituazioneDistributore(id, dataModifica);
-            }
-            //console.log(risultati[0].codiceLotto);            
+
+                //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
+
+            }, errorHandler);
+        });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
         }
 
-    });
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+
 }
 
-function syncroUpdateRecordVenduto(ids) {
+//function syncroUpdateRecordMagazzinoResi() {
+//    var nomeCampoId = "id";
+//    var nomeTabella = "magazzinoresi";
+//    $.ajax({
+//        type: "POST",
+//        crossDomain: true,
+//        contentType: "application/json; charset=utf-8",
+//        url: urlGetMagazzinoPerSyncro,
+//        cache: false,
+//        async: true,
+//        data: JSON.stringify({}),
+//        error: function (data) {
+//            console.log(data.responseText)
+//        },
+//        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+//        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+//        success: function (response) {
+//            risultati = response.d;
+
+//            for (var i = 0; i < risultati.length; i++) {
+//                var id = risultati[i].id;
+//                var dataModifica = dataItaliana(parseJsonDateLettura(risultati[i].dataModifica));
+//                if (dataModifica == "1-01-02") {
+//                    dataModifica = null;
+//                }
+//                checkUpdateInMagazzinoResi(id, dataModifica);
+//            }
+//            //console.log(risultati[0].codiceLotto);            
+//        }
+
+//    });
+//}
+
+function syncroUpdateRecordSituazioneDistributore(ultimoaggiornamento) {
+    if (mydb) {
+
+        mydb.transaction(function (t) {
+
+            t.executeSql("SELECT * FROM  situazionedistributori where datamodifica > ?", [ultimoaggiornamento], function (transaction, results) {
+                for (var i = 0; i < results.rows.length; i++) {
+                    var row = results.rows.item(i);
+
+                    SincronizzoDatiInSituazioneDistributore(row.IdSituazioneDistributore, row.DataModifica);                    
+                }
+
+                //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
+
+            }, errorHandler);
+        });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
+        }
+
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+
+}
+
+//function syncroUpdateRecordSituazioneDistributore() {
+    
+//    $.ajax({
+//        type: "POST",
+//        crossDomain: true,
+//        contentType: "application/json; charset=utf-8",
+//        url: urlGetSituazioneDistributoriPerSyncro,
+//        cache: false,
+//        async: true,
+//        data: JSON.stringify({}),
+//        error: function (data) {
+//            console.log(data.responseText)
+//        },
+//        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+//        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+//        success: function (response) {
+//            risultati = response.d;
+
+//            for (var i = 0; i < risultati.length; i++) {
+//                var id = risultati[i].idSituazioneDistributore;
+//                var dataModifica = dataItaliana(parseJsonDateLettura(risultati[i].dataModifica));
+//                if (dataModifica == "1-01-02") {
+//                    dataModifica = null;
+//                }
+//                checkUpdateInSituazioneDistributore(id, dataModifica);
+//            }
+//            //console.log(risultati[0].codiceLotto);            
+//        }
+
+//    });
+//}
+
+function syncroUpdateRecordSituazioneClienti(ultimoaggiornamento) {
+    if (mydb) {
+
+        mydb.transaction(function (t) {
+
+            t.executeSql("SELECT * FROM  situazioneclienti where datamodifica > ?", [ultimoaggiornamento], function (transaction, results) {
+                for (var i = 0; i < results.rows.length; i++) {
+                    var row = results.rows.item(i);
+
+                    SincronizzoDatiInSituazioneCliente(row.IdSituazioneCliente, row.DataModifica);
+                }
+
+                //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
+
+            }, errorHandler);
+        });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
+        }
+
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+
+}
+
+function syncroUpdateRecordVenduto(ids, ultimoaggiornamento) {
     var tuttid = "";
     //for (var i = 0; i < ids.length; i++) {
     //    tuttid = tuttid + ids[i] + "-";
@@ -1048,7 +1177,7 @@ function syncroUpdateRecordVenduto(ids) {
         url: urlAggiornaRecordCancellatiInVenduto,
         cache: false,
         async: true,
-        data: JSON.stringify({ids: ids}),
+        data: JSON.stringify({ ids: ids}),
         error: function (data) {
             console.log(data.responseText)
         },
@@ -1057,13 +1186,46 @@ function syncroUpdateRecordVenduto(ids) {
         success: function (response) {
             risultati = response.d;
             //$('.contentSyncronizzazioneTabletToVenduto').append(risultati + '<br>');
-            syncroNuoviRecordVenduto();
+            //syncroNuoviRecordVenduto(ultimoaggiornamento);
+            //syncroUpdateRecordVenduti(ultimoaggiornamento);
+            
         }
 
     });
 }
 
-function EliminaVendutiCancellati() {
+//function syncroUpdateRecordVenduti(ultimoaggiornamento) {
+
+//    if (mydb) {
+
+//        mydb.transaction(function (t) {
+
+//            t.executeSql("SELECT idvendita, datarilevazione FROM  venduto where datarilevazione > ?", [ultimoaggiornamento], function (transaction, results) {
+//                var ids = new Array();
+//                var numeroUpdate = 0;
+//                var tuttiGliId = "";
+//                for (var i = 0; i < results.rows.length; i++) {
+//                    var row = results.rows.item(i);
+//                    //SincronizzoDatiInVenduto(row.IdVendita, row.DataRilevazione);
+//                    CheckNewItemInVenduto(row.IdVendita);
+//                }
+                
+//                //AggiornaTabellaSincronizzazioni();
+//                //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
+
+//            }, errorHandler);
+//        });
+
+//        function errorHandler(transaction, error) {
+//            console.log("Error : " + error.message);
+//        }
+
+//    } else {
+//        alert("db not found, your browser does not support web sql!");
+//    }
+//}
+
+function EliminaVendutiCancellati(ultimoaggiornamento) {
 
     if (mydb) {
 
@@ -1085,7 +1247,7 @@ function EliminaVendutiCancellati() {
                     }                    
                    
                 }
-                syncroUpdateRecordVenduto(tuttiGliId);
+                syncroUpdateRecordVenduto(tuttiGliId, ultimoaggiornamento);
                 //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
 
             }, errorHandler);
@@ -1119,7 +1281,7 @@ function checkUpdateInMagazzino(id, dataModifica) {
                     }
                 }
 
-                //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
+                $('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
 
             }, errorHandler);
         });
@@ -1152,7 +1314,7 @@ function checkUpdateInMagazzinoResi(id, dataModifica) {
                     }
                 }
 
-                //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
+                $('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella MagazzinoResi Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
 
             }, errorHandler);
         });
@@ -1185,7 +1347,7 @@ function checkUpdateInSituazioneDistributore(id, dataModifica) {
                     }
                 }
 
-                //$('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella Magazzino Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
+                $('.contentSyncronizzazioneTabletToVenduto').append('***Sincronizzazione Tabella SituazioneDistributori Terminata con N. ' + numeroUpdate + ' record aggiornati! ****<br>');
 
             }, errorHandler);
         });
@@ -1218,13 +1380,13 @@ function SincronizzoDatiInMagazzino(Id, dataModifica) {
             risultati = response.d;
 
             //console.log(risultati);
-            if (risultati == "Insert") {
-                //bisogna inserire il nuovo record nella tabella magazzino
-                CheckNewItemInMagazzino(Id);
-            } else {
-                //il record era già presente ed è stato aggiornato
-                $('.contentSyncronizzazioneTabletToVenduto').append(risultati + '<br>');
-            }
+            //if (risultati == "Insert") {
+            //    //bisogna inserire il nuovo record nella tabella magazzino
+            //    CheckNewItemInMagazzino(Id);
+            //} else {
+            //    //il record era già presente ed è stato aggiornato
+            //    $('.contentSyncronizzazioneTabletToVenduto').append(risultati + '<br>');
+            //}
         }
 
     });
@@ -1248,8 +1410,45 @@ function SincronizzoDatiInMagazzinoResi(Id, dataModifica) {
         complete: function () { $.mobile.loading('hide'); }, //Hide spinner
         success: function (response) {
             risultati = response.d;
+
+            //if (risultati == "Insert") {
+            //    //bisogna inserire il nuovo record nella tabella magazzino
+            //    CheckNewItemInMagazzinoResi(Id);
+            //} else {
+            //    //il record era già presente ed è stato aggiornato
+            //    $('.contentSyncronizzazioneTabletToVenduto').append(risultati + '<br>');
+            //}
+            
+        }
+    });
+
+}
+
+function SincronizzoDatiInSituazioneCliente(Id, dataModifica) {
+
+    $.ajax({
+        type: "POST",
+        crossDomain: true,
+        contentType: "application/json; charset=utf-8",
+        url: urlSincronizzoDatiInSituazioneCliente,
+        cache: false,
+        async: true,
+        data: JSON.stringify({ Id: Id, dataModifica: dataModifica }),
+        error: function (data) {
+            console.log(data.responseText)
+        },
+        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+        success: function (response) {
+            risultati = response.d;
             //console.log(risultati);
-            $('.contentSyncronizzazioneTabletToVenduto').append(risultati + '<br>');
+            //if (risultati == "Insert") {
+            //    //bisogna inserire il nuovo record nella tabella magazzino
+            //    CheckNewItemInSituazioneCliente(Id);
+            //} else {
+            //    //il record era già presente ed è stato aggiornato
+            //    $('.contentSyncronizzazioneTabletToVenduto').append(risultati + '<br>');
+            //}
         }
     });
 
@@ -1273,13 +1472,51 @@ function SincronizzoDatiInSituazioneDistributore(Id, dataModifica) {
         success: function (response) {
             risultati = response.d;
             //console.log(risultati);
-            $('.contentSyncronizzazioneTabletToVenduto').append(risultati + '<br>');
+            //if (risultati == "Insert") {
+            //    //bisogna inserire il nuovo record nella tabella magazzino
+            //    CheckNewItemInSituazioneDistributore(Id);
+            //} else {
+            //    //il record era già presente ed è stato aggiornato
+            //    $('.contentSyncronizzazioneTabletToVenduto').append(risultati + '<br>');
+            //}
         }
     });
 
 }
 
-function syncroNuoviRecordMagazzino() {
+function SincronizzoDatiInVenduto(Id, dataModifica) {
+
+    $.ajax({
+        type: "POST",
+        crossDomain: true,
+        contentType: "application/json; charset=utf-8",
+        url: urlSincronizzoDatiInVenduto,
+        cache: false,
+        async: true,
+        data: JSON.stringify({ Id: Id, dataModifica: dataModifica }),
+        error: function (data) {
+            console.log(data.responseText)
+        },
+        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+        success: function (response) {
+            risultati = response.d;
+
+            ////console.log(risultati);
+            //if (risultati == "Insert") {
+            //    //bisogna inserire il nuovo record nella tabella magazzino
+            //    CheckNewItemInVenduto(Id);
+            //} else {
+            //    //il record era già presente ed è stato aggiornato
+            //    $('.contentSyncronizzazioneTabletToVenduto').append(risultati + '<br>');
+            //}
+        }
+
+    });
+
+}
+
+function syncroNuoviRecordMagazzino(ultimoAggiornamento) {
     var nomeCampoId = "id";
     var nomeTabella = "magazzino";
     $.ajax({
@@ -1361,32 +1598,59 @@ function syncroNuoviRecordSituazioneDistributori() {
     });
 }
 
-function syncroNuoviRecordVenduto() {
-    var nomeCampoId = "idvendita";
-    var nomeTabella = "venduto";
-    $.ajax({
-        type: "POST",
-        crossDomain: true,
-        contentType: "application/json; charset=utf-8",
-        url: urlGetMaxId,
-        cache: false,
-        async: true,
-        data: JSON.stringify({ nomeCampoId: nomeCampoId, nomeTabella: nomeTabella }),
-        error: function (data) {
-            console.log(data.responseText)
-        },
-        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
-        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
-        success: function (response) {
-            risultati = response.d;
+//function syncroNuoviRecordVenduto(ultimoaggiornamento) {
+//    var nomeCampoId = "idvendita";
+//    var nomeTabella = "venduto";
+//    $.ajax({
+//        type: "POST",
+//        crossDomain: true,
+//        contentType: "application/json; charset=utf-8",
+//        url: urlGetMaxId,
+//        cache: false,
+//        async: true,
+//        data: JSON.stringify({ nomeCampoId: nomeCampoId, nomeTabella: nomeTabella }),
+//        error: function (data) {
+//            console.log(data.responseText)
+//        },
+//        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+//        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+//        success: function (response) {
+//            risultati = response.d;
 
-            //console.log(risultati[0].codiceLotto);
-            CheckNewItemInVenduto(risultati);
+//            //console.log(risultati[0].codiceLotto);
+//            CheckNewItemInVenduto(risultati);
 
-        }
+//        }
 
-    });
-}
+//    });
+//}
+
+//function syncroNuoviRecordVenduto() {
+//    var nomeCampoId = "idvendita";
+//    var nomeTabella = "venduto";
+//    $.ajax({
+//        type: "POST",
+//        crossDomain: true,
+//        contentType: "application/json; charset=utf-8",
+//        url: urlGetMaxId,
+//        cache: false,
+//        async: true,
+//        data: JSON.stringify({ nomeCampoId: nomeCampoId, nomeTabella: nomeTabella }),
+//        error: function (data) {
+//            console.log(data.responseText)
+//        },
+//        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+//        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+//        success: function (response) {
+//            risultati = response.d;
+
+//            //console.log(risultati[0].codiceLotto);
+//            CheckNewItemInVenduto(risultati);
+
+//        }
+
+//    });
+//}
 
 function CheckNewItemInMagazzino(lastId) {
     
@@ -1394,7 +1658,7 @@ function CheckNewItemInMagazzino(lastId) {
         
         mydb.transaction(function (t) {
             
-            t.executeSql("SELECT  * FROM  magazzino where id = ?", [lastId], function (transaction, results) {
+            t.executeSql("SELECT  * FROM  magazzino where dataInserimento > ?", [lastId], function (transaction, results) {
                 var ids = new Array();
                 for (var i = 0; i < results.rows.length; i++) {
                     var row = results.rows.item(i);
@@ -1454,7 +1718,7 @@ function CheckNewItemInMagazzinoResi(lastId) {
 
         mydb.transaction(function (t) {
 
-            t.executeSql("SELECT  * FROM  magazzinoresi where id > ?", [lastId], function (transaction, results) {
+            t.executeSql("SELECT  * FROM  magazzinoresi where datainserimento > ?", [lastId], function (transaction, results) {
                 //var ids = new Array();
                 for (var i = 0; i < results.rows.length; i++) {
                     var row = results.rows.item(i);
@@ -1511,7 +1775,7 @@ function CheckNewItemInSituazioneDistributore(lastId) {
 
         mydb.transaction(function (t) {
 
-            t.executeSql("SELECT  * FROM  situazionedistributori where idsituazionedistributore > ?", [lastId], function (transaction, results) {
+            t.executeSql("SELECT  * FROM  situazionedistributori where datainserimento > ?", [lastId], function (transaction, results) {
                 //var ids = new Array();
                 for (var i = 0; i < results.rows.length; i++) {
                     var row = results.rows.item(i);
@@ -1548,10 +1812,71 @@ function CheckNewItemInSituazioneDistributore(lastId) {
                     
                     var colore = row.colore;
 
-                    AggiornaQuantitaProdottoInDistributoreV3(idSituazioneDistributore, idDistributore, idProdotto, codiceLotto, numeroLotto, quantita, prezzoTotale, dataModifica, dataScadenza, modificato, idOperatore, colore);
+                    AggiornaQuantitaProdottoInDistributoreV3(idDistributore, idProdotto, codiceLotto, numeroLotto, quantita, prezzoTotale, dataModifica, dataScadenza, modificato, idOperatore, colore);
                 }
 
                 $('.contentSyncronizzazioneTabletToVenduto').append('Tabella SituazioneDistributori - Record Inseriti: ' + results.rows.length + '<br>');
+                //console.log(ids);
+
+            }, errorHandler);
+        });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
+        }
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+}
+
+function CheckNewItemInSituazioneCliente(lastId) {
+
+    if (mydb) {
+
+        mydb.transaction(function (t) {
+
+            t.executeSql("SELECT  * FROM  situazioneclienti where datainserimento > ?", [lastId], function (transaction, results) {
+                //var ids = new Array();
+                for (var i = 0; i < results.rows.length; i++) {
+                    var row = results.rows.item(i);
+
+                    var idSituazioneCliente = row.IdSituazioneCliente;
+
+                    var idProdotto = row.IdProdotto;
+                    var codiceLotto = "";
+                    if (row.CodiceLotto != "") {
+                        codiceLotto = row.CodiceLotto;
+                    }
+                    var numeroLotto = row.NumeroLotto;
+                    var quantita = row.Quantita;
+                    var prezzoTotale = row.PrezzoTotale;
+                    var dataModifica = null;
+                    //if (row.DataModifica != null) {
+                    //    dataModifica = row.DataModifica;
+                    //}
+                    var dataScadenza = row.DataScadenza;
+                    var modificato = false;
+                    if (row.Modificato == 1) {
+                        modificato = true;
+                    }
+
+                    var idDistributore = null;
+                    if (row.IdDistributore != null) {
+                        idDistributore = row.IdDistributore;
+                    }
+                    var idOperatore = row.IdOperatore;
+                    var IdCliente = null;
+                    if (row.IdCliente != null) {
+                        IdCliente = row.IdCliente;
+                    }
+
+                    var colore = row.colore;
+                    var VenditaDiretta = 0;
+                    AggiornaQuantitaProdottiVenduti(idProdotto, idDistributore, IdCliente, quantitaVenduti, prezzoTotale, idOperatore, VenditaDiretta, null, null, numeroLotto, dataScadenza, codiceLotto);
+                   // AggiornaQuantitaProdottoInDistributoreV3(idSituazioneCliente, idDistributore, idProdotto, codiceLotto, numeroLotto, quantita, prezzoTotale, dataModifica, dataScadenza, modificato, idOperatore, colore);
+                }
+
+                $('.contentSyncronizzazioneTabletToVenduto').append('Tabella SituazioneClienti - Record Inseriti: ' + results.rows.length + '<br>');
                 //console.log(ids);
 
             }, errorHandler);
@@ -1571,7 +1896,7 @@ function CheckNewItemInVenduto(lastId) {
 
         mydb.transaction(function (t) {
 
-            t.executeSql("SELECT * FROM  venduto where idvendita > ?", [lastId], function (transaction, results) {
+            t.executeSql("SELECT * FROM  venduto where datarilevazione > ?", [lastId], function (transaction, results) {
                 //var ids = new Array();
                 for (var i = 0; i < results.rows.length; i++) {
                     var row = results.rows.item(i);
@@ -1603,7 +1928,7 @@ function CheckNewItemInVenduto(lastId) {
                     }
                     var dataScadenza = row.DataScadenza;                    
                     var note = row.note;                    
-                    AggiornaQuantitaProdottiVendutiServer(idVendita, idProdotto, idDistributore, IdCliente, quantita, prezzoTotale, idOperatore, venditaDiretta, null, null, numeroLotto, dataScadenza, codiceLotto);
+                    AggiornaQuantitaProdottiVendutiServer(idProdotto, idDistributore, IdCliente, quantita, prezzoTotale, idOperatore, venditaDiretta, null, null, numeroLotto, dataScadenza, codiceLotto);
                 }
 
                 $('.contentSyncronizzazioneTabletToVenduto').append('Tabella Vendita - Record Inseriti: ' + results.rows.length + '<br>');
