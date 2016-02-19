@@ -3,7 +3,7 @@ var tipoDiConn = "prod";
 var urlProd = 'http://www.giacomorabaglia.com/appdistributoridondi/WebServiceAppDondi.asmx/';
 
 if (tipoDiConn == "test") {
-    urlProd = 'http://localhost:60683/WebServiceAppDondiTest.asmx/';
+    urlProd = 'http://localhost:60683/WebServiceAppDondi.asmx/';
 }
 if (tipoDiConn == "preprod") {
     urlProd = 'http://www.giacomorabaglia.com/appdistributoridondi/WebServiceAppDondiTest.asmx/';
@@ -52,6 +52,7 @@ var urlGetSituazioneDistributoreV2 = urlProd + 'GetSituazioneDistributoreV2';
 var urlAggiornoQuantitaProdottiInDistributore = urlProd + 'AggiornaQuantitaProdottoInDistributore';
 var urlAggiornoQuantitaProdottiInDistributoreV2 = urlProd + 'AggiornaQuantitaProdottoInDistributoreV2';
 var urlAggiornoQuantitaProdottiInDistributoreV3 = urlProd + 'AggiornaQuantitaProdottoInDistributoreV3';
+var urlAggiornaQuantitaProdottoInClienteV3 = urlProd + 'AggiornaQuantitaProdottoInClienteV3';
 var urlAggiornaColoreProdottoInCliente = urlProd + 'AggiornaColoreProdottoInCliente';
 var urlAggiornaColoreProdottoInDistributore = urlProd + 'AggiornaColoreProdottoInDistributore';
 var urlStoricizzaStatoProdottoInCliente = urlProd + 'StoricizzoStatoProdottoInCliente';
@@ -381,6 +382,29 @@ function parseJsonDateLetturaAmericana(jsonDate) {
 
     return (year + "-" + padLeft(mon, 2) + "-" + padLeft(date, 2));
 };
+
+function parseJsonDateLetturaAmericanaWithTime(jsonDate) {
+    var str, year, month, day, hour, minute, seconds, d, finalDate;
+
+    str = jsonDate.replace(/\D/g, "");
+    d = new Date(parseInt(str));
+
+    year = d.getFullYear();
+    month = pad(d.getMonth() + 1);
+    day = pad(d.getDate());
+    hour = pad(d.getHours());
+    minutes = pad(d.getMinutes());
+    seconds = pad(d.getSeconds());
+
+    finalDate = year + "-" + month + "-" + day + " " + hour + ":" + minutes + ":"  + seconds;
+
+    return finalDate;
+};
+
+function pad(num) {
+    num = "0" + num;
+    return num.slice(-2);
+}
 
 function dataOdierna() {
     var currentTime = new Date();
@@ -862,7 +886,7 @@ function AggiornaQuantitaProdottiInMagazzinoResi(id, idProdotto, numeroLotto, co
         url: urlAggiornaQuantitaProdottiInMagazzinoResi,
         cache: false,
         async: true,
-        data: JSON.stringify({ id: id, idProdotto: idProdotto, numeroLotto: numeroLotto, codiceLotto: codiceLotto, quantita: quantita, prezzoTotale: prezzoTotale, dataModifica: dataModifica, dataScadenza: dataScadenza, modificato: modificato, idDistributore: idDistributore, idOperatore: idOperatore, IdCliente: IdCliente }),
+        data: JSON.stringify({ idProdotto: idProdotto, numeroLotto: numeroLotto, codiceLotto: codiceLotto, quantita: quantita, prezzoTotale: prezzoTotale, dataModifica: dataModifica, dataScadenza: dataScadenza, modificato: modificato, idDistributore: idDistributore, idOperatore: idOperatore, IdCliente: IdCliente }),
         error: function (data) {
             console.log(data.responseText)
         },
@@ -870,7 +894,7 @@ function AggiornaQuantitaProdottiInMagazzinoResi(id, idProdotto, numeroLotto, co
         complete: function () { $.mobile.loading('hide'); }, //Hide spinner
         success: function (response) {
             risultati = response.d;
-
+            itemSincronizzato('id', id, 'magazzinoresi');
             //console.log('Record Inserito Correttamente in MagazzinoResi');
 
         }
@@ -879,7 +903,7 @@ function AggiornaQuantitaProdottiInMagazzinoResi(id, idProdotto, numeroLotto, co
 }
 // *********************************************************************************
 // Aggiorno quantita Prodotti rimasti in magazzino *********************************
-function AggiornaQuantitaProdottiInMagazzino(id, idProdotto, codiceLotto, numeroLotto, quantita, prezzoTotale, dataModifica, dataScadenza, modificato, idOperatore, note, smaltito, colore) {
+function AggiornaQuantitaProdottiInMagazzino(idProdotto, codiceLotto, numeroLotto, quantita, prezzoTotale, dataModifica, dataScadenza, modificato, idOperatore, note, smaltito, colore, id) {
     $.ajax({
         type: "POST",
         crossDomain: true,
@@ -888,7 +912,7 @@ function AggiornaQuantitaProdottiInMagazzino(id, idProdotto, codiceLotto, numero
         url: urlQuantitaProdottiInMagazzino,
         cache: false,
         async: true,
-        data: JSON.stringify({ id: id, idProdotto: idProdotto, codiceLotto: codiceLotto, numeroLotto: numeroLotto, quantita: quantita, prezzoTotale: prezzoTotale, dataModifica: dataModifica, dataScadenza: dataScadenza, modificato: modificato, idOperatore: idOperatore, note: note, smaltito: smaltito, colore: colore }),
+        data: JSON.stringify({ idProdotto: idProdotto, codiceLotto: codiceLotto, numeroLotto: numeroLotto, quantita: quantita, prezzoTotale: prezzoTotale, dataModifica: dataModifica, dataScadenza: dataScadenza, modificato: modificato, idOperatore: idOperatore, note: note, smaltito: smaltito, colore: colore }),
         error: function (data) {
             console.log(data.responseText)
         },
@@ -897,7 +921,8 @@ function AggiornaQuantitaProdottiInMagazzino(id, idProdotto, codiceLotto, numero
         success: function (response) {
             risultati = response.d;
 
-            //console.log('Record Inserito Correttamente in Magazzino');
+            itemSincronizzato('id', id, 'magazzino');
+            console.log(risultati);
 
         }
 
@@ -923,7 +948,7 @@ function AggiornaQuantitaProdottiInMagazzinoV2(idProdotto, quantitaRimasti, prez
         success: function (response) {
             risultati = response.d;
 
-            //console.log(risultati);
+            console.log(risultati);
 
         }
 
@@ -991,7 +1016,7 @@ function AggiornaQuantitaProdottiVenduti(idProdotto, idDistributore, idCliente, 
     if (mydb) {
         //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
         mydb.transaction(function (t) {
-            t.executeSql("Insert into venduto (IdProdotto, IdDistributore, idCliente, Quantita, PrezzoTotale, IdOperatore, VenditaDiretta, numeroDDT, dataDDT, numeroLotto, dataScadenza, codiceLotto) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [idProdotto, idDistributore, idCliente, quantitaVenduti, prezzoTotaleVenduti, idOperatore, VenditaDiretta, numeroDDT, DataDDT, numeroLotto, dataScadenza, codiceLotto], function (transaction, results) {
+            t.executeSql("Insert into venduto (IdProdotto, IdDistributore, idCliente, Quantita, PrezzoTotale, IdOperatore, VenditaDiretta, numeroDDT, dataDDT, numeroLotto, dataScadenza, codiceLotto, syncro) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)", [idProdotto, idDistributore, idCliente, quantitaVenduti, prezzoTotaleVenduti, idOperatore, VenditaDiretta, numeroDDT, DataDDT, numeroLotto, dataScadenza, codiceLotto], function (transaction, results) {
                                
             }, errorHandler);
                         

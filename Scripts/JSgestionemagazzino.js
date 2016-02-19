@@ -12,7 +12,8 @@ function GestioneMagazzino() {
             //var dataModifica = dataOdierna();
             var query = "SELECT   DISTINCT prodotti.descrizione, " + 
             "prodotti.foto, " + 
-            "prodotti.idprodotto,  " + 
+            "prodotti.idprodotto,  " +
+            "(select quantitaVecchia from magazzino where magazzino.idprodotto = prodotti.idprodotto and  magazzino.modificato = 0 and magazzino.smaltito = 0) as quantitaVecchia , " +
             "(select SUM( quantita) from magazzino where magazzino.idprodotto = prodotti.idprodotto and  modificato =0 and smaltito = 0) as quantita , " + 
             "prodotti.prezzo, " + 
             "(select magazzino.colore from magazzino where magazzino.idprodotto = prodotti.idprodotto and  modificato =0 and smaltito = 0 order by datainserimento desc limit 0,1) as colore " + 
@@ -59,7 +60,7 @@ function GestioneMagazzino() {
                 var row = results.rows.item(i);
                 colore = row.colore;
                 quantita = row.quantita;
-                
+                var quantitaVecchia = row.quantitaVecchia;
                 if (quantita == null) {
                     quantita = 0;
                 }
@@ -73,7 +74,7 @@ function GestioneMagazzino() {
                 dettaglio = dettaglio + '<td><input type="number" id="carica' + row.IdProdotto + '" class="miniInput" min="0"><a href="#" data-descrizione="' + row.Descrizione + '" data-idProdotto="' + row.IdProdotto + '" data-foto="' + row.Foto + '" data-quantita="' + quantita + '" data-prezzo="' + row.Prezzo + '" class="ui-btn ui-corner-all ui-shadow ui-btn-active caricaProdottoInMagazzino ui-btnCarica">Carica</a></td>';
 
                 if (parseInt(quantita) > 0) {
-                    dettaglio = dettaglio + '<td><input type="number" id="scarica' + row.IdProdotto + '" class="miniInput" min="0"><a href="#" data-descrizione="' + row.Descrizione + '" data-IdMagazzino="' + row.IdMagazzino + '"  data-idProdotto="' + row.IdProdotto + '" data-quantita="' + quantita + '" data-prezzo="' + row.Prezzo + '" data-foto="' + row.Foto + '" class="ui-btn ui-corner-all ui-shadow ui-btn-active scaricaProdottoDaMagazzino ui-btnScarica">Scarica</a> </td>';
+                    dettaglio = dettaglio + '<td><input type="number" id="scarica' + row.IdProdotto + '" class="miniInput" min="0"><a href="#" data-descrizione="' + row.Descrizione + '" data-IdMagazzino="' + row.IdMagazzino + '"  data-idProdotto="' + row.IdProdotto + '" data-quantita="' + quantita + '" data-quantitaVecchia="' + quantitaVecchia + '"data-prezzo="' + row.Prezzo + '" data-foto="' + row.Foto + '" class="ui-btn ui-corner-all ui-shadow ui-btn-active scaricaProdottoDaMagazzino ui-btnScarica">Scarica</a> </td>';
                 }
                 else {
                     dettaglio = dettaglio + '<td></td>';
@@ -202,7 +203,7 @@ function GestioneMagazzino() {
 
                         //CaricaProdottoInMagazzino(idProdotto, quantitaCaricati, prezzoTotaleCaricati, idOperatore, numeroLotto, numeroDDT, dataDDT, note);                    
 
-                        CaricaProdottoInMagazzino(idProdotto, quantitaCaricati, quantitaTotale, prezzoTotaleCaricati, idOperatore, codiceLotto, numeroLotto, dataScadenza, null, null, note, 'azzurro');
+                        CaricaProdottoInMagazzino(idProdotto, quantitaCaricati, quantitaTotale, prezzoTotaleCaricati, idOperatore, codiceLotto, numeroLotto, dataScadenza, null, null, note, 'azzurro', quantitaVecchia);
 
                         tdQuantita.animate({
                             backgroundColor: "#38c",
@@ -575,27 +576,59 @@ function cambiaQuantitaGiacente(obj) {
 }
 
 
-function CaricaProdottoInMagazzino(idProdotto, quantitaCaricati, quantitaAggiornata, prezzoTotaleCaricati, idOperatore, codiceLotto, numeroLotto, dataScadenza, numeroDDT, dataDDT, note, colore) {
+function CaricaProdottoInMagazzino(idProdotto, quantitaCaricati, quantitaAggiornata, prezzoTotaleCaricati, idOperatore, codiceLotto, numeroLotto, dataScadenza, numeroDDT, dataDDT, note, colore, quantitaVecchia) {
 
     if (mydb) {
-        //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+
         mydb.transaction(function (t) {
             //var dataModifica = dataOdierna();
             if (numeroLotto != "") {
-                numeroLotto = dataItaliana(numeroLotto);
+                numeroLotto = numeroLotto;
             } else {
                 numeroLotto = null
             }
             if (dataScadenza != "") {
-                dataScadenza = dataItaliana(dataScadenza);
+                dataScadenza = dataScadenza;
+            } else {
+                dataScadenza = null;
+            }
+            var parametri = [idProdotto, numeroLotto];
+            var adesso = dataOdierna();
+            var query = "Update magazzino set modificato = 1, syncro = 0, datamodifica = '" + adesso + "'  where idprodotto = ? and numerolotto = ?";
+            if (numeroLotto == null) {
+                query = "Update magazzino set modificato = 1, syncro = 0, datamodifica = '" + adesso + "'  where idprodotto = ? and codicelotto = ?";
+                parametri = [idProdotto, codiceLotto];
+            }
+
+            t.executeSql(query, parametri, function (transaction, results) {
+                //console.log(risultati);
+               
+            }, errorHandler);
+
+        });
+        
+        mydb.transaction(function (t) {
+            //var dataModifica = dataOdierna();
+            if (numeroLotto != "") {
+                numeroLotto = numeroLotto;
+            } else {
+                numeroLotto = null
+            }
+            if (dataScadenza != "") {
+                dataScadenza = dataScadenza;
             } else {
                 dataScadenza = null;
             }
             
-            t.executeSql("Insert into magazzino (idProdotto, quantita, prezzoTotale, idOperatore, codiceLotto, numeroLotto, dataScadenza, numeroDDT, dataDDT, note, colore) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [idProdotto, quantitaCaricati, prezzoTotaleCaricati, idOperatore, codiceLotto, numeroLotto, dataScadenza, numeroDDT, dataDDT, note, colore], function (transaction, results) {
+            t.executeSql("Insert into magazzino (idProdotto, quantita, prezzoTotale, idOperatore, codiceLotto, numeroLotto, dataScadenza, numeroDDT, dataDDT, note, colore, syncro, quantitaVecchia) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)", [idProdotto, quantitaCaricati, prezzoTotaleCaricati, idOperatore, codiceLotto, numeroLotto, dataScadenza, numeroDDT, dataDDT, note, colore, quantitaVecchia], function (transaction, results) {
                 //console.log(risultati);
                 if (results.rowsAffected > 0) {
-                    displayNumeriLottoMagazzino(0, 0);                    
+                    displayNumeriLottoMagazzino(0, 0);
+                    if (numeroLotto == null) {
+                        AggiornaVecchiaQuantita(idProdotto, codiceLotto, 2);
+                    } else {
+                        AggiornaVecchiaQuantita(idProdotto, numeroLotto, 1);
+                    }
                 }
             }, errorHandler);
             
@@ -626,8 +659,14 @@ function GetProdottiInMagazzinoByIdProdNumLotto(idProdotto, idOperatore, quantit
                 for (var i = 0; i < results.rows.length; i++) {
                     var row = results.rows.item(i);
                     var codiceLotto = row.CodiceLotto;
-                    var numLotto = dataItaliana(row.NumeroLotto);
-                    var dataScadenza = dataItaliana(row.DataScadenza);
+                    var numLotto = row.NumeroLotto;
+                    var dataScadenza = row.DataScadenza;
+                    
+                    if (smaltito) {
+                        smaltito = 1;
+                    } else {
+                        smaltito = 0;
+                    }
                     //numLotto = stringToDate(numLotto, 'dd-MM-yyyy', '-');
                     if (quantitaDaScaricare <= row.Quantita) {
 
@@ -650,38 +689,43 @@ function GetProdottiInMagazzinoByIdProdNumLotto(idProdotto, idOperatore, quantit
         } else {
             alert("db not found, your browser does not support web sql!");
     }
-    
-   
+       
 }
 
-function SmaltiscoProdottoInMagazzinoV3(idMagazzino, idProdotto, idOperatore, quantitaDaSmaltire, quantitaRimanente, prezzoProdotto, quantitaAggiornata, codiceLotto, numeroLotto, dataScadenza, smaltito, colore) {
+function SmaltiscoProdottoInMagazzinoV3(idMagazzino, idProdotto, idOperatore, quantitaDaSmaltire, quantitaRimanente, prezzoProdotto, quantitaAggiornata, codiceLotto, numeroLotto, dataScadenza, smaltito, colore, quantitaVecchia) {
     if (mydb) {
         //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
         mydb.transaction(function (t) {
             var dataModifica = dataOdierna();
-            t.executeSql("UPDATE magazzino set DataModifica = '" + dataModifica + "', Modificato = 1, IdOperatore = ?, smaltito = ? Where id = ?", [idOperatore, smaltito, idMagazzino], function (transaction, results) {
+            t.executeSql("UPDATE magazzino set DataModifica = '" + dataModifica + "', Modificato = 1, IdOperatore = ?, smaltito = ?, syncro = 0 Where id = ?", [idOperatore, smaltito, idMagazzino], function (transaction, results) {
             //console.log(risultati);
                         }, errorHandler);
            
             if (quantitaDaSmaltire < quantitaRimanente)
             {
                 var quantitaDaCaricare = quantitaRimanente - quantitaDaSmaltire;
-                var prezzoTotale = quantitaRimanente * prezzoProdotto;
+                var prezzoTotale = quantitaDaCaricare * prezzoProdotto;
                 if (numeroLotto != "") {
-                    numeroLotto = dataItaliana(numeroLotto);
+                    numeroLotto = numeroLotto;
                 } else {
                     numeroLotto = null
                 }
                 if (dataScadenza != "") {
-                    dataScadenza = dataItaliana(dataScadenza);
+                    dataScadenza = dataScadenza;
                 } else {
                     dataScadenza = null;
                 }
-                t.executeSql("Insert into magazzino (IdProdotto, quantita, prezzoTotale, idOperatore, numeroLotto, colore, numeroDDT, dataDDT, dataScadenza, codiceLotto, note) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [idProdotto, quantitaDaCaricare, prezzoTotale, idOperatore, numeroLotto, colore, '', '', dataScadenza, codiceLotto, ''], function (transaction, results) {
+                t.executeSql("Insert into magazzino (IdProdotto, quantita, prezzoTotale, idOperatore, numeroLotto, colore, numeroDDT, dataDDT, dataScadenza, codiceLotto, note, quantitaVecchia, syncro) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)", [idProdotto, quantitaDaCaricare, prezzoTotale, idOperatore, numeroLotto, colore, '', '', dataScadenza, codiceLotto, '', quantitaVecchia], function (transaction, results) {
                     //console.log(transaction);
                     //console.log(results);
                     if (results.rowsAffected > 0) {
                         displayNumeriLottoMagazzino(0, 0);
+                        //if (numeroLotto == null) {
+                        //    AggiornaVecchiaQuantita(idProdotto, codiceLotto, 2)
+                        //} else {
+                        //    AggiornaVecchiaQuantita(idProdotto, numeroLotto, 1)
+                        //}
+                        
                     }
                 }, errorHandler);
 

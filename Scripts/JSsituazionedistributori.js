@@ -485,23 +485,23 @@ function GetSituazioneDistributore(IdDistributore, descDistributore) {
                                             var idOperatore = localStorage.idOperatore;
                                             var giacenza = $('#quantMagazzino' + idProdotto);
 
-                                            if (quantitaDaCaricare == "" || isInteroPositivo(parseInt(quantitaDaCaricare)) == false) {
-                                                alert("Scegli un valore Numerico per indicare quanto caricare!");
-                                                $(this).prev().addClass("evidenziaErrore", 1000, "easeOutBounce");
-                                                return;
-                                            } else {
-                                                $(this).prev().removeClass("evidenziaErrore");
-                                            }
+                                            //if (quantitaDaCaricare == "" || isInteroPositivo(parseInt(quantitaDaCaricare)) == false) {
+                                            //    alert("Scegli un valore Numerico per indicare quanto caricare!");
+                                            //    $(this).prev().addClass("evidenziaErrore", 1000, "easeOutBounce");
+                                            //    return;
+                                            //} else {
+                                            //    $(this).prev().removeClass("evidenziaErrore");
+                                            //}
 
-                                            if (isInteroPositivo(parseInt(quantMagazzino)) == false) {
-                                                alert("Questo prodotto risulta esaurito in magazzino!");
-                                                return;
-                                            }
+                                            //if (isInteroPositivo(parseInt(quantMagazzino)) == false) {
+                                            //    alert("Questo prodotto risulta esaurito in magazzino!");
+                                            //    return;
+                                            //}
 
-                                            if (parseInt(quantitaDaCaricare) > parseInt(quantMagazzino)) {
-                                                alert("Non si possono caricare più prodotti di quelli presenti in magazzino!");
-                                                return;
-                                            }
+                                            //if (parseInt(quantitaDaCaricare) > parseInt(quantMagazzino)) {
+                                            //    alert("Non si possono caricare più prodotti di quelli presenti in magazzino!");
+                                            //    return;
+                                            //}
 
                                             GetProdottiInMagazzinoPerCaricare(IdDistributore, idProdotto, quantitaDaCaricare, quantitaRimasti, quantitaAggiornataMagazzino, quantitaAggiornataDistributore, prezzoTotaleDaCaricare, prezzoTotaleRimasti, idOperatore);
 
@@ -539,7 +539,7 @@ function GetSituazioneDistributore(IdDistributore, descDistributore) {
                                             var quantitaAggiornataDistributore = (parseInt(quantitaDistributore) - parseInt(quantitaDaSpostare));
                                             var prezzoTotaleRimasti = (prezzo * quantRestante);
                                             var prezzoTotaleRimastiDistributore = (prezzo * (parseInt(quantitaDistributore) - parseInt(quantitaDaSpostare)));
-                                            var prezzoTotaleDaSpostare = (prezzo * quantitaDaSpostare);
+                                            var prezzoTotaleDaSpostare = (prezzo * quantitaAggiornataMagazzino);
 
                                             var idOperatore = localStorage.idOperatore;
 
@@ -1093,7 +1093,7 @@ function GetProdottiInDistributorePerRimasti(idDistributore, idProdotto, quantit
             for (var i = 0; i < results.rows.length; i++) {
                 var row = results.rows.item(i);
                 var lotti = '<br>Lotti: ';
-                numLotti = dataItaliana(row.NumeroLotto);
+                numLotti = row.NumeroLotto;
                 //var numeroLotto = stringToDate(numLotti, 'dd-MM-yyyy', '-');
                 var numeroLotto = row.NumeroLotto;
                 dataScadenza = row.DataScadenza;
@@ -1162,8 +1162,8 @@ function GetProdottiInDistributorePerResi(idDistributore, idProdotto, quantitaRe
             for (var i = 0; i < results.rows.length; i++) {
                 var row = results.rows.item(i);
                 var lotti = '<br>Lotti: ';
-                numeroLotto = dataItaliana(row.NumeroLotto);
-                dataScadenza = dataItaliana(row.DataScadenza);
+                numeroLotto = row.NumeroLotto;
+                dataScadenza = row.DataScadenza;
                 //var numeroLotto = stringToDate(numLotti, 'dd-MM-yyyy', '-');
                 //dataScadenza = stringToDate(dataScadenza, 'dd-MM-yyyy', '-');
                 if (row.CodiceLotto != null) {
@@ -1179,7 +1179,7 @@ function GetProdottiInDistributorePerResi(idDistributore, idProdotto, quantitaRe
                 //console.log('quantita: ' + row.quantitaDistributore);
                 quantitaDistributore = row.Quantita;
                 //}
-
+                var quantitaVecchia = row.Quantita;
                 var idCliente = 0;
                 var VenditaDiretta = 0;
                 if (quantitaResi <= quantitaDistributore) {
@@ -1225,7 +1225,7 @@ function GetProdottiInMagazzinoPerCaricare(idDistributore, idProdotto, quantitaD
             }
             t.executeSql("SELECT DISTINCT prodotti.idprodotto, prodotti.descrizione, magazzino.numerolotto, " +
                            "magazzino.quantita, " +
-                           "magazzino.id, prodotti.prezzo, magazzino.codicelotto, magazzino.datascadenza   " +
+                           "magazzino.id, prodotti.prezzo, magazzino.codicelotto, magazzino.datascadenza, magazzino.quantitaVecchia   " +
                         "FROM prodotti " +
                         "LEFT OUTER JOIN magazzino ON prodotti.idprodotto = magazzino.idprodotto " +
                         "WHERE magazzino.modificato = 0 and magazzino.smaltito = 0 " + where + "  ORDER BY prodotti.ordine, prodotti.descrizione, magazzino.datascadenza", parameter, function (transaction, results) {
@@ -1238,28 +1238,29 @@ function GetProdottiInMagazzinoPerCaricare(idDistributore, idProdotto, quantitaD
                 for (var i = 0; i < results.rows.length; i++) {
                     var row = results.rows.item(i);
                     var lotti = '<br>Lotti: ';
-                    var numeroLotto = dataItaliana(row.NumeroLotto);
+                    var numeroLotto = row.NumeroLotto;
                     //var numeroLotto = stringToDate(numLotti, 'dd-MM-yyyy', '-');
 
-                    dataScadenza = dataItaliana(row.DataScadenza);
+                    dataScadenza = row.DataScadenza;
                     //dataScadenza = stringToDate(dataScadenza, 'dd-MM-yyyy', '-');
                     codiceLotto = row.CodiceLotto;
                     if (codiceLotto == null) {
                         codiceLotto = '';
-                    }
+                    }                    
 
                     quantitaMagazzino = row.Quantita;
                     var idCliente = 0;
                     var VenditaDiretta = 0;
+                    var quantitaVecchia = row.quantitaVecchia;
                     if (quantitaDaCaricare <= quantitaMagazzino) {
 
-                        SmaltiscoProdottoInMagazzinoV3(row.Id, idProdotto, idOperatore, quantitaDaCaricare, parseInt(quantitaMagazzino), row.Prezzo, quantitaAggiornataMagazzino, codiceLotto, numeroLotto, dataScadenza, true, 'rosso');
+                        SmaltiscoProdottoInMagazzinoV3(row.Id, idProdotto, idOperatore, quantitaDaCaricare, parseInt(quantitaMagazzino), row.Prezzo, quantitaAggiornataMagazzino, codiceLotto, numeroLotto, dataScadenza, 1, 'rosso', quantitaVecchia);
 
                         InsertProdottiInDistributore(idDistributore, idProdotto, quantitaDaCaricare, quantitaAggiornataDistributore, prezzoTotaleDaCaricare, idOperatore, numeroLotto, null, null, dataScadenza, codiceLotto, 'azzurro');
                         break;
                     } else {
 
-                        SmaltiscoProdottoInMagazzinoV3(row.Id, idProdotto, idOperatore, quantitaDaCaricare, parseInt(quantitaMagazzino), row.Prezzo, quantitaAggiornataMagazzino, codiceLotto, numeroLotto, dataScadenza, true, 'rosso');
+                        SmaltiscoProdottoInMagazzinoV3(row.Id, idProdotto, idOperatore, quantitaDaCaricare, parseInt(quantitaMagazzino), row.Prezzo, quantitaAggiornataMagazzino, codiceLotto, numeroLotto, dataScadenza, 1, 'rosso', quantitaVecchia);
                         if (quantitaDaCaricare <= quantitaMagazzino) {
 
                             InsertProdottiInDistributore(idDistributore, idProdotto, quantitaDaCaricare, quantitaAggiornataDistributore, prezzoTotaleDaCaricare, idOperatore, numeroLotto, null, null, dataScadenza, codiceLotto, 'azzurro');
@@ -1291,11 +1292,12 @@ function GetProdottiInMagazzinoPerScaricare(idDistributore, idProdotto, quantita
             
                 var oggi = dataOdierna();
                 t.executeSql("SELECT DISTINCT prodotti.IdProdotto, prodotti.Descrizione, situazionedistributori.NumeroLotto, " + 
-                                "situazionedistributori.quantita, situazionedistributori.IdDistributore, situazionedistributori.DataScadenza, situazionedistributori.CodiceLotto, situazionedistributori.IdSituazioneDistributore " + 
+                                "situazionedistributori.quantita, situazionedistributori.IdDistributore, situazionedistributori.DataScadenza, situazionedistributori.CodiceLotto, situazionedistributori.IdSituazioneDistributore, magazzino.quantitaVecchia " +
                                 "FROM prodotti " + 
-                                "LEFT OUTER JOIN situazionedistributori situazionedistributori ON prodotti.IdProdotto = situazionedistributori.IdProdotto " + 
-                                "WHERE situazionedistributori.modificato = 0 and " +
-                                "situazionedistributori.IdDistributore = ? AND situazionedistributori.idprodotto = ? ORDER BY situazionedistributori.DataScadenza ", [idDistributore, idProdotto], function (transaction, results) {
+                                "LEFT OUTER JOIN situazionedistributori situazionedistributori ON prodotti.IdProdotto = situazionedistributori.IdProdotto " +
+                                " inner join magazzino on prodotti.IdProdotto = magazzino.IdProdotto " +
+                                "WHERE situazionedistributori.modificato = 0 and magazzino.Modificato = 0 " +
+                                "and situazionedistributori.IdDistributore = ? AND situazionedistributori.idprodotto = ? ORDER BY situazionedistributori.DataScadenza ", [idDistributore, idProdotto], function (transaction, results) {
 
                     var idProdottoOld = 0;
                     var numLotti = '';
@@ -1305,8 +1307,8 @@ function GetProdottiInMagazzinoPerScaricare(idDistributore, idProdotto, quantita
                     for (var i = 0; i < results.rows.length; i++) {
                         var row = results.rows.item(i);
                         var lotti = '<br>Lotti: ';
-                        var numeroLotto = dataItaliana(row.NumeroLotto);
-                        dataScadenza = dataItaliana(row.DataScadenza);
+                        var numeroLotto = row.NumeroLotto;
+                        dataScadenza = row.DataScadenza;
                         //var numeroLotto = stringToDate(numLotti, 'dd-MM-yyyy', '-');
                         //dataScadenza = stringToDate(dataScadenza, 'dd-MM-yyyy', '-');
 
@@ -1318,20 +1320,21 @@ function GetProdottiInMagazzinoPerScaricare(idDistributore, idProdotto, quantita
                         var IdSituazioneDistributore = row.IdSituazioneDistributore;
                         var idCliente = 0;
                         var VenditaDiretta = 0;
+                        var quantitaVecchia = row.quantitaVecchia;
                         if (quantitaDaCaricare <= quantitaDistributore) {
 
                             StoricizzoStatoProdottoInDistributore(idDistributore, idProdotto, quantitaDaCaricare, quantitaDistributore, quantitaAggiornataDistributore, prezzoTotaleRimasti, idOperatore, numeroLotto, dataScadenza, codiceLotto, IdSituazioneDistributore);
 
-                            CaricaProdottoInMagazzino(idProdotto, quantitaDaCaricare, quantitaAggiornataMagazzino, prezzoTotaleDaCaricare, idOperatore, codiceLotto, numeroLotto, dataScadenza, null, null, '', 'azzurro');
+                            CaricaProdottoInMagazzino(idProdotto, quantitaAggiornataMagazzino, quantitaAggiornataMagazzino, prezzoTotaleDaCaricare, idOperatore, codiceLotto, numeroLotto, dataScadenza, null, null, '', 'azzurro', quantitaVecchia);
                             break;
                         } else {
                             StoricizzoStatoProdottoInDistributore(idDistributore, idProdotto, quantitaDaCaricare, quantitaDistributore, quantitaAggiornataDistributore, prezzoTotaleRimasti, idOperatore, numeroLotto, dataScadenza, codiceLotto, IdSituazioneDistributore);
                             if (quantitaDaCaricare <= quantitaDistributore) {
                                 //AggiornaQuantitaProdottiVenduti(idProdotto, idDistributore, idCliente, quantitaVenduti, prezzoTotaleVenduti, idOperatore, VenditaDiretta, numeroLotto);
-                                CaricaProdottoInMagazzino(idProdotto, quantitaDaCaricare, quantitaAggiornataMagazzino, prezzoTotaleDaCaricare, idOperatore, codiceLotto, numeroLotto, dataScadenza, null, null, '', 'azzurro');
+                                CaricaProdottoInMagazzino(idProdotto, quantitaAggiornataMagazzino, quantitaAggiornataMagazzino, prezzoTotaleDaCaricare, idOperatore, codiceLotto, numeroLotto, dataScadenza, null, null, '', 'azzurro', quantitaVecchia);
                             } else {
                                 //AggiornaQuantitaProdottiVenduti(idProdotto, idDistributore, idCliente, quantitaDistributore, prezzoTotaleVenduti, idOperatore, VenditaDiretta, numeroLotto);
-                                CaricaProdottoInMagazzino(idProdotto, quantitaDistributore, quantitaAggiornataMagazzino, prezzoTotaleDaCaricare, idOperatore, codiceLotto, numeroLotto, dataScadenza, null, null, '', 'azzurro');
+                                CaricaProdottoInMagazzino(idProdotto, quantitaAggiornataMagazzino, quantitaAggiornataMagazzino, prezzoTotaleDaCaricare, idOperatore, codiceLotto, numeroLotto, dataScadenza, null, null, '', 'azzurro', quantitaVecchia);
                             }
                         }
                         quantitaDaCaricare = quantitaDaCaricare - quantitaDistributore;
@@ -1462,7 +1465,7 @@ function SalvaResi(idDistributore, idProdotto, quantitaResi, quantitaRimasta, pr
             idProdotto = parseInt(idProdotto);
             quantitaResi = parseInt(quantitaResi);
             idOperatore = parseInt(idOperatore);
-            t.executeSql("Insert into magazzinoresi (idProdotto, idDistributore, idCliente, quantita, prezzoTotale, idOperatore, dataScadenza, codiceLotto, numeroLotto, dataModifica) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [idProdotto, idDistributore, idCliente, quantitaResi, prezzoTotale, idOperatore, dataScadenza, codiceLotto, numeroLotto, dataModifica], function (transaction, results) {
+            t.executeSql("Insert into magazzinoresi (idProdotto, idDistributore, idCliente, quantita, prezzoTotale, idOperatore, dataScadenza, codiceLotto, numeroLotto, dataModifica, syncro) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)", [idProdotto, idDistributore, idCliente, quantitaResi, prezzoTotale, idOperatore, dataScadenza, codiceLotto, numeroLotto, dataModifica], function (transaction, results) {
             
             }, errorHandler);
         
@@ -1488,7 +1491,7 @@ function StoricizzoStatoProdottoInDistributore(idDistributore, idProdotto, quant
         //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
         mydb.transaction(function (t) {
             var addedOn = dataOdierna();
-            t.executeSql("UPDATE situazionedistributori set DataModifica = '" + addedOn + "', Modificato = 1 Where idSituazioneDistributore = ? ", [idSituazioneDistributore], function (transaction, results) {
+            t.executeSql("UPDATE situazionedistributori set DataModifica = '" + addedOn + "', Modificato = 1, syncro = 0 Where idSituazioneDistributore = ? ", [idSituazioneDistributore], function (transaction, results) {
                
             }, errorHandler);
             if (quantitaVenduti < quantitaDistributore) {
@@ -1500,7 +1503,7 @@ function StoricizzoStatoProdottoInDistributore(idDistributore, idProdotto, quant
                 if (dataScadenza == "") {                    
                     dataScadenza = null;
                 }
-                t.executeSql("Insert into situazionedistributori (IdDistributore, IdProdotto, Quantita, PrezzoTotale, IdOperatore, NumeroLotto, colore, dataScadenza, codiceLotto) Values (?, ?, ?, ?, ?, ?, ?, ?, ?)", [idDistributore, idProdotto, quantitaDaCaricare, prezzoParziale, idOperatore, numeroLotto, 'azzurro', dataScadenza, codiceLotto], function (transaction, results) {
+                t.executeSql("Insert into situazionedistributori (IdDistributore, IdProdotto, Quantita, PrezzoTotale, IdOperatore, NumeroLotto, colore, dataScadenza, codiceLotto, syncro) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)", [idDistributore, idProdotto, quantitaDaCaricare, prezzoParziale, idOperatore, numeroLotto, 'azzurro', dataScadenza, codiceLotto], function (transaction, results) {
                     if (results.rowsAffected > 0) {
                         displayNumeriLottoDistributore(idDistributore, idProdotto, quantitaRimasti);
                     }
@@ -1526,16 +1529,16 @@ function InsertProdottiInDistributore(idDistributore, idProdotto, quantita, quan
         mydb.transaction(function (t) {
             var dataModifica = dataOdierna();
             if (numeroLotto != "") {
-                numeroLotto = dataItaliana(numeroLotto);
+                numeroLotto = numeroLotto;
             } else {
                 numeroLotto = null
             }
             if (dataScadenza != "") {
-                dataScadenza = dataItaliana(dataScadenza);
+                dataScadenza = dataScadenza;
             } else {
                 dataScadenza = null;
             }
-            t.executeSql("Insert into situazionedistributori (IdDistributore, IdProdotto, Quantita, PrezzoTotale, IdOperatore, NumeroLotto, colore, dataScadenza, codiceLotto, numeroDDT, dataDDT) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [idDistributore, idProdotto, quantita, prezzoTotale, idOperatore, numeroLotto, colore, dataScadenza, codiceLotto, numeroDDT, dataDDT], function (transaction, results) {
+            t.executeSql("Insert into situazionedistributori (IdDistributore, IdProdotto, Quantita, PrezzoTotale, IdOperatore, NumeroLotto, colore, dataScadenza, codiceLotto, numeroDDT, dataDDT, syncro) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)", [idDistributore, idProdotto, quantita, prezzoTotale, idOperatore, numeroLotto, colore, dataScadenza, codiceLotto, numeroDDT, dataDDT], function (transaction, results) {
                 //console.log(risultati);
                 if (results.rowsAffected > 0) {
                     displayNumeriLottoMagazzino(0, 0);

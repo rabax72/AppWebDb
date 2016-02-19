@@ -1015,7 +1015,7 @@ function SalvaResiCliente(idCliente, idProdotto, quantitaResi, quantitaRimasta, 
             idProdotto = parseInt(idProdotto);
             quantitaResi = parseInt(quantitaResi);
             idOperatore = parseInt(idOperatore);
-            t.executeSql("Insert into magazzinoresi (idProdotto, idDistributore, idCliente, quantita, prezzoTotale, idOperatore, dataScadenza, codiceLotto, numeroLotto, dataModifica) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [idProdotto, idDistributore, idCliente, quantitaResi, prezzoTotale, idOperatore, dataScadenza, codiceLotto, numeroLotto, dataModifica], function (transaction, results) {
+            t.executeSql("Insert into magazzinoresi (idProdotto, idDistributore, idCliente, quantita, prezzoTotale, idOperatore, dataScadenza, codiceLotto, numeroLotto, dataModifica, syncro) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)", [idProdotto, idDistributore, idCliente, quantitaResi, prezzoTotale, idOperatore, dataScadenza, codiceLotto, numeroLotto, dataModifica], function (transaction, results) {
                 if (results.rowsAffected > 0) {
                     displayNumeriLottoCliente(idCliente, 0, quantitaRimasta);
                 }
@@ -1085,7 +1085,7 @@ function StoricizzoStatoProdottoInCliente(idCliente, idProdotto, quantitaVenduti
         //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
         mydb.transaction(function (t) {
             var addedOn = dataOdierna();
-            t.executeSql("UPDATE situazioneclienti set DataModifica = '" + addedOn + "', Modificato = 1 Where idSituazioneCliente = ? ", [idSituazioneCliente], function (transaction, results) {
+            t.executeSql("UPDATE situazioneclienti set DataModifica = '" + addedOn + "', Modificato = 1, syncro = 0 Where idSituazioneCliente = ? ", [idSituazioneCliente], function (transaction, results) {
 
             }, errorHandler);
             if (quantitaVenduti < quantitaCliente) {
@@ -1097,7 +1097,7 @@ function StoricizzoStatoProdottoInCliente(idCliente, idProdotto, quantitaVenduti
                 if (dataScadenza == "") {                   
                     dataScadenza = null;
                 }
-                t.executeSql("Insert into situazioneclienti (IdCliente, IdProdotto, Quantita, PrezzoTotale, IdOperatore, NumeroLotto, colore, dataScadenza, codiceLotto) Values (?, ?, ?, ?, ?, ?, ?, ?, ?)", [idCliente, idProdotto, quantitaDaCaricare, prezzoParziale, idOperatore, numeroLotto, 'azzurro', dataScadenza, codiceLotto], function (transaction, results) {
+                t.executeSql("Insert into situazioneclienti (IdCliente, IdProdotto, Quantita, PrezzoTotale, IdOperatore, NumeroLotto, colore, dataScadenza, codiceLotto, syncro) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)", [idCliente, idProdotto, quantitaDaCaricare, prezzoParziale, idOperatore, numeroLotto, 'azzurro', dataScadenza, codiceLotto], function (transaction, results) {
                     if (results.rowsAffected > 0) {
                         displayNumeriLottoCliente(idCliente, 0, quantitaRimasti);
                     }
@@ -1151,16 +1151,16 @@ function InsertProdottiInCliente(idCliente, idProdotto, quantita, quantitaAggior
         mydb.transaction(function (t) {
             var dataModifica = dataOdierna();
             if (numeroLotto != "") {
-                numeroLotto = dataItaliana(numeroLotto);
+                numeroLotto = numeroLotto;
             } else {
                 numeroLotto = null
             }
             if (dataScadenza != "") {
-                dataScadenza = dataItaliana(dataScadenza);
+                dataScadenza = dataScadenza;
             } else {
                 dataScadenza = null;
             }
-            t.executeSql("Insert into situazioneclienti (IdCliente, IdProdotto, Quantita, PrezzoTotale, IdOperatore, NumeroLotto, colore, dataScadenza, codiceLotto, numeroDDT, dataDDT) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [idCliente, idProdotto, quantita, prezzoTotale, idOperatore, numeroLotto, colore, dataScadenza, codiceLotto, numeroDDT, dataDDT], function (transaction, results) {
+            t.executeSql("Insert into situazioneclienti (IdCliente, IdProdotto, Quantita, PrezzoTotale, IdOperatore, NumeroLotto, colore, dataScadenza, codiceLotto, numeroDDT, dataDDT, syncro) Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)", [idCliente, idProdotto, quantita, prezzoTotale, idOperatore, numeroLotto, colore, dataScadenza, codiceLotto, numeroDDT, dataDDT], function (transaction, results) {
                 //console.log(risultati);
                 if (results.rowsAffected > 0) {
                     displayNumeriLottoMagazzino(0, 0);
@@ -1355,7 +1355,7 @@ function GetProdottiInMagazzinoPerCaricareCliente(idCliente, idProdotto, quantit
             }
             t.executeSql("SELECT DISTINCT prodotti.idprodotto, prodotti.descrizione, magazzino.numerolotto, " +
                            "magazzino.quantita, " +
-                           "magazzino.id, prodotti.prezzo, magazzino.codicelotto, magazzino.datascadenza   " +
+                           "magazzino.id, prodotti.prezzo, magazzino.codicelotto, magazzino.datascadenza, magazzino.quantitaVecchia   " +
                         "FROM prodotti " +
                         "LEFT OUTER JOIN magazzino ON prodotti.idprodotto = magazzino.idprodotto " +
                         "WHERE magazzino.modificato = 0 and magazzino.smaltito = 0 " + where + "  ORDER BY prodotti.ordine, prodotti.descrizione, magazzino.datascadenza", parameter, function (transaction, results) {
@@ -1368,28 +1368,29 @@ function GetProdottiInMagazzinoPerCaricareCliente(idCliente, idProdotto, quantit
                             for (var i = 0; i < results.rows.length; i++) {
                                 var row = results.rows.item(i);
                                 var lotti = '<br>Lotti: ';
-                                var numeroLotto = dataItaliana(row.NumeroLotto);
+                                var numeroLotto = row.NumeroLotto;
                                 //var numeroLotto = stringToDate(numLotti, 'dd-MM-yyyy', '-');
 
-                                dataScadenza = dataItaliana(row.DataScadenza);
+                                dataScadenza = row.DataScadenza;
                                 //dataScadenza = stringToDate(dataScadenza, 'dd-MM-yyyy', '-');
                                 codiceLotto = row.CodiceLotto;
                                 if (codiceLotto == null) {
                                     codiceLotto = '';
                                 }
-
+                                
                                 quantitaMagazzino = row.Quantita;
                                 //var idCliente = 0;
                                 var VenditaDiretta = 0;
+                                var quantitaVecchia = row.quantitaVecchia;
                                 if (quantitaDaCaricare <= quantitaMagazzino) {
 
-                                    SmaltiscoProdottoInMagazzinoV3(row.Id, idProdotto, idOperatore, quantitaDaCaricare, parseInt(quantitaMagazzino), row.Prezzo, quantitaAggiornataMagazzino, codiceLotto, numeroLotto, dataScadenza, true, 'rosso');
+                                    SmaltiscoProdottoInMagazzinoV3(row.Id, idProdotto, idOperatore, quantitaDaCaricare, parseInt(quantitaMagazzino), row.Prezzo, quantitaAggiornataMagazzino, codiceLotto, numeroLotto, dataScadenza, 1, 'rosso', quantitaVecchia);
 
                                     InsertProdottiInCliente(idCliente, idProdotto, quantitaDaCaricare, quantitaAggiornataCliente, prezzoTotaleDaCaricare, idOperatore, numeroLotto, null, null, dataScadenza, codiceLotto, 'azzurro');
                                     break;
                                 } else {
 
-                                    SmaltiscoProdottoInMagazzinoV3(row.Id, idProdotto, idOperatore, quantitaDaCaricare, parseInt(quantitaMagazzino), row.Prezzo, quantitaAggiornataMagazzino, codiceLotto, numeroLotto, dataScadenza, true, 'rosso');
+                                    SmaltiscoProdottoInMagazzinoV3(row.Id, idProdotto, idOperatore, quantitaDaCaricare, parseInt(quantitaMagazzino), row.Prezzo, quantitaAggiornataMagazzino, codiceLotto, numeroLotto, dataScadenza, 1, 'rosso', quantitaVecchia);
                                     if (quantitaDaCaricare <= quantitaMagazzino) {
 
                                         InsertProdottiInCliente(idCliente, idProdotto, quantitaDaCaricare, quantitaAggiornataCliente, prezzoTotaleDaCaricare, idOperatore, numeroLotto, null, null, dataScadenza, codiceLotto, 'azzurro');
@@ -1435,8 +1436,8 @@ function GetProdottiInMagazzinoPerScaricareCliente(idCliente, idProdotto, quanti
                                 for (var i = 0; i < results.rows.length; i++) {
                                     var row = results.rows.item(i);
                                     var lotti = '<br>Lotti: ';
-                                    var numeroLotto = dataItaliana(row.NumeroLotto);
-                                    dataScadenza = dataItaliana(row.DataScadenza);
+                                    var numeroLotto = row.NumeroLotto;
+                                    dataScadenza = row.DataScadenza;
                                     //var numeroLotto = stringToDate(numLotti, 'dd-MM-yyyy', '-');
                                     //dataScadenza = stringToDate(dataScadenza, 'dd-MM-yyyy', '-');
 
@@ -1501,7 +1502,7 @@ function GetProdottiInClientePerRimasti(idCliente, idProdotto, quantitaVenduti, 
                 for (var i = 0; i < results.rows.length; i++) {
                     var row = results.rows.item(i);
                     var lotti = '<br>Lotti: ';
-                    numLotti = dataItaliana(row.NumeroLotto);
+                    numLotti = row.NumeroLotto;
                     //var numeroLotto = stringToDate(numLotti, 'dd-MM-yyyy', '-');
                     var numeroLotto = row.NumeroLotto;
                     dataScadenza = row.DataScadenza;
@@ -1569,8 +1570,8 @@ function GetProdottiInClientePerResi(idCliente, idProdotto, quantitaResi, quanti
                 for (var i = 0; i < results.rows.length; i++) {
                     var row = results.rows.item(i);
                     var lotti = '<br>Lotti: ';
-                    numeroLotto = dataItaliana(row.NumeroLotto);
-                    dataScadenza = dataItaliana(row.DataScadenza);
+                    numeroLotto = row.NumeroLotto;
+                    dataScadenza = row.DataScadenza;
                     //var numeroLotto = stringToDate(numLotti, 'dd-MM-yyyy', '-');
                     //dataScadenza = stringToDate(dataScadenza, 'dd-MM-yyyy', '-');
                     if (row.CodiceLotto != null) {
@@ -1617,4 +1618,31 @@ function GetProdottiInClientePerResi(idCliente, idProdotto, quantitaResi, quanti
     } else {
         alert("db not found, your browser does not support web sql!");
     }
+}
+
+
+function AggiornaQuantitaProdottoInClienteV3(idCliente, idProdotto, codiceLotto, numeroLotto, quantita, prezzoTotale, dataModifica, dataScadenza, modificato, idOperatore, colore) {
+
+    $.ajax({
+        type: "POST",
+        crossDomain: true,
+        contentType: "application/json; charset=utf-8",
+        url: urlAggiornaQuantitaProdottoInClienteV3,
+        cache: false,
+        async: true,
+        data: JSON.stringify({ idCliente: idCliente, idProdotto: idProdotto, codiceLotto: codiceLotto, numeroLotto: numeroLotto, quantita: quantita, prezzoTotale: prezzoTotale, dataModifica: dataModifica, dataScadenza: dataScadenza, modificato: modificato, idOperatore: idOperatore, colore: colore }),
+        error: function (data) {
+            console.log(data.responseText)
+        },
+        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+        success: function (response) {
+            risultati = response.d;
+
+            //console.log(risultati[0].codiceLotto);            
+
+        }
+
+    });
+
 }
