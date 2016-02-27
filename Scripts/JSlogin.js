@@ -120,7 +120,7 @@ $(function () {
 
         var email = $("#txt-email").val();
         var password = $("#txt-password").val();
-
+        alert("user=" + email);
         //Autenticazione(email, password);
         getAutenticazione(email, password);
 
