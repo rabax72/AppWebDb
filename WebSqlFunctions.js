@@ -331,10 +331,13 @@
     //                        "(1503, 1, '2015-12-12', 1, '1.00', '2015-12-12 14:29:38', '2015-12-12 00:00:00', 0, NULL, NULL, NULL, NULL, 1, 1);";
     var valoriTrasporto = "DELETE from trasporto";
 
-    creaStrutturaTabella(strutturaClienti, 'Clienti');
-    creaStrutturaTabella(strutturaDistributori, 'Distributori');
+    //creaStrutturaTabella(strutturaClienti, 'Clienti');
+    creaTabella(strutturaClienti, valoriClienti, 'Clienti');
+    //creaStrutturaTabella(strutturaDistributori, 'Distributori');
+    creaTabella(strutturaDistributori, valoriDistributori, 'Distributori');
     creaStrutturaTabella(strutturaMezzi, 'Mezzi');
-    creaStrutturaTabella(strutturaOperatori, 'Operatori');
+    //creaStrutturaTabella(strutturaOperatori, 'Operatori');
+    creaTabella(strutturaOperatori, valoriOperatori, 'Operatori');
     creaStrutturaTabella(strutturaProdotti, 'Prodotti');
     creaStrutturaTabella(strutturaSincronizzazioni, 'Sincronizzazioni');
     creaStrutturaTabella(strutturaSituazioneClienti, 'SituazioneClienti');
