@@ -476,6 +476,7 @@ function operatoriValidi(transaction, results) {
       
     for (var i = 0; i < results.rows.length; i++) {
         var row = results.rows.item(i);
+        alert("ruolo=" + row.Ruolo);
         if (row.Ruolo != null) {
             if (row.Ruolo == 'admin') {
                 $(".onlyAdmin").switchClass("onlyAdmin", "", 1000);
