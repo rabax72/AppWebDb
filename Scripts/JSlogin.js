@@ -487,6 +487,41 @@ function operatoriValidi(transaction, results) {
     }
     if (results.rows.length == 0) {
         $("#authResult").html('User o Password Errati!!!');
+
+        if (mydb) {
+            //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+            mydb.transaction(function (t) {
+
+                t.executeSql("SELECT * From operatori ORDER by nome", [], function (transaction, results) {
+                    //console.log(risultati);
+
+                    var clienti = '<ul data-role="listview" data-filter="true" data-filter-placeholder="Cerca il Cliente..." data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">';
+
+                    for (var i = 0; i < results.rows.length; i++) {
+                        var row = results.rows.item(i);
+                        //var desc = row.Descrizione;                        
+
+                        clienti = clienti + '<li>' + row.Nome + '</li>';
+                        //$("#" + row).show();
+                    }
+                    clienti = clienti + '</ul>';
+                    $("#authResult").html('User o Password Errati!!!<br>' + clienti);
+                    //$("#tuttiClienti").html(clienti);
+
+                    //console.log(clienti);            
+
+                }, errorHandler);
+                //console.log(risultati);
+            });
+
+            function errorHandler(transaction, error) {
+                console.log("Error : " + error.message);
+            }
+
+        } else {
+            alert("db not found, your browser does not support web sql!");
+        }
+
     }
    
 }
