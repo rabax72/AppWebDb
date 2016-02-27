@@ -483,9 +483,10 @@ function operatoriValidi(transaction, results) {
             }
             localStorage.idOperatore = row.IdOperatore;
             location.hash = "ElencoDistributori";
-        } else {
-            $("#authResult").html('User o Password Errati!!!');
-        }
+        } 
+    }
+    if (results.rows.length == 0) {
+        $("#authResult").html('User o Password Errati!!!');
     }
    
 }
