@@ -1,6 +1,6 @@
 ﻿if (window.openDatabase) {
     //Create the database the parameters are 1. the database name 2.version number 3. a description 4. the size of the database (in bytes) 5 x 1024 x 1024 = 5MB
-    var mydb = openDatabase("appdoldi_db", "0.1", "Il DB dei Distributori Doldi", 5 * 1024 * 1024);
+    var mydb = openDatabase("appdoldi_db2", "0.2", "Il DB dei Distributori TeDoldi", 5 * 1024 * 1024);
 
     var strutturaClienti = "CREATE TABLE IF NOT EXISTS clienti (" +
                       "IdCliente INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
@@ -105,7 +105,7 @@
                             "('Giacomo', 'Rabaglia', 'rabax@hotmail.com', 'jake', 'admin', 'admin')," +
                             "('Sara', 'Soncini', 'sdff', 'doldi', 'doldi', 'vettore')," +
                             "('Gianni', 'Gianni', 'aa@bb.it', 'vettore', 'vettore', 'vettore')," +
-                            "('Sara', 'Soncini', 'sara', 'sara', 'preppy2003', 'admin');";
+                            "('Sara', 'Soncini', 'sara', 'sara', 'preppy2003', 'admin')";
 
     var strutturaProdotti = "CREATE TABLE IF NOT EXISTS prodotti (" +
                               "IdProdotto INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
@@ -332,12 +332,12 @@
     var valoriTrasporto = "DELETE from trasporto";
 
     //creaStrutturaTabella(strutturaClienti, 'Clienti');
-    creaTabella(strutturaClienti, valoriClienti, 'Clienti');
+    //creaTabella(strutturaClienti, valoriClienti, 'clienti');
     //creaStrutturaTabella(strutturaDistributori, 'Distributori');
-    creaTabella(strutturaDistributori, valoriDistributori, 'Distributori');
+    //creaTabella(strutturaDistributori, valoriDistributori, 'distributori');
     creaStrutturaTabella(strutturaMezzi, 'Mezzi');
     //creaStrutturaTabella(strutturaOperatori, 'Operatori');
-    creaTabella(strutturaOperatori, valoriOperatori, 'Operatori');
+    //creaTabella(strutturaOperatori, valoriOperatori, 'operatori');
     creaStrutturaTabella(strutturaProdotti, 'Prodotti');
     creaStrutturaTabella(strutturaSincronizzazioni, 'Sincronizzazioni');
     creaStrutturaTabella(strutturaSituazioneClienti, 'SituazioneClienti');
@@ -348,6 +348,9 @@
     creaStrutturaTabella(strutturaMagazzinoResi, 'MagazzinoResi');
     creaStrutturaTabella(strutturaTrasporto, 'Trasporto');
 
+    inizializzaTabella('operatori', strutturaOperatori, valoriOperatori);
+    inizializzaTabella('distributori', strutturaDistributori, valoriDistributori);
+    //inizializzaTabella('clienti', strutturaClienti, valoriClienti);
 } else {
     alert("WebSQL is not supported by your browser!");
 }
@@ -390,20 +393,56 @@ function outputCars() {
 
 //function to add the car to the database
 
+function inizializzaTabella(nomeTabella, strutturaTabella, valoriInsertTabella) {
+    var righeAggiornate = [];
+    var righeCancellate = 0;
+    var righeInserite = 0;
+    if (mydb) {
+        mydb.transaction(function (t) {
+            t.executeSql("drop table if exists " + nomeTabella, [], function (transaction, results) {
+                //if (results.rowsAffected > 0) {
+                //    righeCancellate = results.rowsAffected;
+                //    //console.log('Righe Cancellate: ' + righeCancellate);
+
+                //}
+                //$('.contentSyncroMagToTablet').append('Tabella Creata: ' + nomeTabella + '<br>');
+                creaTabella(strutturaTabella, valoriInsertTabella)
+            }, errorHandler);
+
+        });
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
+        }
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+}
+
 function creaTabella(strutturaTabella, valoriTabella, nomeTabella) {
     var righeAggiornate = [];
     var righeCancellate = 0;
     var righeInserite = 0;
-    var querone = "drop table " + nomeTabella + "; " + strutturaTabella + "; " + valoriTabella;
+    //var querone = "drop table " + nomeTabella + "; "; // + strutturaTabella  ;
+    //console.log(strutturaTabella);
     if (mydb) {
         mydb.transaction(function (t) {
-            t.executeSql(querone, [], function (transaction, results) {
-                if (results.rowsAffected > 0) {
-                    righeInserite = results.rowsAffected;
-                    //console.log('Righe Cancellate: ' + righeCancellate);
-                    $('.authResult').append('Tabella : ' + nomeTabella + ' righe inserite:' +righeInserite + '<br>');
-                }
-               
+
+            //t.executeSql("drop table " + nomeTabella, function (transaction, results) {
+            //    if (results.rowsAffected > 0) {
+            //        righeCancellate = results.rowsAffected;
+            //        //console.log('Righe Cancellate: ' + righeCancellate);
+            //        $('.authResult').append('Tabella cancellata: ' + nomeTabella + '<br>');
+            //    }
+
+            //}, errorHandler);
+
+            t.executeSql(strutturaTabella, [], function (transaction, results) {
+                //if (results.rowsAffected > 0) {
+                //    righeInserite = results.rowsAffected;
+                //    //console.log('Righe Cancellate: ' + righeCancellate);
+                //    $('.authResult').append('Tabella creata: ' + nomeTabella + ' <br>');
+                //}
+                inserisciValoriTabella(valoriTabella);
             }, errorHandler);
 
             //t.executeSql("delete from " + nomeTabella, function (transaction, results) {
@@ -438,20 +477,45 @@ function creaTabella(strutturaTabella, valoriTabella, nomeTabella) {
     }    
 }
 
-function creaStrutturaTabella(strutturaTabella, nomeTabella) {
+function creaStrutturaTabella(strutturaTabella, valoriTabella) {
     var righeAggiornate = [];
     var righeCancellate = 0;
     var righeInserite = 0;
     if (mydb) {
         mydb.transaction(function (t) {
             t.executeSql(strutturaTabella, [], function (transaction, results) {
-                if (results.rowsAffected > 0) {
-                    righeCancellate = results.rowsAffected;
-                    //console.log('Righe Cancellate: ' + righeCancellate);
+                //if (results.rowsAffected > 0) {
+                //    righeCancellate = results.rowsAffected;
+                //    //console.log('Righe Cancellate: ' + righeCancellate);
                     
-                }
-                $('.contentSyncroMagToTablet').append('Tabella Creata: ' + nomeTabella + '<br>');
+                //}
+                //$('.contentSyncroMagToTablet').append('Tabella Creata: ' + nomeTabella + '<br>');
+                //inserisciValoriTabella(valoriTabella);
             }, errorHandler);            
+
+        });
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
+        }
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+}
+
+function inserisciValoriTabella(valoriTabella) {
+    var righeAggiornate = [];
+    var righeCancellate = 0;
+    var righeInserite = 0;
+    if (mydb) {
+        mydb.transaction(function (t) {
+            t.executeSql(valoriTabella, [], function (transaction, results) {
+                //if (results.rowsAffected > 0) {
+                //    righeCancellate = results.rowsAffected;
+                //    //console.log('Righe Cancellate: ' + righeCancellate);
+
+                //}
+                //$('.contentSyncroMagToTablet').append('Tabella Creata: ' + nomeTabella + '<br>');
+            }, errorHandler);
 
         });
         function errorHandler(transaction, error) {
