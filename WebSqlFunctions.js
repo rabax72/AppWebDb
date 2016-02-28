@@ -400,7 +400,7 @@ function creaTabella(strutturaTabella, valoriTabella, nomeTabella) {
                 if (results.rowsAffected > 0) {
                     righeCancellate = results.rowsAffected;
                     //console.log('Righe Cancellate: ' + righeCancellate);
-                    $('.contentSyncroMagToTablet').append('Righe Cancellate: ' + righeCancellate + '<br>');
+                    $('.authResult').append('Tabella creata: ' + nomeTabella + '<br>');
                 }
                
             }, errorHandler);
@@ -409,8 +409,8 @@ function creaTabella(strutturaTabella, valoriTabella, nomeTabella) {
                     righeInserite = results.rowsAffected;
                     //console.log('Righe Inserite: ' + righeInserite);
                     //console.log('***Aggiornamento Tabella: ' + nomeTabella + ' completato***');
-                    $('.contentSyncroMagToTablet').append('Righe Inserite: ' + righeInserite + '<br>');
-                    $('.contentSyncroMagToTablet').append('***Aggiornamento Tabella: ' + nomeTabella + ' completato***<br><br>');
+                    $('.authResult').append('Righe Inserite: ' + righeInserite + '<br>');
+                    $('.authResult').append('***Aggiornamento Tabella: ' + nomeTabella + ' completato***<br><br>');
                     //righeAggiornate = [righeCancellate, righeInserite];
                     //return righeAggiornate;
                 }
