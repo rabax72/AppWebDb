@@ -110,7 +110,8 @@ $(function () {
     //ElencoMezziPerClienti();
     //ElencoMezziPerCaricareMerce();
 
-    GetElencoDistributori();
+    //devo farlo partire dopo aver creato la tabella 'inizializzaTabella'
+    //GetElencoDistributori();
 
     //ElencoDistributori();
 

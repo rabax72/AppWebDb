@@ -406,7 +406,7 @@ function inizializzaTabella(nomeTabella, strutturaTabella, valoriInsertTabella) 
 
                 //}
                 //$('.contentSyncroMagToTablet').append('Tabella Creata: ' + nomeTabella + '<br>');
-                creaTabella(strutturaTabella, valoriInsertTabella)
+                creaTabella(strutturaTabella, valoriInsertTabella, nomeTabella)
             }, errorHandler);
 
         });
@@ -442,7 +442,7 @@ function creaTabella(strutturaTabella, valoriTabella, nomeTabella) {
                 //    //console.log('Righe Cancellate: ' + righeCancellate);
                 //    $('.authResult').append('Tabella creata: ' + nomeTabella + ' <br>');
                 //}
-                inserisciValoriTabella(valoriTabella);
+                inserisciValoriTabella(valoriTabella, nomeTabella);
             }, errorHandler);
 
             //t.executeSql("delete from " + nomeTabella, function (transaction, results) {
@@ -502,7 +502,7 @@ function creaStrutturaTabella(strutturaTabella, valoriTabella) {
     }
 }
 
-function inserisciValoriTabella(valoriTabella) {
+function inserisciValoriTabella(valoriTabella, nomeTabella) {
     var righeAggiornate = [];
     var righeCancellate = 0;
     var righeInserite = 0;
@@ -515,6 +515,10 @@ function inserisciValoriTabella(valoriTabella) {
 
                 //}
                 //$('.contentSyncroMagToTablet').append('Tabella Creata: ' + nomeTabella + '<br>');
+                if (nomeTabella == 'distributori') {
+                    GetElencoDistributori();
+                }
+                
             }, errorHandler);
 
         });
