@@ -12,7 +12,7 @@
                       "IdOperatore int(11) NOT NULL," +
                       "ordine int(11) DEFAULT NULL" +
                      // "PRIMARY KEY (IdCliente)" +
-                    ");";
+                    ")";
 
     var valoriClienti = "INSERT INTO clienti (IdCliente, Descrizione, Indirizzo, DataInserimento, DataModifica, Cancellato, IdOperatore, ordine) VALUES" +
                         "(1, 'GELATERIA CARAIBI', 'via emilio lepido 9/a/b', '2015-01-06 14:16:59', NULL, 0, 1, NULL)," +
@@ -34,7 +34,7 @@
                         "(17, 'PANETTERIA SACCANI', 'Via fratelli cervi 31, fontevivo', '2015-03-27 08:29:46', NULL, 0, 1, NULL)," +
                         "(18, 'RISTORANTE PIZZERIA MARY JOY DI FOIS MARIA GRAZIA', 'Via san martino 40, medesano', '2015-03-27 08:31:00', NULL, 0, 1, NULL)," +
                         "(19, '1000', NULL, '2015-03-28 07:43:47', '', 0, 1, 1000)," +
-                        "(20, 'SANE E PANOS', 'piazza garibaldi 19/e, parma', '2015-03-28 08:38:08', NULL, 0, 1, NULL);";
+                        "(20, 'SANE E PANOS', 'piazza garibaldi 19/e, parma', '2015-03-28 08:38:08', NULL, 0, 1, NULL)";
 
     var strutturaDistributori = "CREATE TABLE IF NOT EXISTS distributori (" +
                       "IdDistributore INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
@@ -76,7 +76,7 @@
                                 "(24, '1819G401957', 'MG', 'MAGENTA', 'via verdi, reggio emilia', '0.00000000', '0.00000000', '2015-03-27 17:51:15', 'REGGIO EMILIA', 17)," +
                                 "(25, '1559GA02455', 'PG', 'PIAZZA GARIBALDI', 'PIAZZA GARIBALDI', '0.00000000', '0.00000000', '2015-06-04 16:56:20', 'PARMA', 3)," +
                                 "(28, '4949GA02271', 'CO', 'COLLECCHIO', 'VIALE SARAGAT', '0.00000000', '0.00000000', '2015-09-21 10:21:51', 'COLLECCHIO', 25)," +
-                                "(29, '1819G401961', 'CO', 'CORCAGNANO', '', '0.00000000', '0.00000000', '2015-10-10 10:45:48', 'PARMA', 29);";
+                                "(29, '1819G401961', 'CO', 'CORCAGNANO', '', '0.00000000', '0.00000000', '2015-10-10 10:45:48', 'PARMA', 29)";
 
     var strutturaMezzi = "CREATE TABLE IF NOT EXISTS mezzi (" +
                                  "IdMezzo INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
@@ -101,11 +101,11 @@
                               //"PRIMARY KEY (IdOperatore)" +
                             ")";
 
-    var valoriOperatori = "INSERT INTO operatori (IdOperatore, Nome, Cognome, Email, User, Password, Ruolo) VALUES" +
-                            "(1, 'Giacomo', 'Rabaglia', 'rabax@hotmail.com', 'jake', 'admin', 'admin')," +
-                            "(2, 'Sara', 'Soncini', 'sdff', 'doldi', 'doldi', 'vettore')," +
-                            "(3, 'Gianni', 'Gianni', 'aa@bb.it', 'vettore', 'vettore', 'vettore')," +
-                            "(4, 'Sara', 'Soncini', 'sara', 'sara', 'preppy2003', 'admin');";
+    var valoriOperatori = "INSERT INTO operatori (Nome, Cognome, Email, User, Password, Ruolo) VALUES" +
+                            "('Giacomo', 'Rabaglia', 'rabax@hotmail.com', 'jake', 'admin', 'admin')," +
+                            "('Sara', 'Soncini', 'sdff', 'doldi', 'doldi', 'vettore')," +
+                            "('Gianni', 'Gianni', 'aa@bb.it', 'vettore', 'vettore', 'vettore')," +
+                            "('Sara', 'Soncini', 'sara', 'sara', 'preppy2003', 'admin');";
 
     var strutturaProdotti = "CREATE TABLE IF NOT EXISTS prodotti (" +
                               "IdProdotto INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
@@ -394,32 +394,44 @@ function creaTabella(strutturaTabella, valoriTabella, nomeTabella) {
     var righeAggiornate = [];
     var righeCancellate = 0;
     var righeInserite = 0;
+    var querone = "drop table " + nomeTabella + "; " + strutturaTabella + "; " + valoriTabella;
     if (mydb) {
         mydb.transaction(function (t) {
-            t.executeSql(strutturaTabella, [], function (transaction, results) {
+            t.executeSql(querone, [], function (transaction, results) {
                 if (results.rowsAffected > 0) {
-                    righeCancellate = results.rowsAffected;
+                    righeInserite = results.rowsAffected;
                     //console.log('Righe Cancellate: ' + righeCancellate);
-                    $('.authResult').append('Tabella creata: ' + nomeTabella + '<br>');
+                    $('.authResult').append('Tabella : ' + nomeTabella + ' righe inserite:' +righeInserite + '<br>');
                 }
                
             }, errorHandler);
-            t.executeSql(valoriTabella, [], function (transaction, results) {
-                if (results.rowsAffected > 0) {
-                    righeInserite = results.rowsAffected;
-                    //console.log('Righe Inserite: ' + righeInserite);
-                    //console.log('***Aggiornamento Tabella: ' + nomeTabella + ' completato***');
-                    $('.authResult').append('Righe Inserite: ' + righeInserite + '<br>');
-                    $('.authResult').append('***Aggiornamento Tabella: ' + nomeTabella + ' completato***<br><br>');
-                    //righeAggiornate = [righeCancellate, righeInserite];
-                    //return righeAggiornate;
-                }
+
+            //t.executeSql("delete from " + nomeTabella, function (transaction, results) {
+            //    if (results.rowsAffected > 0) {
+            //        righeCancellate = results.rowsAffected;
+            //        //console.log('Righe Cancellate: ' + righeCancellate);
+            //        $('.authResult').append('Righe cancellate: ' + righeCancellate + '<br>');
+            //    }
+
+            //}, errorHandler);
+
+            //t.executeSql(valoriTabella, [], function (transaction, results) {
+            //    if (results.rowsAffected > 0) {
+            //        righeInserite = results.rowsAffected;
+            //        //console.log('Righe Inserite: ' + righeInserite);
+            //        //console.log('***Aggiornamento Tabella: ' + nomeTabella + ' completato***');
+            //        $('.authResult').append('Righe Inserite: ' + righeInserite + '<br>');
+            //        $('.authResult').append('***Aggiornamento Tabella: ' + nomeTabella + ' completato***<br><br>');
+            //        //righeAggiornate = [righeCancellate, righeInserite];
+            //        //return righeAggiornate;
+            //    }
                 
-            }, errorHandler);
+            //}, errorHandler);
             
         });
         function errorHandler(transaction, error) {
             console.log("Error : " + error.message + '--' + nomeTabella);
+            //alert("Error : " + error.message + '--' + nomeTabella);
         }
     } else {
         alert("db not found, your browser does not support web sql!");
