@@ -104,7 +104,7 @@
     var valoriOperatori = "INSERT INTO operatori (Nome, Cognome, Email, User, Password, Ruolo) VALUES" +
                             "('Giacomo', 'Rabaglia', 'rabax@hotmail.com', 'jake', 'admin', 'admin')," +
                             "('Sara', 'Soncini', 'sdff', 'doldi', 'doldi', 'vettore')," +
-                            "('Gianni', 'Gianni', 'aa@bb.it', 'vettore', 'vettore', 'vettore')," +
+                            "('Gianni', 'Gianni', 'aa@bb.it', 'sami', 'sami', 'vettore')," +
                             "('Sara', 'Soncini', 'sara', 'sara', 'preppy2003', 'admin')";
 
     var strutturaProdotti = "CREATE TABLE IF NOT EXISTS prodotti (" +
