@@ -1123,54 +1123,96 @@ function togliEvidenziatoCliente(idCliente, descCliente) {
 }
 
 function togliEvidenziatoDistributore(idDistributore, descDistributore) {
-    $.ajax({
-        type: "POST",
-        crossDomain: true,
-        contentType: "application/json; charset=utf-8",        
-        url: urlResetEvidenzaByDistributore,
-        cache: false,
-        async: true,
-        //            data: "idDisciplina=" + idDisciplina,
-        data: JSON.stringify({ idDistributore: idDistributore }),
-        error: function (data) {
-            console.log(data.responseText)
-        },
-        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
-        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
-        success: function (response) {
-            risultati = response.d;
+    if (mydb) {
+        mydb.transaction(function (t) {
 
-            //console.log(risultati);
-            GetSituazioneDistributore(idDistributore, descDistributore);
+            t.executeSql("UPDATE situazionedistributori set colore = NULL Where idDistributore = ?", [idDistributore], function (transaction, results) {
+
+                GetSituazioneDistributore(idDistributore, descDistributore);
+
+            }, errorHandler);
+
+        });
+
+            function errorHandler(transaction, error) {
+                console.log("Error : " + error.message);
+            }
+
+        } else {
+            alert("db not found, your browser does not support web sql!");
         }
+    }
 
-    });
-}
+//function togliEvidenziatoDistributore(idDistributore, descDistributore) {
+//    $.ajax({
+//        type: "POST",
+//        crossDomain: true,
+//        contentType: "application/json; charset=utf-8",        
+//        url: urlResetEvidenzaByDistributore,
+//        cache: false,
+//        async: true,
+//        //            data: "idDisciplina=" + idDisciplina,
+//        data: JSON.stringify({ idDistributore: idDistributore }),
+//        error: function (data) {
+//            console.log(data.responseText)
+//        },
+//        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+//        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+//        success: function (response) {
+//            risultati = response.d;
+
+//            //console.log(risultati);
+//            GetSituazioneDistributore(idDistributore, descDistributore);
+//        }
+
+//    });
+//}
 
 function togliEvidenziatoMagazzino() {
-    $.ajax({
-        type: "POST",
-        crossDomain: true,
-        contentType: "application/json; charset=utf-8",        
-        url: urlResetEvidenzaMagazzino,
-        cache: false,
-        async: true,
-        //            data: "idDisciplina=" + idDisciplina,
-        data: JSON.stringify({ }),
-        error: function (data) {
-            console.log(data.responseText)
-        },
-        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
-        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
-        success: function (response) {
-            risultati = response.d;
+    if (mydb) {
+        mydb.transaction(function (t) {
 
-            //console.log(risultati);
-            GestioneMagazzino();
+            t.executeSql("UPDATE magazzino set colore = null Where smaltito = 0", [], function (transaction, results) {
+
+                GestioneMagazzino();
+
+            }, errorHandler);
+            
+        });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
         }
 
-    });
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
 }
+
+//function togliEvidenziatoMagazzino() {
+//    $.ajax({
+//        type: "POST",
+//        crossDomain: true,
+//        contentType: "application/json; charset=utf-8",        
+//        url: urlResetEvidenzaMagazzino,
+//        cache: false,
+//        async: true,
+//        //            data: "idDisciplina=" + idDisciplina,
+//        data: JSON.stringify({ }),
+//        error: function (data) {
+//            console.log(data.responseText)
+//        },
+//        beforeSend: function () { $.mobile.loading('show'); }, //Show spinner
+//        complete: function () { $.mobile.loading('hide'); }, //Hide spinner
+//        success: function (response) {
+//            risultati = response.d;
+
+//            //console.log(risultati);
+//            GestioneMagazzino();
+//        }
+
+//    });
+//}
 
 function AggiornaColoreProdottoInCliente(idCliente, idProdotto, colore) {
     if (mydb) {       

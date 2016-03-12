@@ -5,19 +5,7 @@ function SincronizzaTabletConProdottiInMagazzino() {
 
     if (!confirm("Sicuro che vuoi procedere all aggiornamento dei dati sul tablet??? Tutti i dati attualmente presenti verranno cancellati e sovrascritti con quelli presenti sul server!")) return;
     if (mydb) {
-        
-        RecuperoDatiPerTabellaClienti();
-        RecuperoDatiPerTabellaDistributori();
-        RecuperoDatiPerTabellaMezzi();
-        RecuperoDatiPerTabellaOperatori();
-        RecuperoDatiPerTabellaProdotti();
-        RecuperoDatiPerTabellaSituazioneClienti();
-        RecuperoDatiPerTabellaSituazioneDistributori();
-        RecuperoDatiPerTabellaVenduto();        
-        RecuperoDatiPerTabellaMagazzino();
-        RecuperoDatiPerTabellaMagazzinoResi();
-
-        AggiornaDataSincronizzazione('MagToTablet');
+        AggiornaDataSincronizzazione('MagToTablet');               
 
     } else {
         alert("db not found, your browser does not support web sql!");
@@ -33,14 +21,8 @@ function SincronizzaVendutoDaTablet() {
     
     var idOperatore = localStorage.idOperatore;
 
-    getDataUltimaSincronizzazione(CheckNewItemInMagazzino);
-    getDataUltimaSincronizzazione(CheckNewItemInMagazzinoResi);    
-    getDataUltimaSincronizzazione(CheckNewItemInSituazioneDistributore);
-    getDataUltimaSincronizzazione(CheckNewItemInSituazioneCliente);
-    getDataUltimaSincronizzazione(CheckNewItemInVenduto);
-   
     AggiornaDataSincronizzazione('TabToMag');
-
+           
 }
 
 function AggiornaDataSincronizzazione(verso) {
@@ -48,8 +30,26 @@ function AggiornaDataSincronizzazione(verso) {
     if (mydb) {
         //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
         mydb.transaction(function (t) {
-            t.executeSql("Insert into sincronizzazioni (idOperatore, verso) Values (?, ?)", [idOperatore, verso], function (transaction, results) {
-
+            t.executeSql("Insert into sincronizzazioni (idOperatore, verso, numtabelleaggiornate) Values (?, ?, 0)", [idOperatore, verso], function (transaction, results) {
+                if (verso == 'MagToTablet') {
+                    //RecuperoDatiPerTabellaClienti();
+                    RecuperoDatiPerTabellaDistributori();
+                    //RecuperoDatiPerTabellaMezzi();
+                    RecuperoDatiPerTabellaOperatori();
+                    RecuperoDatiPerTabellaProdotti();
+                    //RecuperoDatiPerTabellaSituazioneClienti();
+                    RecuperoDatiPerTabellaSituazioneDistributori();
+                    RecuperoDatiPerTabellaVenduto();
+                    RecuperoDatiPerTabellaMagazzino();
+                    RecuperoDatiPerTabellaMagazzinoResi();
+                }
+                if (verso == 'TabToMag') {
+                    getDataUltimaSincronizzazione(CheckNewItemInMagazzino);
+                    getDataUltimaSincronizzazione(CheckNewItemInMagazzinoResi);
+                    getDataUltimaSincronizzazione(CheckNewItemInSituazioneDistributore);
+                    getDataUltimaSincronizzazione(CheckNewItemInSituazioneCliente);
+                    getDataUltimaSincronizzazione(CheckNewItemInVenduto);
+                }
             }, errorHandler);
 
         });
@@ -81,9 +81,7 @@ function getDataUltimaSincronizzazione(callBackFunction) {
             }, errorHandler);
 
         });
-
         
-
         function errorHandler(transaction, error) {
             console.log("Error : " + error.message);
         }

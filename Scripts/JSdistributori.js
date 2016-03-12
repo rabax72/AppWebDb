@@ -6,7 +6,7 @@ function GetElencoDistributori() {
     if (mydb) {
         //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
         mydb.transaction(function (t) {
-            t.executeSql("SELECT * FROM distributori", [], elencoDistributori);
+            t.executeSql("SELECT * FROM distributori order by ordine", [], elencoDistributori);
         });
     } else {
         alert("db not found, your browser does not support web sql!");

@@ -328,7 +328,7 @@ function GetSituazioneDistributore(IdDistributore, descDistributore) {
                                         var desc = descDistributore;
                                         desc = desc.replace("'", "\\'");
                                         desc = '\'' + desc + '\'';
-                                        dettaglio = dettaglio + '<br><p align="center"><input type="button" value="FINE" class="ui-btn ui-corner-all ui-shadow ui-btn-active ui-btnCarica fineCarico" onclick="togliEvidenziatoDistributore(' + IdDistributore + ', ' + desc + ')" /></p>';
+                                        dettaglio = dettaglio + '<br><p align="center"><input type="button" value="FINE" class="ui-btn ui-corner-all ui-shadow ui-btn-active ui-btnCarica fineCarico" onclick="togliEvidenziatoDistributore(' + IdDistributore + ', ' + desc + ')" /></p><p>&nbsp;</p><p>&nbsp;</p>';
 
                                         $('.DettaglioDistributore').html(dettaglio);
 

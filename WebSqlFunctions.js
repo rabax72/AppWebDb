@@ -148,7 +148,8 @@
                                      "  id  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                                      "  ultimoAggiornamento datetime NOT NULL DEFAULT (datetime('now','localtime'))," +                                     
                                      "  idOperatore  int(11) NOT NULL," +
-                                     "  verso  varchar(50) " +
+                                     "  verso  varchar(50), " +
+                                     " numTabelleAggiornate	int(11) " + 
                                     ")";
 
     //var valoriSincronizzazioni = "Select count(id) from sincronizzazioni;";
@@ -495,7 +496,7 @@ function creaStrutturaTabella(strutturaTabella, valoriTabella) {
 
         });
         function errorHandler(transaction, error) {
-            console.log("Error : " + error.message);
+            console.log("Error : " + error.message + " " + strutturaTabella);
         }
     } else {
         alert("db not found, your browser does not support web sql!");
@@ -543,8 +544,16 @@ function aggiornaTabella(valoriTabella, nomeTabella, callBackFunction) {
                     //console.log('Righe Inserite: ' + righeInserite);
                     //console.log('***Aggiornamento Tabella: ' + nomeTabella + ' completato***');
                     //$('.contentSyncroMagToTablet').html('');
-                    $('.contentSyncroMagToTablet').append('Righe Inserite: ' + righeInserite + '<br>');
-                    $('.contentSyncroMagToTablet').append('***Aggiornamento Tabella: ' + nomeTabella + ' completato***<br><br>');
+                                        
+                    if (valoriTabella.substring(0, 6) == 'INSERT') {
+                        $('.contentSyncroMagToTablet').append('*');
+                        //$('.contentSyncroMagToTablet').append('Righe Inserite: ' + righeInserite + '<br>');
+                        //$('.contentSyncroMagToTablet').append('***Aggiornamento Tabella: ' + nomeTabella + ' completato***<br><br>');
+                    }
+                    var agg = $('.contentSyncroMagToTablet').html();
+                    if (agg == '**') {
+                        $('.contentSyncroMagToTablet').html('*******AGGIORNAMENTO COMPLETATO*********');
+                    }
                     //righeAggiornate = [righeCancellate, righeInserite];
                     //return righeAggiornate;
                     if (callBackFunction == 1) {
