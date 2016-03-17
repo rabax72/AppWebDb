@@ -539,19 +539,19 @@ function aggiornaTabella(valoriTabella, nomeTabella, callBackFunction) {
         mydb.transaction(function (t) {
             
             t.executeSql(valoriTabella, [], function (transaction, results) {
-                if (results.rowsAffected > 0) {
+                //if (results.rowsAffected > 0) {
                     righeInserite = results.rowsAffected;
                     //console.log('Righe Inserite: ' + righeInserite);
                     //console.log('***Aggiornamento Tabella: ' + nomeTabella + ' completato***');
                     //$('.contentSyncroMagToTablet').html('');
                                         
-                    if (valoriTabella.substring(0, 6) == 'INSERT') {
+                    if (valoriTabella.substring(0, 6) == 'Delete') {
                         $('.contentSyncroMagToTablet').append('*');
                         //$('.contentSyncroMagToTablet').append('Righe Inserite: ' + righeInserite + '<br>');
                         //$('.contentSyncroMagToTablet').append('***Aggiornamento Tabella: ' + nomeTabella + ' completato***<br><br>');
                     }
                     var agg = $('.contentSyncroMagToTablet').html();
-                    if (agg == '**') {
+                    if (agg == '****') {
                         $('.contentSyncroMagToTablet').html('*******AGGIORNAMENTO COMPLETATO*********');
                     }
                     //righeAggiornate = [righeCancellate, righeInserite];
@@ -561,7 +561,7 @@ function aggiornaTabella(valoriTabella, nomeTabella, callBackFunction) {
                         inserisciVecchieQuantitaResi();
                     }
                     //callBackFunction;
-                }
+                //}
 
             }, errorHandler);
 
