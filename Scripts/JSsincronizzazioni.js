@@ -21,7 +21,14 @@ function SincronizzaVendutoDaTablet() {
     
     var idOperatore = localStorage.idOperatore;
 
-    AggiornaDataSincronizzazione('TabToMag');
+    //AggiornaDataSincronizzazione('TabToMag');
+
+    $('.contentSyncronizzazioneTabletToVendutoCompletato').html('');
+    getDataUltimaSincronizzazione(CheckNewItemInMagazzino);
+    getDataUltimaSincronizzazione(CheckNewItemInMagazzinoResi);
+    getDataUltimaSincronizzazione(CheckNewItemInSituazioneDistributore);
+    //getDataUltimaSincronizzazione(CheckNewItemInSituazioneCliente);
+    getDataUltimaSincronizzazione(CheckNewItemInVenduto);
            
 }
 
@@ -44,11 +51,11 @@ function AggiornaDataSincronizzazione(verso) {
                     RecuperoDatiPerTabellaMagazzinoResi();
                 }
                 if (verso == 'TabToMag') {
-                    getDataUltimaSincronizzazione(CheckNewItemInMagazzino);
-                    getDataUltimaSincronizzazione(CheckNewItemInMagazzinoResi);
-                    getDataUltimaSincronizzazione(CheckNewItemInSituazioneDistributore);
-                    getDataUltimaSincronizzazione(CheckNewItemInSituazioneCliente);
-                    getDataUltimaSincronizzazione(CheckNewItemInVenduto);
+                    //getDataUltimaSincronizzazione(CheckNewItemInMagazzino);
+                    //getDataUltimaSincronizzazione(CheckNewItemInMagazzinoResi);
+                    //getDataUltimaSincronizzazione(CheckNewItemInSituazioneDistributore);
+                    ////getDataUltimaSincronizzazione(CheckNewItemInSituazioneCliente);
+                    //getDataUltimaSincronizzazione(CheckNewItemInVenduto);
                 }
             }, errorHandler);
 
@@ -1780,7 +1787,13 @@ function CheckNewItemInMagazzino(lastDate) {
                     
                 }
                 $('.contentSyncronizzazioneTabletToVenduto').append('Tabella Magazzino - Aggiornati: ' + recordAggiornati + ' Aggiunti: ' + recordAggiunti + '<br>');
-               
+
+                $('.contentSyncronizzazioneTabletToVendutoCompletato').append('*');
+                var agg = $('.contentSyncronizzazioneTabletToVendutoCompletato').html();
+                if (agg == '****') {
+                    $('.contentSyncronizzazioneTabletToVendutoCompletato').html('*******AGGIORNAMENTO COMPLETATO*********');
+                    AggiornaDataSincronizzazione('TabToMag');
+                }
                 //setTimeout(syncroUpdateRecordMagazzino, 5000);
 
 
@@ -1873,7 +1886,12 @@ function CheckNewItemInMagazzinoResi(lastDate) {
                                                            
                 }
                 $('.contentSyncronizzazioneTabletToVenduto').append('Tabella MagazzinoResi - Aggiornati: ' + recordAggiornati + ' Aggiunti: ' + recordAggiunti + '<br>');
-                //console.log(ids);
+                $('.contentSyncronizzazioneTabletToVendutoCompletato').append('*');
+                var agg = $('.contentSyncronizzazioneTabletToVendutoCompletato').html();
+                if (agg == '****') {
+                    $('.contentSyncronizzazioneTabletToVendutoCompletato').html('*******AGGIORNAMENTO COMPLETATO*********');
+                    AggiornaDataSincronizzazione('TabToMag');
+                }
 
             }, errorHandler);
         });
@@ -1943,7 +1961,12 @@ function CheckNewItemInSituazioneDistributore(lastId) {
                 }
 
                 $('.contentSyncronizzazioneTabletToVenduto').append('Tabella SituazioneDistributori - Inseriti: ' + recordAggiunti + ' aggiornati: ' + recordAggiornati + '<br>');
-                //console.log(ids);
+                $('.contentSyncronizzazioneTabletToVendutoCompletato').append('*');
+                var agg = $('.contentSyncronizzazioneTabletToVendutoCompletato').html();
+                if (agg == '****') {
+                    $('.contentSyncronizzazioneTabletToVendutoCompletato').html('*******AGGIORNAMENTO COMPLETATO*********');
+                    AggiornaDataSincronizzazione('TabToMag');
+                }
 
             }, errorHandler);
         });
@@ -2068,7 +2091,12 @@ function CheckNewItemInVenduto(lastId) {
                 }
 
                 $('.contentSyncronizzazioneTabletToVenduto').append('Tabella Vendita - Inseriti: ' + results.rows.length + '<br>');
-                //console.log(ids);
+                $('.contentSyncronizzazioneTabletToVendutoCompletato').append('*');
+                var agg = $('.contentSyncronizzazioneTabletToVendutoCompletato').html();
+                if (agg == '****') {
+                    $('.contentSyncronizzazioneTabletToVendutoCompletato').html('*******AGGIORNAMENTO COMPLETATO*********');
+                    AggiornaDataSincronizzazione('TabToMag');
+                }
 
             }, errorHandler);
         });
