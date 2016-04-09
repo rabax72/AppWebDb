@@ -169,7 +169,7 @@ $(function () {
             myFunction(xhttp);
         }
     };
-    xhttp.open("GET", "../config.xml", true);
+    xhttp.open("GET", "config.xml", true);
     xhttp.send();
 
 });
