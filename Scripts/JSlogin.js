@@ -105,7 +105,7 @@ var urlUltimoAggiornamentoByIdOperatore = urlProd + 'UltimoAggiornamentoByIdOper
 $(function () {    
 
     $(".leftPanel").load("Include/LeftPanel.html");
-    
+
     //ElencoMezziPerDistributori();
     //ElencoMezziPerClienti();
     //ElencoMezziPerCaricareMerce();
@@ -161,7 +161,30 @@ $(function () {
         }
     });
 
+    //per recuperare la Versione
+    var xhttp;
+    xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            myFunction(xhttp);
+        }
+    };
+    xhttp.open("GET", "../config.xml", true);
+    xhttp.send();
+
 });
+
+
+
+function myFunction(xml) {
+    var x, i, txt, xmlDoc;
+    xmlDoc = xml.responseXML;
+    txt = "";
+    x = xmlDoc.getElementsByTagName("widget");
+    txt = x[0].attributes[3].nodeValue;
+    //alert(txt);
+    $('#versione').html('Ver. ' + txt);
+}
 
 function isInt32(n) {
     return +n === n && !(n % 1) && n < 0x80000000 && n >= -0x80000000;
