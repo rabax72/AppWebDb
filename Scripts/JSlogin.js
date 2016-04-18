@@ -506,6 +506,7 @@ function operatoriValidi(transaction, results) {
                 $(".onlyAdmin").switchClass("onlyAdmin", "", 1000);
             }
             localStorage.idOperatore = row.IdOperatore;
+            GetElencoDistributori();
             location.hash = "ElencoDistributori";
         } 
     }
