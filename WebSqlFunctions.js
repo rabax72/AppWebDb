@@ -332,6 +332,9 @@
     //                        "(1503, 1, '2015-12-12', 1, '1.00', '2015-12-12 14:29:38', '2015-12-12 00:00:00', 0, NULL, NULL, NULL, NULL, 1, 1);";
     var valoriTrasporto = "DELETE from trasporto";
 
+
+    //VerificaEsistenzaTabella('Mezzi');
+
     //creaStrutturaTabella(strutturaClienti, 'Clienti');
     //creaTabella(strutturaClienti, valoriClienti, 'clienti');
     //creaStrutturaTabella(strutturaDistributori, 'Distributori');
@@ -349,8 +352,11 @@
     creaStrutturaTabella(strutturaMagazzinoResi, 'MagazzinoResi');
     creaStrutturaTabella(strutturaTrasporto, 'Trasporto');
 
-    inizializzaTabella('operatori', strutturaOperatori, valoriOperatori);
-    inizializzaTabella('distributori', strutturaDistributori, valoriDistributori);
+    creaStrutturaTabella(strutturaOperatori, 'operatori');
+    creaStrutturaTabella(strutturaDistributori, 'distributori');
+
+    //inizializzaTabella('operatori', strutturaOperatori, valoriOperatori);
+    //inizializzaTabella('distributori', strutturaDistributori, valoriDistributori);
     //inizializzaTabella('clienti', strutturaClienti, valoriClienti);
 } else {
     alert("WebSQL is not supported by your browser!");
@@ -391,6 +397,26 @@ function outputCars() {
         alert("db not found, your browser does not support web sql!");
     }
 }
+
+function VerificaEsistenzaTabella(nomeTabella) {
+    if (mydb) {
+
+        mydb.transaction(function (t) {
+
+            t.executeSql("select * FROM " + nomeTabella , [], function (transaction, results) {
+
+            }, errorHandler);
+        });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
+
+        }
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
+}
+
 
 //function to add the car to the database
 

@@ -115,7 +115,7 @@ $(function () {
 
     //ElencoDistributori();
 
-    ElencoClienti();        
+    //ElencoClienti();        
 
     $("#btn-submit").click(function () {
 
@@ -1354,6 +1354,29 @@ function AggiornaQuantitaProdottiVendutiServer(idProdotto, idDistributore, idCli
         }
 
     });
+}
+
+function AzzeraTabellaLocale(nomeTabella) {
+    if (mydb) {
+        //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
+        mydb.transaction(function (t) {
+            //var dataModifica = dataOdierna();
+            var query = "delete from " + nomeTabella ;
+            t.executeSql(query, [], function (transaction, results) {
+
+                //console.log(risultati);
+                
+            }, errorHandler);
+
+        });
+
+        function errorHandler(transaction, error) {
+            console.log("Error : " + error.message);
+        }
+
+    } else {
+        alert("db not found, your browser does not support web sql!");
+    }
 }
 
 function AggiornaTabellaSincronizzazioni() {

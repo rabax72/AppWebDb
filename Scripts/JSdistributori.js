@@ -2,11 +2,18 @@
    
 });
 
+function ElencoDistributoriLocale() {
+
+    $('#tuttiDistributori').html('');
+    GetElencoDistributori();
+    location.hash = "ElencoDistributori";
+}
+
 function GetElencoDistributori() {
     if (mydb) {
         //Get all the cars from the database with a select statement, set outputCarList as the callback function for the executeSql command
         mydb.transaction(function (t) {
-            t.executeSql("SELECT * FROM distributori order by citta, ordine", [], elencoDistributori);
+            t.executeSql("SELECT * FROM distributori order by ordine", [], elencoDistributori);
         });
     } else {
         alert("db not found, your browser does not support web sql!");
@@ -46,7 +53,7 @@ function elencoDistributori(transaction, results) {
         desc = '\'' + desc + '\'';
 
         if (Citta != CittaOld) {
-            distributori = distributori + '<li data-role="list-divider">' + Citta + '</li>';
+            distributori = distributori + '<li data-role="list-divider" role="heading" class="ui-li-divider ui-bar-inherit">' + Citta + '</li>';
         }
 
         distributori = distributori + '<li class="Blu"><a href="javascript:GetSituazioneDistributore(' + row.IdDistributore + ', ' + desc + ');" class="ui-btn ui-btn-icon-right ui-icon-carat-r nomeDistributore" >' + row.Descrizione + '<br><span class="miniText">' + indirizzo + '</span></a></li>';

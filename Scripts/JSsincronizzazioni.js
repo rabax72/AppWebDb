@@ -56,6 +56,9 @@ function AggiornaDataSincronizzazione(verso) {
                     //getDataUltimaSincronizzazione(CheckNewItemInSituazioneDistributore);
                     ////getDataUltimaSincronizzazione(CheckNewItemInSituazioneCliente);
                     //getDataUltimaSincronizzazione(CheckNewItemInVenduto);
+                    AzzeraTabellaLocale('magazzino');
+                    AzzeraTabellaLocale('magazzinoresi');
+                    AzzeraTabellaLocale('situazionedistributori');
                 }
             }, errorHandler);
 
@@ -212,7 +215,7 @@ function RecuperoDatiPerTabellaDistributori() {
 
             valoriInsert = testoInsert + valoriInsert;
             //console.log(valoriInsert);
-            var pulisciClienti = "Delete from Distributori";
+            var pulisciClienti = "Delete from distributori";
 
             var aggClienti = creaTabella(pulisciClienti, valoriInsert, 'Distributori');
             //console.log(aggClienti);
